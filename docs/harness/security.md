@@ -13,6 +13,7 @@
 ## Secrets and egress
 - Credentials live outside source control. CI and default demos use `LLM_MODE=fake` and no provider credentials.
 - MCP allowlist contains local mock billing/CRM only. Deny arbitrary network egress in test/runtime profiles.
+- The API verifies HS256 JWT signature, issuer, expiry, and required claims, using `JWT_SECRET`. The checked-in demo secret and token helper are only for isolated local execution; external identity, key rotation, and production credentials are not implemented.
 - The MCP SDK server currently runs only in memory for contract tests. Its synthetic tenant arguments are test data, not an authentication scheme; do not expose that mock transport to a network. Runtime calls must enter through `LocalToolGateway`, which binds the trusted `Principal` to each tool operation.
 
 ## Required security tests

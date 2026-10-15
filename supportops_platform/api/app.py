@@ -1,16 +1,23 @@
 """HTTP API with explicit local fake credentials and tenant-bound persistence."""
 
 import os
+from secrets import token_urlsafe
 from collections import deque
 from threading import Lock
 from time import monotonic
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
+from jwt.exceptions import InvalidTokenError
 
 from supportops_platform import __version__
+from supportops_platform.auth.jwt import decode_principal
 from supportops_platform.contracts import Principal, Ticket
+from supportops_platform.async_tasks.queue import LocalTaskQueue
+from supportops_platform.obs.metrics import MetricsRegistry
+from supportops_platform.integrations.observability import configure_telemetry, prometheus_metrics
 from supportops_platform.repositories import AuthorizationError, InMemoryStore
 
 
@@ -28,51 +35,62 @@ class ApprovalDecision(BaseModel):
     decision: str
 
 
-def _fake_principals() -> dict[str, Principal]:
-    if os.getenv("LLM_MODE", "fake") != "fake":
-        raise RuntimeError("only LLM_MODE=fake is implemented in this release candidate")
-    return {
-        "tenant-a-agent": Principal(
-            subject="agent-a", tenant_id="tenant-a", roles=frozenset({"agent"}),
-            scopes=frozenset({"ticket:read", "ticket:write", "refund:request"}),
-        ),
-        "tenant-a-approver": Principal(
-            subject="approver-a", tenant_id="tenant-a", roles=frozenset({"approver"}),
-            scopes=frozenset({"ticket:read", "approval:decide"}),
-        ),
-        "tenant-a-reader": Principal(
-            subject="reader-a", tenant_id="tenant-a", roles=frozenset({"viewer"}),
-            scopes=frozenset({"ticket:read"}),
-        ),
-        "tenant-b-agent": Principal(
-            subject="agent-b", tenant_id="tenant-b", roles=frozenset({"agent"}),
-            scopes=frozenset({"ticket:read", "ticket:write"}),
-        ),
-    }
+class TaskCreate(BaseModel):
+    ticket_id: str = Field(min_length=1, max_length=100)
 
 
-def create_app(store: InMemoryStore | None = None, requests_per_minute: int = 60) -> FastAPI:
+class TicketFeedback(BaseModel):
+    rating: int = Field(ge=1, le=5)
+    comment: str = Field(default="", max_length=1000)
+
+
+def create_app(
+    store: InMemoryStore | None = None,
+    requests_per_minute: int = 60,
+    token_secret: str | None = None,
+) -> FastAPI:
     if requests_per_minute < 1:
         raise ValueError("requests_per_minute must be positive")
+    secret = token_secret or os.getenv("JWT_SECRET")
+    if secret is None and os.getenv("LLM_MODE", "fake") == "fake":
+        secret = token_urlsafe(48)
+    if secret is None:
+        raise ValueError("JWT_SECRET is required outside fake mode")
+    if len(secret) < 32:
+        raise ValueError("JWT_SECRET must contain at least 32 characters")
     app = FastAPI(title="SupportOps Platform", version=__version__)
+    configure_telemetry()
     app.state.store = store or InMemoryStore()
-    app.state.tokens = _fake_principals()
+    app.state.task_queue = LocalTaskQueue()
+    app.state.metrics = MetricsRegistry()
+    app.state.token_secret = secret
     app.state.rate_limit = requests_per_minute
     app.state.request_times = {}
     app.state.request_times_lock = Lock()
+    bearer_scheme = HTTPBearer(auto_error=False)
 
-    def principal(authorization: str | None = Header(default=None)) -> Principal:
-        if not authorization or not authorization.startswith("Bearer "):
-            raise HTTPException(status_code=401, detail="bearer token required")
-        token = authorization.removeprefix("Bearer ")
-        actor = app.state.tokens.get(token)
-        if actor is None:
-            raise HTTPException(status_code=401, detail="invalid token")
-        return actor
+    def principal(
+        credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+    ) -> Principal:
+        if credentials is None:
+            raise HTTPException(status_code=401, detail="bearer token required", headers={"WWW-Authenticate": "Bearer"})
+        try:
+            return decode_principal(credentials.credentials, app.state.token_secret)
+        except InvalidTokenError as exc:
+            raise HTTPException(status_code=401, detail="invalid token", headers={"WWW-Authenticate": "Bearer"}) from exc
 
     @app.get("/health")
     def health() -> dict[str, str]:
         return {"status": "ok", "version": __version__, "llm_mode": os.getenv("LLM_MODE", "fake")}
+
+    @app.get("/metrics", include_in_schema=False)
+    def metrics() -> Response:
+        package_metrics, _ = prometheus_metrics()
+        local_metrics = app.state.metrics.render().encode("utf-8")
+        return Response(
+            package_metrics + local_metrics,
+            media_type="text/plain; version=0.0.4; charset=utf-8",
+        )
 
     @app.get("/v1/tickets")
     def list_tickets(actor: Principal = Depends(principal)) -> list[Ticket]:
@@ -96,6 +114,20 @@ def create_app(store: InMemoryStore | None = None, requests_per_minute: int = 60
             return app.state.store.get_ticket(actor, ticket_id)
         except AuthorizationError as exc:
             raise HTTPException(status_code=404, detail="ticket not found") from exc
+
+    @app.post("/v1/tickets/{ticket_id}/feedback", status_code=201)
+    def submit_feedback(
+        ticket_id: str, payload: TicketFeedback, actor: Principal = Depends(principal)
+    ) -> dict[str, str]:
+        try:
+            feedback_id = app.state.store.add_feedback(
+                actor, ticket_id, payload.rating, payload.comment
+            )
+        except AuthorizationError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return {"id": feedback_id, "status": "recorded"}
 
     @app.post("/v1/tickets/{ticket_id}/refund-approvals", status_code=202)
     def request_refund(
@@ -128,6 +160,35 @@ def create_app(store: InMemoryStore | None = None, requests_per_minute: int = 60
             raise HTTPException(status_code=409, detail=str(exc)) from exc
         return {"id": approval.id, "state": approval.state}
 
+    @app.post("/v1/tasks", status_code=202)
+    def enqueue_triage_task(
+        payload: TaskCreate,
+        actor: Principal = Depends(principal),
+        idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
+    ) -> dict[str, object]:
+        if "task:write" not in actor.scopes:
+            raise HTTPException(status_code=403, detail="task:write scope required")
+        try:
+            app.state.store.get_ticket(actor, payload.ticket_id)
+            task = app.state.task_queue.enqueue(
+                actor, "triage", {"ticket_id": payload.ticket_id}, idempotency_key or ""
+            )
+        except AuthorizationError as exc:
+            raise HTTPException(status_code=404, detail="ticket not found") from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return {"id": task.id, "status": task.status.value, "attempts": task.attempts}
+
+    @app.get("/v1/tasks/{task_id}")
+    def get_task(task_id: str, actor: Principal = Depends(principal)) -> dict[str, object]:
+        if "task:read" not in actor.scopes:
+            raise HTTPException(status_code=403, detail="task:read scope required")
+        try:
+            task = app.state.task_queue.get(actor, task_id)
+        except AuthorizationError as exc:
+            raise HTTPException(status_code=404, detail="task not found") from exc
+        return {"id": task.id, "status": task.status.value, "attempts": task.attempts}
+
     @app.middleware("http")
     async def request_size_limit(request: Request, call_next):
         content_length = request.headers.get("content-length")
@@ -149,7 +210,9 @@ def create_app(store: InMemoryStore | None = None, requests_per_minute: int = 60
             if len(events) >= app.state.rate_limit:
                 return JSONResponse(status_code=429, content={"detail": "rate limit exceeded"})
             events.append(now)
-        return await call_next(request)
+        response = await call_next(request)
+        app.state.metrics.record_request(request.method, response.status_code)
+        return response
 
     return app
 

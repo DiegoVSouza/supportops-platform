@@ -1,0 +1,4 @@
+command: uv run --locked pytest tests/test_api_security.py tests/test_async_tasks.py
+...................                                                      [100%]
+19 passed in 0.93s
+exit_code=0
