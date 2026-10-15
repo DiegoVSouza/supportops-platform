@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run real local checks and preserve the separate package integration gate."""
 
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -25,6 +26,21 @@ for command in commands:
     if result.returncode:
         failures.append((label, result.returncode))
 if failures:
-    print("check-full: INCOMPLETE; local checks ran and one or more mandatory gates remain unavailable")
+    print("local-checks: INCOMPLETE; one or more executed checks failed")
     sys.exit(2)
+feature_inventory = json.loads(
+    (root / "docs/harness/feature_list.json").read_text(encoding="utf-8")
+)
+outstanding = [
+    f"{feature['id']}={feature['status']}"
+    for feature in feature_inventory.get("features", [])
+    if feature.get("status") != "PASS"
+]
+if outstanding:
+    print("local-checks: PASS")
+    print("product-acceptance: INCOMPLETE (" + ", ".join(outstanding) + ")")
+    print("check-full: INCOMPLETE; local checks passed but required product features remain")
+    sys.exit(2)
+print("local-checks: PASS")
+print("product-acceptance: PASS")
 print("check-full: PASS")

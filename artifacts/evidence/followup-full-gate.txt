@@ -1,12 +1,12 @@
 command: uv run --locked python scripts/check_full.py
-exit_code: 0
+exit_code: 2
 output:
 $ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m compileall -q supportops_platform tests
 exit_code=0
 $ uv run --locked pytest
 exit_code=0
 .....................................................................    [100%]
-69 passed in 1.54s
+69 passed in 1.58s
 $ uv run --locked python scripts/eval_retrieval.py
 exit_code=0
 evaluation=deterministic-local-retrieval
@@ -29,4 +29,6 @@ P03 observability: READY
   version=0.1.1 sha256=250985C33E334B1E8F1C31BF8DCFE770ED8FF20419B96DECAA9ADF9D05010C1F source_commit=6a074e906b080fdb837907237787f623f17c3e3c
 P04 async: READY
 Package integration gate: PASS
-check-full: PASS
+local-checks: PASS
+product-acceptance: INCOMPLETE (service-backed-async=INCOMPLETE, network-mcp-auth=INCOMPLETE, real-model-evaluation=PENDING)
+check-full: INCOMPLETE; local checks passed but required product features remain
