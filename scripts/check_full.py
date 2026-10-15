@@ -10,6 +10,7 @@ commands = [
     [sys.executable, "-m", "compileall", "-q", "supportops_platform", "tests"],
     ["uv", "run", "--locked", "pytest"],
     ["uv", "run", "--locked", "python", "scripts/eval_retrieval.py"],
+    ["uv", "run", "--locked", "python", "scripts/export_openapi.py", "--check"],
     [sys.executable, "scripts/verify_packages.py"],
 ]
 failures = []

@@ -1,11 +1,14 @@
 {
   "python": {"version": "3.13.12", "source": "https://docs.python.org/3.13/", "checked": "2026-10-15"},
   "fastapi": {"version": "0.142.4", "source": "https://fastapi.tiangolo.com/release-notes/", "checked": "2026-10-15"},
-  "pydantic": {"version": "2.12.5", "source": "https://docs.pydantic.dev/latest/", "checked": "2026-10-15"},
+  "pydantic": {"version": "2.14.1", "source": "https://docs.pydantic.dev/latest/", "checked": "2026-10-15"},
   "mcp": {"version": "2.3.0", "source": "https://pypi.org/project/mcp/; https://py.sdk.modelcontextprotocol.io/", "checked": "2026-10-15"},
+  "pyjwt": {"version": "2.15.1", "source": "https://pyjwt.readthedocs.io/en/stable/; https://pypi.org/project/PyJWT/2.15.1/", "checked": "2026-10-15"},
   "langgraph": {"version": "PENDING approved P01 package contract", "source": "https://docs.langchain.com/oss/python/langgraph/overview", "checked": "2026-10-15"},
-  "p01_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"},
-  "p02_package": {"name": "supportops-ai-toolkit", "version": "0.1.0", "origin_commit": "00a5f9b8e1f9c78ea26f09839d24847cfcfbf6f6", "artifact_sha256": "5B7F1BBD9DD015620D5CB9CBCF6B4B39B1D2DC668805B066E7A2D9A930D48A52", "approved": false},
-  "p03_package": {"name": "supportops_obs", "version": "0.1.0", "origin_commit": "7d78bf63f42b03c510792773ad2c9915015120e9", "artifact_sha256": "e4e80cd664c97cf38b8fbe5557f10d4c8d247af275412569fb6a1bcbc0f11575", "approved": false},
-  "p04_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"}
+  "p00_package": {"name": "supportops-foundation", "version": "1.0.1", "origin_commit": "607b7603bd40728ffa58745badac0ffd10c70090", "artifact_commit": "16528c96798e55f62ec6488ec92d6f87bed2c373", "artifact_sha256": "DF4292756676D02490A908B609B8F9474F35F3C5F56131809F3E4A83659B4795", "artifact_path": "artifacts/packages/supportops_foundation-1.0.1-py3-none-any.whl", "approved": true, "installed_verified": true},
+  "p00_superseded_artifact": {"name": "supportops-foundation", "version": "1.0.0", "origin_commit": "e48c6ac3d7047c20d6e68b17ee36e1a1b1b0347d", "artifact_sha256": "0CB839A42E5834DFB7E5368DAE06BF0C57B3266EE4E04346B60F3E5A1650806C", "artifact_path": "artifacts/packages/supportops_foundation-1.0.0-py3-none-any.whl", "approved": true, "status": "SUPERSEDED_BY_1.0.1"},
+  "p01_package": {"name": "supportops-agents", "version": "0.1.0", "origin_commit": "af06f4c564d2e601ac8009ecb32ae7e529b72c83", "artifact_sha256": "9F360E98FC1DF9D9D10CCDAB51F0AF0CCEF5F1A17CD49CEFEC9E2E3A8A4BED8B", "artifact_path": "artifacts/packages/supportops_agents-0.1.0-py3-none-any.whl", "approved": true, "installed_verified": true},
+  "p02_package": {"name": "supportops-ai-toolkit", "version": "0.1.0", "origin_commit": "00a5f9b8e1f9c78ea26f09839d24847cfcfbf6f6", "artifact_sha256": "5B7F1BBD9DD015620D5CB9CBCF6B4B39B1D2DC668805B066E7A2D9A930D48A52", "artifact_path": "artifacts/packages/supportops_ai_toolkit-0.1.0-py3-none-any.whl", "approved": true, "installed_verified": true},
+  "p03_package": {"name": "supportops-obs", "version": "0.1.0", "origin_commit": "7d78bf63f42b03c510792773ad2c9915015120e9", "artifact_sha256": "e4e80cd664c97cf38b8fbe5557f10d4c8d247af275412569fb6a1bcbc0f11575", "artifact_path": "artifacts/packages/supportops_obs-0.1.0-py3-none-any.whl", "approved": true, "installed_verified": true},
+  "p04_package": {"name": "supportops-async", "version": "0.1.0", "origin_commit": "d66bf316eedb2a5a810bc0a35ebf80d37f4474ab", "artifact_commit": "1fd9903a8850f53520704191f4dd13c12afb4460", "artifact_sha256": "5210a3c87afa7680c81ac6a7d2e37f16651e2ee06981a4ff9c1bc26c51725e23", "artifact_path": "artifacts/packages/supportops_async-0.1.0-py3-none-any.whl", "approved": true, "installed_verified": false, "dependency_resolution": "INCOMPLETE: wheel requires fastapi==0.137.1 but P05 pins fastapi==0.142.4; local integration will use no-deps wheel install"}
 }

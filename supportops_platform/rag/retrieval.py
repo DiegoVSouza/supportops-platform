@@ -6,6 +6,7 @@ import re
 from dataclasses import dataclass
 
 from supportops_platform.contracts import Citation, ContractError
+from supportops_platform.integrations.toolkit import safe_retrieval_query
 
 TOKEN = re.compile(r"[a-z0-9]+", re.IGNORECASE)
 MAX_DOCUMENTS = 100
@@ -83,6 +84,10 @@ class LocalRetriever:
             raise ContractError("tenant is required")
         if not 1 <= top_k <= 10:
             raise ContractError("top_k must be between 1 and 10")
+        try:
+            query = safe_retrieval_query(query)
+        except ValueError as exc:
+            raise ContractError(str(exc)) from exc
         query_tokens = tuple(token.lower() for token in TOKEN.findall(query))
         if not query_tokens:
             return []

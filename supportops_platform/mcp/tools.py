@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from mcp.server import MCPServer
 
 from supportops_platform.contracts import Principal
+from supportops_platform.integrations.toolkit import bounded_tool
 from supportops_platform.repositories import AuthorizationError
 
 
@@ -49,34 +50,69 @@ class LocalToolGateway:
             ("tenant-a", "customer-a"): {"customer_id": "customer-a", "tier": "standard"},
             ("tenant-b", "customer-b"): {"customer_id": "customer-b", "tier": "standard"},
         }
+        self._invoice_tool = bounded_tool(
+            "lookup_invoice", self._lookup_invoice_raw,
+            {"invoice_id": {"type": "string", "minLength": 1, "maxLength": 64}},
+            {"invoice_id": {"type": "string"}, "amount_cents": {"type": "integer"}, "status": {"type": "string"}},
+        )
+        self._customer_tool = bounded_tool(
+            "lookup_customer", self._lookup_customer_raw,
+            {"tenant_id": {"type": "string"}, "customer_id": {"type": "string"}},
+            {"customer_id": {"type": "string"}, "tier": {"type": "string"}},
+        )
+        self._refund_tool = bounded_tool(
+            "propose_refund", self._propose_refund_raw,
+            {"ticket_id": {"type": "string"}, "tenant_id": {"type": "string"}, "amount_cents": {"type": "integer"}},
+            {"ticket_id": {"type": "string"}, "tenant_id": {"type": "string"}, "amount_cents": {"type": "integer"}, "state": {"type": "string"}, "effect_performed": {"type": "boolean"}},
+        )
+
+    def _lookup_invoice_raw(self, invoice_id: str) -> dict[str, object]:
+        invoice = self.invoices.get(invoice_id)
+        if invoice is None:
+            raise ValueError("invoice not found")
+        return {"invoice_id": invoice.invoice_id, "amount_cents": invoice.amount_cents, "status": invoice.status}
+
+    def _lookup_customer_raw(self, tenant_id: str, customer_id: str) -> dict[str, str]:
+        customer = self.customers.get((tenant_id, customer_id))
+        if customer is None:
+            raise ValueError("customer not found")
+        return customer.copy()
+
+    @staticmethod
+    def _propose_refund_raw(ticket_id: str, tenant_id: str, amount_cents: int) -> dict[str, object]:
+        if amount_cents <= 0 or amount_cents > 5000:
+            raise ValueError("refund exceeds local approval ceiling")
+        return {
+            "ticket_id": ticket_id,
+            "tenant_id": tenant_id,
+            "amount_cents": amount_cents,
+            "state": "needs_approval",
+            "effect_performed": False,
+        }
 
     def lookup_invoice(self, principal: Principal, invoice_id: str) -> dict[str, object]:
         ToolPolicy.authorize(principal, "lookup_invoice")
         invoice = self.invoices.get(invoice_id)
         if invoice is None or invoice.tenant_id != principal.tenant_id:
             raise AuthorizationError("invoice not found")
-        return {"invoice_id": invoice.invoice_id, "amount_cents": invoice.amount_cents, "status": invoice.status}
+        from supportops_toolkit.guardrails import authorize_tool
+
+        authorize_tool("support", "lookup_invoice")
+        return self._invoice_tool(invoice_id=invoice_id)
 
     def lookup_customer(self, principal: Principal, customer_id: str) -> dict[str, str]:
         ToolPolicy.authorize(principal, "lookup_customer")
-        customer = self.customers.get((principal.tenant_id, customer_id))
-        if customer is None:
+        if (principal.tenant_id, customer_id) not in self.customers:
             raise AuthorizationError("customer not found")
-        return customer.copy()
+        return self._customer_tool(tenant_id=principal.tenant_id, customer_id=customer_id)
 
     def propose_refund(
         self, principal: Principal, ticket_id: str, amount_cents: int
     ) -> dict[str, object]:
         ToolPolicy.authorize(principal, "propose_refund")
-        if amount_cents <= 0 or amount_cents > 5000:
-            raise ValueError("refund exceeds local approval ceiling")
-        return {
-            "ticket_id": ticket_id,
-            "tenant_id": principal.tenant_id,
-            "amount_cents": amount_cents,
-            "state": "needs_approval",
-            "effect_performed": False,
-        }
+        return self._refund_tool(
+            ticket_id=ticket_id, tenant_id=principal.tenant_id, amount_cents=amount_cents
+        )
 
 
 def create_mock_mcp_server(gateway: LocalToolGateway | None = None) -> MCPServer:

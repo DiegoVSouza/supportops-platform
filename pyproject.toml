@@ -6,7 +6,12 @@ requires-python = ">=3.13,<3.14"
 dependencies = [
   "fastapi==0.142.4",
   "mcp==2.3.0",
-  "pydantic==2.12.5",
+  "pydantic==2.14.1",
+  "PyJWT==2.15.1",
+  "supportops-ai-toolkit==0.1.0",
+  "supportops-agents==0.1.0",
+  "supportops-foundation==1.0.1",
+  "supportops-obs==0.1.0",
   "uvicorn==0.44.0",
 ]
 
@@ -27,3 +32,9 @@ addopts = "-q"
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+
+[tool.uv.sources]
+supportops-ai-toolkit = { path = "artifacts/packages/supportops_ai_toolkit-0.1.0-py3-none-any.whl" }
+supportops-agents = { path = "artifacts/packages/supportops_agents-0.1.0-py3-none-any.whl" }
+supportops-foundation = { path = "artifacts/packages/supportops_foundation-1.0.1-py3-none-any.whl" }
+supportops-obs = { path = "artifacts/packages/supportops_obs-0.1.0-py3-none-any.whl" }

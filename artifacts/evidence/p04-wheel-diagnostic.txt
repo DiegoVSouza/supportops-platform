@@ -1,0 +1,9 @@
+command: uv pip install --offline --no-deps --python .venv\Scripts\python.exe artifacts\packages\supportops_async-0.1.0-py3-none-any.whl
+Resolved 1 package in 1ms
+Checked 1 package in 0.21ms
+exit_code=0
+
+command: .venv\Scripts\python.exe -m pytest tests\test_p04_package_integration.py -q
+.                                                                        [100%]
+exit_code=0
+limitation=diagnostic only; locked integration remains INCOMPLETE due exact FastAPI requirement conflict

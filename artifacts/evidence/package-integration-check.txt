@@ -1,0 +1,31 @@
+command: uv run --locked python scripts/check_full.py
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m compileall -q supportops_platform tests
+exit_code=0
+$ uv run --locked pytest
+exit_code=0
+.................................................................        [100%]
+65 passed in 1.47s
+$ uv run --locked python scripts/eval_retrieval.py
+exit_code=0
+evaluation=deterministic-local-retrieval
+cases=4
+hit_at_3=4/4 (1.000)
+interpretation=fixture coverage only; not LLM quality
+$ uv run --locked python scripts/export_openapi.py --check
+exit_code=0
+OpenAPI contract: PASS (v1 paths, HTTP bearer, 0.1.0 package schema)
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/verify_packages.py
+exit_code=2
+  version=1.0.1 sha256=DF4292756676D02490A908B609B8F9474F35F3C5F56131809F3E4A83659B4795 source_commit=607b7603bd40728ffa58745badac0ffd10c70090
+P00 foundation: READY
+  version=0.1.0 sha256=9F360E98FC1DF9D9D10CCDAB51F0AF0CCEF5F1A17CD49CEFEC9E2E3A8A4BED8B source_commit=af06f4c564d2e601ac8009ecb32ae7e529b72c83
+P01 orchestration: READY
+  version=0.1.0 sha256=5B7F1BBD9DD015620D5CB9CBCF6B4B39B1D2DC668805B066E7A2D9A930D48A52 source_commit=00a5f9b8e1f9c78ea26f09839d24847cfcfbf6f6
+P02 toolkit: READY
+  version=0.1.0 sha256=E4E80CD664C97CF38B8FBE5557F10D4C8D247AF275412569FB6A1BCBC0F11575 source_commit=7d78bf63f42b03c510792773ad2c9915015120e9
+P03 observability: READY
+  version=0.1.0 sha256=5210A3C87AFA7680C81AC6A7D2E37F16651E2EE06981A4FF9C1BC26C51725E23 source_commit=d66bf316eedb2a5a810bc0a35ebf80d37f4474ab
+P04 async: INCOMPLETE
+Package integration gate: INCOMPLETE (P04 async)
+check-full: INCOMPLETE; local checks ran and one or more mandatory gates remain unavailable
+exit_code=2
