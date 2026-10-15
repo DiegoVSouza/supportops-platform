@@ -9,8 +9,8 @@ version, source commit, and artifact digest; no neighboring source paths are imp
 HTTP API -> tenant authorization -> application services -> task adapter
                                       |                    |
                                       |                    +-> P04 adapter contract
-                                      +-> local retrieval -> citations
-                                      +-> tool policy -> MCP billing/CRM boundary
+                                      +-> bounded local retrieval -> citations
+                                      +-> LocalToolGateway -> in-memory MCP billing/CRM boundary
 API / worker / agent / tools -> telemetry adapter -> P03 package contract
 ```
 
@@ -19,6 +19,11 @@ The fake credentials in `supportops_platform.api.app` are test fixtures and are 
 production identity provider. Refund requests create pending approvals; no refund
 effect is implemented. Real persistence, queue delivery, and P01–P04 integration
 remain gated until their approved artifacts and service-backed checks are available.
+
+The lexical retriever has a 100-document, 64 KB per-document, and 10-result limit.
+The MCP SDK server is exercised in memory with synthetic records. The authenticated
+local gateway performs scope and tenant checks; the SDK mock itself has no network
+transport and must not be exposed as an authenticated service.
 
 ## Trust boundaries
 

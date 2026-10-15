@@ -35,7 +35,8 @@ not approved. Review `artifacts/evidence/` for saved command output and gate sta
 
 ## Status
 
-API authentication, tenant filtering, refund approval transitions, and request bounds
-have local tests. Database durability, queue recovery, end-to-end traces, the P01/P02/
-P03/P04 artifact integrations, replay evaluation, and service-backed deployment
-checks remain incomplete or pending. No model metrics are claimed.
+API authentication, tenant filtering, refund approval transitions, bounded lexical
+retrieval, and the in-memory MCP SDK contract have local tests. Database durability,
+queue recovery, end-to-end traces, the P01/P02/P03/P04 artifact integrations, replay
+evaluation, and service-backed deployment checks remain incomplete or pending. The
+deterministic fixture evaluation is not a model metric.

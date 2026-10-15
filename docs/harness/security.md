@@ -13,6 +13,7 @@
 ## Secrets and egress
 - Credentials live outside source control. CI and default demos use `LLM_MODE=fake` and no provider credentials.
 - MCP allowlist contains local mock billing/CRM only. Deny arbitrary network egress in test/runtime profiles.
+- The MCP SDK server currently runs only in memory for contract tests. Its synthetic tenant arguments are test data, not an authentication scheme; do not expose that mock transport to a network. Runtime calls must enter through `LocalToolGateway`, which binds the trusted `Principal` to each tool operation.
 
 ## Required security tests
 - Tenant A cannot access Tenant B resources even with a valid token for A.

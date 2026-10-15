@@ -9,6 +9,7 @@ root = Path(__file__).resolve().parents[1]
 commands = [
     [sys.executable, "-m", "compileall", "-q", "supportops_platform", "tests"],
     ["uv", "run", "--locked", "pytest"],
+    ["uv", "run", "--locked", "python", "scripts/eval_retrieval.py"],
     [sys.executable, "scripts/verify_packages.py"],
 ]
 failures = []

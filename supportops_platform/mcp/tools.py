@@ -1,0 +1,103 @@
+"""Billing and CRM mock tools with an explicit in-process authorization gateway."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from mcp.server import MCPServer
+
+from supportops_platform.contracts import Principal
+from supportops_platform.repositories import AuthorizationError
+
+
+@dataclass(frozen=True, slots=True)
+class MockInvoice:
+    tenant_id: str
+    invoice_id: str
+    amount_cents: int
+    status: str
+
+
+class ToolPolicy:
+    """Allowlist binds each local mock tool to a scope and a caller role."""
+
+    REQUIRED: dict[str, tuple[str, frozenset[str]]] = {
+        "lookup_invoice": ("billing:read", frozenset({"agent", "approver"})),
+        "lookup_customer": ("crm:read", frozenset({"agent", "approver"})),
+        "propose_refund": ("refund:request", frozenset({"agent"})),
+    }
+
+    @classmethod
+    def authorize(cls, principal: Principal, tool_name: str) -> None:
+        required = cls.REQUIRED.get(tool_name)
+        if required is None:
+            raise AuthorizationError("tool is not allowlisted")
+        scope, roles = required
+        if scope not in principal.scopes or not principal.roles.intersection(roles):
+            raise AuthorizationError("principal is not authorized for this tool")
+
+
+class LocalToolGateway:
+    """Testable gateway keeps principal context outside model-controlled arguments."""
+
+    def __init__(self) -> None:
+        self.invoices = {
+            "inv-a-1": MockInvoice("tenant-a", "inv-a-1", 2500, "paid"),
+            "inv-b-1": MockInvoice("tenant-b", "inv-b-1", 9000, "paid"),
+        }
+        self.customers = {
+            ("tenant-a", "customer-a"): {"customer_id": "customer-a", "tier": "standard"},
+            ("tenant-b", "customer-b"): {"customer_id": "customer-b", "tier": "standard"},
+        }
+
+    def lookup_invoice(self, principal: Principal, invoice_id: str) -> dict[str, object]:
+        ToolPolicy.authorize(principal, "lookup_invoice")
+        invoice = self.invoices.get(invoice_id)
+        if invoice is None or invoice.tenant_id != principal.tenant_id:
+            raise AuthorizationError("invoice not found")
+        return {"invoice_id": invoice.invoice_id, "amount_cents": invoice.amount_cents, "status": invoice.status}
+
+    def lookup_customer(self, principal: Principal, customer_id: str) -> dict[str, str]:
+        ToolPolicy.authorize(principal, "lookup_customer")
+        customer = self.customers.get((principal.tenant_id, customer_id))
+        if customer is None:
+            raise AuthorizationError("customer not found")
+        return customer.copy()
+
+    def propose_refund(
+        self, principal: Principal, ticket_id: str, amount_cents: int
+    ) -> dict[str, object]:
+        ToolPolicy.authorize(principal, "propose_refund")
+        if amount_cents <= 0 or amount_cents > 5000:
+            raise ValueError("refund exceeds local approval ceiling")
+        return {
+            "ticket_id": ticket_id,
+            "tenant_id": principal.tenant_id,
+            "amount_cents": amount_cents,
+            "state": "needs_approval",
+            "effect_performed": False,
+        }
+
+
+def create_mock_mcp_server(gateway: LocalToolGateway | None = None) -> MCPServer:
+    """Create an in-memory SDK server; no network transport or live effect is enabled."""
+    gateway = gateway or LocalToolGateway()
+    server = MCPServer("supportops-mock-tools", version="0.1.0")
+
+    @server.tool()
+    def lookup_invoice(invoice_id: str, tenant_id: str) -> dict[str, object]:
+        """Return a synthetic invoice summary for a local demo tenant."""
+        invoice = gateway.invoices.get(invoice_id)
+        if invoice is None or invoice.tenant_id != tenant_id:
+            raise ValueError("invoice not found")
+        return {"invoice_id": invoice.invoice_id, "amount_cents": invoice.amount_cents, "status": invoice.status}
+
+    @server.tool()
+    def propose_refund(ticket_id: str, tenant_id: str, amount_cents: int) -> dict[str, object]:
+        """Create an approval proposal only; this tool never issues a refund."""
+        if amount_cents <= 0 or amount_cents > 5000:
+            raise ValueError("refund exceeds local approval ceiling")
+        return {"ticket_id": ticket_id, "tenant_id": tenant_id, "amount_cents": amount_cents,
+                "state": "needs_approval", "effect_performed": False}
+
+    return server

@@ -1,0 +1,6 @@
+[
+  {"tenant_id": "tenant-a", "query": "refund approval", "expected_document_id": "refund-policy"},
+  {"tenant_id": "tenant-a", "query": "package tracking delay", "expected_document_id": "delivery-policy"},
+  {"tenant_id": "tenant-a", "query": "account takeover secure access", "expected_document_id": "account-security"},
+  {"tenant_id": "tenant-a", "query": "invoice payment dispute", "expected_document_id": "billing-dispute"}
+]
