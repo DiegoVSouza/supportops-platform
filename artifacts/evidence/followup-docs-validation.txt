@@ -1,0 +1,8 @@
+command: uv run --locked python -m json.tool docs/harness/feature_list.json
+exit_code: 0
+output: JSON parses with 8 features
+
+command: uv run --locked python scripts/export_openapi.py --check
+exit_code: 0
+output:
+OpenAPI contract: PASS (v1 paths, HTTP bearer, 0.2.0 package schema)

@@ -17,8 +17,8 @@ API / worker / agent / tools -> telemetry adapter -> P03 package contract
 The current runtime uses process-local ticket and approval storage for development.
 The configured HMAC key verifies local JWTs. Fake mode generates an ephemeral key if
 `JWT_SECRET` is absent. Refund requests create pending approvals; no refund effect is
-implemented. P00–P03 use approved local wheels; P04's service-backed integration remains
-gated because its FastAPI pin conflicts with P05's locked version.
+implemented. P00–P04 use approved local wheels. P04's SQLite/in-memory contract passes,
+while PostgreSQL/SQS service-backed integration remains incomplete.
 
 The lexical retriever has a 100-document, 64 KB per-document, and 10-result limit.
 The MCP SDK server is exercised in memory with synthetic records. The authenticated

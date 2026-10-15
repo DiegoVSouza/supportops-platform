@@ -14,5 +14,5 @@
 ## 2026-10-15 — Local API and retrieval components
 
 - API baseline and contracts committed as `549ab1f`; tenant scope, rate bounds, pending refund approval, and idempotency are exercised by unit/API tests.
-- RAG/MCP local implementation is in progress: deterministic retrieval, citation output, official MCP SDK in-memory contract tests, and bounded fake evaluation.
-- Runtime persistence, task-broker delivery, network MCP transport, and approved P00–P04 wheel integrations remain INCOMPLETE.
+- RAG/MCP local implementation includes deterministic tenant-scoped retrieval, API citations, and principal-injected in-memory MCP tools.
+- P00–P04 approved wheel integrations pass locally. Runtime persistence, service-backed task-broker delivery, authenticated network MCP transport, replay evaluation, and degraded-agent regression remain INCOMPLETE or PENDING.

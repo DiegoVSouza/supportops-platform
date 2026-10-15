@@ -23,13 +23,17 @@ uv run --locked pytest
 uv run --locked python scripts/check_full.py
 ```
 
-O `check_full.py` retorna `2` enquanto o gate de dependência do P04 estiver incompleto.
-P00–P03 usam wheels locais aprovados. Consulte `artifacts/evidence/`.
+O `check_full.py` reporta como incompletos os gates que dependem de serviços externos.
+P00–P04 usam wheels locais aprovados no lock. Consulte `artifacts/evidence/`.
+
+A rota `POST /v1/tickets/{ticket_id}/triage` exige o escopo `triage:run`, consulta
+somente documentos do tenant autenticado e devolve as citações junto ao trace fake do
+agente. O servidor MCP continua somente em memória: injete um principal confiável ao
+criá-lo; sem principal, as ferramentas falham fechadas.
 
 ## Limitações
 
-PostgreSQL, broker em serviço, recuperação persistente, integração MCP em rede, avaliação
-replay e tracing end-to-end seguem INCOMPLETE. O adaptador de diagnóstico P04 passou com
-SQLite e broker em memória, mas o wheel exige FastAPI 0.137.1 e conflita com a versão
-fixada no P05; aguarda-se um pacote compatível para passar o gate. A avaliação local de
+PostgreSQL, broker em serviço, recuperação persistente, autenticação MCP em rede, avaliação
+replay e tracing end-to-end seguem INCOMPLETE. O adaptador P04 0.1.1 passou com SQLite e
+broker em memória; isso não substitui os serviços reais. A avaliação local de
 hit@k mede somente o conjunto determinístico versionado, não qualidade de modelo.

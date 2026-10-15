@@ -1,9 +1,12 @@
 # Verify — RAG and MCP
 
-- [x] Retrieval returns source IDs/citations and deterministic ranking for the fixture corpus.
-- [x] hit@k runs on saved fake/replay dataset; its score is not model quality.
-- [x] MCP tool contracts reject invalid schemas and unauthorized tool use.
-- [x] Prompt injection embedded in KB cannot invoke a prohibited tool; 30 adversarial fixtures remain data-only citations.
-- [x] Record official SDK/spec versions and separate unit/integration results. The SDK server/client runs in memory; network MCP integration remains INCOMPLETE.
+- [x] Local lexical retrieval chunks documents and returns deterministic tenant-filtered citations with stable source IDs.
+- [x] Deterministic hit@k runs on the saved fixture corpus; the score measures fixture coverage only.
+- [x] API triage loads tenant from the authenticated ticket, invokes the P01 fake runner, and includes citations in its response and trace.
+- [x] MCP SDK client/server tool contracts run in memory; authorization and input bounds are tested.
+- [x] Thirty prompt-injection fixtures remain untrusted retrieved text and cannot grant tool capability.
+- [x] MCP server handlers receive a server-injected principal; calls without one fail closed and cross-tenant reads are denied.
+- [x] Official SDK/package versions and wheel provenance are recorded in `docs/harness/sources.lock.json`.
+- [ ] Embedding-backed retrieval, replay cassettes, and network MCP authentication/interoperability — INCOMPLETE; lexical and in-memory adapters only.
 
-Validation evidence: `artifacts/evidence/phase-002-rag-mcp.md`. Local package integration is not claimed by the SDK in-memory contract test.
+Evidence: `artifacts/evidence/followup-full-gate.txt`, `artifacts/evidence/followup-package-gate.txt`.

@@ -1,3 +1,52 @@
 {
-  "features": []
+  "features": [
+    {
+      "id": "auth-tenant-scope",
+      "description": "JWT principal scopes API and repository access by tenant",
+      "status": "PASS",
+      "evidence": "artifacts/evidence/followup-focused-tests.txt"
+    },
+    {
+      "id": "mcp-trusted-principal",
+      "description": "In-memory MCP tools use injected principal and fail closed without it",
+      "status": "PASS",
+      "evidence": "artifacts/evidence/followup-focused-tests.txt"
+    },
+    {
+      "id": "refund-dual-control",
+      "description": "Approval records requester and prevent self-approval",
+      "status": "PASS",
+      "evidence": "artifacts/evidence/followup-focused-tests.txt"
+    },
+    {
+      "id": "tenant-rag-agent",
+      "description": "Triage route returns tenant-scoped retrieval citations in fake agent trace",
+      "status": "PASS",
+      "evidence": "artifacts/evidence/followup-focused-tests.txt"
+    },
+    {
+      "id": "approved-packages",
+      "description": "P00-P04 local wheel provenance, locked install and consumer contracts",
+      "status": "PASS",
+      "evidence": "artifacts/evidence/followup-full-gate.txt"
+    },
+    {
+      "id": "service-backed-async",
+      "description": "PostgreSQL and SQS integration against real services",
+      "status": "INCOMPLETE",
+      "evidence": "PENDING service credentials and approved service environment"
+    },
+    {
+      "id": "network-mcp-auth",
+      "description": "Authenticated network MCP transport integration",
+      "status": "INCOMPLETE",
+      "evidence": "MCP adapter is in-memory only; transport auth not implemented"
+    },
+    {
+      "id": "real-model-evaluation",
+      "description": "Replay/live model quality evaluation",
+      "status": "PENDING",
+      "evidence": "No cassette or authorized live run"
+    }
+  ]
 }
