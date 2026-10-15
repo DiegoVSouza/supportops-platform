@@ -32,15 +32,27 @@ contrato consumidor local passou.
 
 **EN:** Retrieved passages are citations and remain untrusted data. Retrieval has no
 tool capability. Separate tool authorization checks the caller's verified scopes and
-roles, while refund execution requires a separate approval subject. The MCP contract
-server injects its principal at creation and fails closed without one; it remains an
-in-memory adapter, not a network-authenticated service.
+roles, while refund execution requires a separate approval subject. The offline MCP
+mock injects its principal at creation. The separate Streamable HTTP server verifies
+bearer tokens and derives identity only from SDK request context. Its authenticated
+client test uses in-process ASGI, not a deployed TCP service.
 
 **PT:** Trechos recuperados são citações e continuam sendo dados não confiáveis. O
 retriever não possui acesso a ferramentas. A autorização de ferramentas verifica os
 escopos e papéis do principal, enquanto um refund exige outro sujeito aprovador. O
-servidor MCP injeta o principal ao ser criado e falha fechado sem identidade; continua
-sendo um adaptador em memória, não um serviço autenticado em rede.
+mock MCP injeta o principal ao ser criado. O servidor Streamable HTTP separado verifica
+bearer tokens e deriva identidade somente do contexto de requisição do SDK. O teste
+autenticado usa ASGI no processo; o serviço TCP implantado segue não validado.
+
+The local hybrid retriever uses deterministic hashed-token vectors plus lexical
+ranking. Those vectors are control-flow fixtures, not semantic embeddings; model
+quality remains PENDING. The PostgreSQL pgvector adapter/query and migration have
+fake-connection contract tests, while real PostgreSQL/pgvector execution is INCOMPLETE.
+
+O retriever híbrido local usa vetores determinísticos por hash de tokens e ranking
+lexical. São fixtures de fluxo de controle, não embeddings semânticos; qualidade do
+modelo permanece PENDING. O adaptador/consulta pgvector e a migration têm testes de
+contrato com conexão fake; execução real PostgreSQL/pgvector segue INCOMPLETE.
 
 ## Como o agente usa RAG sem cruzar tenants?
 

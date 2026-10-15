@@ -5,6 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from mcp.server import MCPServer
+from mcp.server.auth.middleware.auth_context import get_access_token
+from mcp.server.auth.provider import AccessToken, TokenVerifier
+from mcp.server.auth.settings import AuthSettings
+from pydantic import AnyHttpUrl
 
 from supportops_platform.contracts import Principal
 from supportops_platform.integrations.toolkit import bounded_tool
@@ -137,5 +141,54 @@ def create_mock_mcp_server(
     def propose_refund(ticket_id: str, amount_cents: int) -> dict[str, object]:
         """Create an approval proposal only; this tool never issues a refund."""
         return gateway.propose_refund(require_principal(), ticket_id, amount_cents)
+
+    return server
+
+
+def create_network_mcp_server(
+    token_verifier: TokenVerifier,
+    issuer_url: str,
+    resource_server_url: str,
+    gateway: LocalToolGateway | None = None,
+) -> MCPServer:
+    """Create an HTTP MCP server whose principal comes only from verified bearer context."""
+    gateway = gateway or LocalToolGateway()
+    server = MCPServer(
+        "supportops-network-tools",
+        version="0.3.0",
+        token_verifier=token_verifier,
+        auth=AuthSettings(
+            issuer_url=AnyHttpUrl(issuer_url),
+            resource_server_url=AnyHttpUrl(resource_server_url),
+            required_scopes=["billing:read"],
+            validate_token_resource=True,
+        ),
+    )
+
+    def transport_principal() -> Principal:
+        token: AccessToken | None = get_access_token()
+        if token is None:
+            raise AuthorizationError("verified transport identity is required")
+        claims = token.claims or {}
+        tenant_id = claims.get("tenant_id")
+        roles = claims.get("roles", [])
+        if not isinstance(tenant_id, str) or not tenant_id or not isinstance(roles, list):
+            raise AuthorizationError("verified token lacks principal claims")
+        return Principal(
+            subject=token.subject or token.client_id,
+            tenant_id=tenant_id,
+            roles=frozenset(str(role) for role in roles),
+            scopes=frozenset(token.scopes),
+        )
+
+    @server.tool()
+    def lookup_invoice(invoice_id: str) -> dict[str, object]:
+        """Look up an invoice inside the authenticated transport tenant."""
+        return gateway.lookup_invoice(transport_principal(), invoice_id)
+
+    @server.tool()
+    def propose_refund(ticket_id: str, amount_cents: int) -> dict[str, object]:
+        """Create a refund proposal for the authenticated principal; never issue a refund."""
+        return gateway.propose_refund(transport_principal(), ticket_id, amount_cents)
 
     return server

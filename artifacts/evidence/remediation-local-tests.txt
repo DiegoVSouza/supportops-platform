@@ -1,0 +1,25 @@
+command: uv run --locked pytest -q tests/test_api_security.py tests/test_rag.py tests/test_mcp_transport_auth.py tests/test_p04_package_integration.py (from projects/p05)
+exit_code: 0
+classification: unit/contract and package consumer; MCP transport uses MCP SDK Streamable HTTP client over in-process ASGI, not TCP service E2E
+output:
+.........................................................                [100%]
+
+command: uv run --project projects/p05 --locked pytest -q projects/p05/tests/test_package_integrations.py projects/p05/tests/test_p04_package_integration.py
+exit_code: 0 (after P03 0.3.1 install)
+classification: package integration
+output:
+......                                                                   [100%]
+
+command: uv run --project projects/p05 --locked pytest -q projects/p05/tests/test_mcp_transport_auth.py
+exit_code: 0
+classification: Streamable HTTP auth contract over in-process ASGI; bearer success, missing token denial, and cross-tenant denial
+output:
+..                                                                       [100%]
+
+command: uv run --project projects/p05 --locked python projects/p05/scripts/check_fast.py
+exit_code: 0
+output: check-fast: OK
+
+command: uv run --project projects/p05 --locked python projects/p05/scripts/export_openapi.py --check
+exit_code: 0
+output: OpenAPI contract: PASS (v1 compatibility paths, HTTP bearer, package schema 0.3.0)

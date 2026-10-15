@@ -1,0 +1,33 @@
+command: uv run --project projects/p05 --locked python projects/p05/scripts/check_full.py
+exit_code: 1 from `uv run` (check_full's explicit incomplete branch calls `sys.exit(2)`; uv surfaced this as 1)
+classification: unit, package integration, local product acceptance
+output:
+$ python -m compileall -q supportops_platform tests
+exit_code=0
+$ uv run --locked pytest
+exit_code=0
+........................................................................ [ 93%]
+.....                                                                    [100%]
+77 passed in 1.99s
+$ uv run --locked python scripts/eval_retrieval.py
+exit_code=0
+evaluation=deterministic-local-retrieval
+cases=4
+hit_at_3=4/4 (1.000)
+interpretation=fixture coverage only; not LLM quality
+$ uv run --locked python scripts/export_openapi.py --check
+exit_code=0
+OpenAPI contract: PASS (v1 compatibility paths, HTTP bearer, package schema 0.3.0)
+$ python scripts/verify_packages.py
+exit_code=0
+P00 foundation: READY
+P01 orchestration: READY (0.1.1; DD77E9B91F2D9BA7AC84178BBB557E0EA50BDE954554A528B4632DEC18DDB51F)
+P02 toolkit: READY (0.2.0; 7126517f9c64202b034b8a067dedf29e1313bb3139f15a984e93660654eb4d10)
+P03 observability: READY (0.3.1; 82b3a79aacd0ac4faa1082087c0237487264b2a6497d9b77b79c1d6bb86f66a8)
+P04 async: READY (0.1.2; a41c2a5a6c797e3913a510321d6859b5ab3be73b3f796eb7e9b1ea76fe6f5fd8)
+Package integration gate: PASS
+local-checks: PASS
+product-acceptance: INCOMPLETE (service-backed-async=INCOMPLETE, network-mcp-auth=INCOMPLETE, pgvector-service=INCOMPLETE, real-model-evaluation=PENDING)
+check-full: INCOMPLETE; local checks passed but required product features remain
+
+No PostgreSQL/pgvector, Redis, LocalStack, TCP-hosted MCP server, replay cassette, or live model run was executed.

@@ -1,0 +1,16 @@
+command: uv run --project projects/p05 --locked pytest -q projects/p05/tests/test_package_integrations.py projects/p05/tests/test_p04_package_integration.py
+exit_code: 0
+classification: package integration consumer tests
+output:
+......                                                                   [100%]
+
+command: uv run --project projects/p05 --locked python projects/p05/scripts/verify_packages.py
+exit_code: 0
+classification: package integration provenance/hash/version gate
+output:
+P00 foundation: READY (supportops-foundation 1.0.1)
+P01 orchestration: READY (supportops-agents 0.1.1; source 4c70b1ea3e23606dfe60ffae77567417de53a3f7; SHA256 DD77E9B91F2D9BA7AC84178BBB557E0EA50BDE954554A528B4632DEC18DDB51F)
+P02 toolkit: READY (supportops-ai-toolkit 0.2.0; source b4966c54fa3feda3ff1eae36ee872e5c407a4102; SHA256 7126517f9c64202b034b8a067dedf29e1313bb3139f15a984e93660654eb4d10)
+P03 observability: READY (supportops-obs 0.3.1; source e191f17d4649f40d6dea7057d3b52729dbbb1389; SHA256 82b3a79aacd0ac4faa1082087c0237487264b2a6497d9b77b79c1d6bb86f66a8)
+P04 async: READY (supportops-async 0.1.2; source 3aa96ec9d3fa2f85f771d9b5aaa4c5ab3641034d; SHA256 a41c2a5a6c797e3913a510321d6859b5ab3be73b3f796eb7e9b1ea76fe6f5fd8)
+Package integration gate: PASS

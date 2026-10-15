@@ -93,6 +93,27 @@ class InMemoryStore:
         approval.state = decision
         return approval
 
+    def decide_ticket_approval(
+        self, principal: Principal, ticket_id: str, approval_id: str | None, decision: str
+    ) -> Approval:
+        if approval_id is None:
+            matches = [
+                approval for approval in self.approvals.values()
+                if approval.tenant_id == principal.tenant_id
+                and approval.ticket_id == ticket_id
+                and approval.state == "pending"
+            ]
+            if len(matches) != 1:
+                raise ValueError("ticket must have exactly one pending approval")
+            approval = matches[0]
+        else:
+            approval = self.approvals.get(approval_id)
+        if approval is None or approval.tenant_id != principal.tenant_id:
+            raise AuthorizationError("approval not found")
+        if approval.ticket_id != ticket_id:
+            raise AuthorizationError("approval not found for ticket")
+        return self.decide_approval(principal, approval.id, decision)
+
     @traced_operation("database", name="ticket.feedback")
     def add_feedback(self, principal: Principal, ticket_id: str, rating: int, comment: str) -> str:
         self.get_ticket(principal, ticket_id)

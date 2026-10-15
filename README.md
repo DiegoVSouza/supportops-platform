@@ -15,7 +15,7 @@ uv run --locked python -m supportops_platform
 In another terminal:
 
 ```powershell
-Invoke-RestMethod http://127.0.0.1:8080/health
+Invoke-RestMethod http://127.0.0.1:8080/healthz
 ```
 
 The API uses in-memory development storage and signed local demo tokens. See the
@@ -23,7 +23,7 @@ The API uses in-memory development storage and signed local demo tokens. See the
 [package integration gate](docs/harness/package-integration.md). See also the
 [test classification](docs/harness/test-classification.md). P00–P04 use approved
 local wheels in the lock. P04's SQLite/in-memory API is covered by a consumer contract;
-PostgreSQL/SQS service checks remain incomplete. Fake mode creates a process-local random JWT
+the P03 0.3.1 wheel is provenance-checked with the other integrations. PostgreSQL/SQS service checks remain incomplete. Fake mode creates a process-local random JWT
 key; configure `JWT_SECRET` when local tokens must survive restarts. No live LLM or
 external effects run.
 
@@ -41,8 +41,9 @@ human approval, run `uv run --locked python scripts/demo.py`.
 
 ## Status
 
-API authentication, tenant filtering, dual-control refund approval, tenant-scoped RAG
-citations through triage, and the in-memory MCP SDK contract have local tests. Approved
-P00–P04 wheel adapters are installed and verified. Database durability, replay
-evaluation, network MCP authentication, and service-backed deployment checks remain
-incomplete. The deterministic fixture evaluation is not a model metric.
+API compatibility and authentication, tenant filtering, dual-control refund approval,
+tenant-scoped hybrid RAG citations, and MCP Streamable HTTP bearer auth over an
+in-process ASGI transport have local tests. P00–P04 wheel adapters are installed and
+verified. PostgreSQL/pgvector, Redis/queue durability, TCP-hosted MCP, replay evaluation,
+and service-backed deployment checks remain incomplete. Hashed fake embeddings and
+the deterministic retrieval fixture are not semantic or model quality metrics.

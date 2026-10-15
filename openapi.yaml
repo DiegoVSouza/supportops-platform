@@ -2,13 +2,13 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SupportOps Platform",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "paths": {
-    "/health": {
+    "/healthz": {
       "get": {
         "summary": "Health",
-        "operationId": "health_health_get",
+        "operationId": "health_healthz_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -19,7 +19,7 @@
                     "type": "string"
                   },
                   "type": "object",
-                  "title": "Response Health Health Get"
+                  "title": "Response Health Healthz Get"
                 }
               }
             }
@@ -226,6 +226,111 @@
                     "type": "string"
                   },
                   "title": "Response Submit Feedback V1 Tickets  Ticket Id  Feedback Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/feedback": {
+      "post": {
+        "summary": "Submit Feedback Compat",
+        "operationId": "submit_feedback_compat_v1_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackSubmission"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Submit Feedback Compat V1 Feedback Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/tickets/{ticket_id}/approve": {
+      "post": {
+        "summary": "Approve Ticket",
+        "operationId": "approve_ticket_v1_tickets__ticket_id__approve_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ticket Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketApprovalDecision"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Approve Ticket V1 Tickets  Ticket Id  Approve Post"
                 }
               }
             }
@@ -498,6 +603,34 @@
         ],
         "title": "ApprovalDecision"
       },
+      "FeedbackSubmission": {
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Rating"
+          },
+          "comment": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Comment",
+            "default": ""
+          },
+          "ticket_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Ticket Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rating",
+          "ticket_id"
+        ],
+        "title": "FeedbackSubmission"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -582,6 +715,30 @@
           "body"
         ],
         "title": "Ticket"
+      },
+      "TicketApprovalDecision": {
+        "properties": {
+          "approval_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Id"
+          },
+          "decision": {
+            "type": "string",
+            "title": "Decision",
+            "default": "approved"
+          }
+        },
+        "type": "object",
+        "title": "TicketApprovalDecision"
       },
       "TicketCreate": {
         "properties": {

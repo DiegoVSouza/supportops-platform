@@ -6,18 +6,26 @@
 
 - Original acceptance criteria were reconciled into six local phases with SPEC, PLAN, and VERIFY before product code.
 - Coordinator plan review: accepted. Every phase plan declares local path ownership, forbidden changes, 2–4 tasks, verification, and stop condition.
-- The P00–P04 local wheel consumer gate passed for the earlier package versions. Remediation replacements must be installed and reverified before this integration status is refreshed.
+- Intake baseline used earlier P00–P04 wheel versions. This historical state was superseded by the phase 007 package install and consumer evidence below.
 - The RAG profile is enabled; governance is full because the platform is multi-tenant, handles private ticket data, and has an irreversible refund action.
 
 ## 2026-10-15 — Local API and retrieval components
 
 - API baseline and contracts committed as `549ab1f`; tenant scope, rate bounds, pending refund approval, and idempotency are exercised by unit/API tests.
 - RAG/MCP local implementation includes deterministic tenant-scoped retrieval, API citations, and principal-injected in-memory MCP tools.
-- P00–P04 approved wheel integrations pass locally. Runtime persistence, service-backed task-broker delivery, authenticated network MCP transport, replay evaluation, and degraded-agent regression remain INCOMPLETE or PENDING.
+- Baseline local API tests passed; runtime persistence, service-backed task-broker delivery, authenticated network MCP transport, replay evaluation, and degraded-agent regression were then INCOMPLETE or PENDING. Current package/API status is recorded in phase 007 below.
 
 ## 2026-10-15 — Roadmap remediation phase 007
 
 - Phase 007 was created and reviewed before product changes. Its five acceptance requirements cover API reconciliation, approved wheel integration, service path, retrieval/MCP security, observability, and evidence-backed state.
-- Available remediation artifacts: P00 `supportops-foundation` 1.0.1; P02 `supportops-ai-toolkit` 0.2.0 (source `b4966c54fa3feda3ff1eae36ee872e5c407a4102`, SHA-256 `7126517f9c64202b034b8a067dedf29e1313bb3139f15a984e93660654eb4d10`); and P04 `supportops-async` 0.1.2 (source `3aa96ec9d3fa2f85f771d9b5aaa4c5ab3641034d`, SHA-256 `a41c2a5a6c797e3913a510321d6859b5ab3be73b3f796eb7e9b1ea76fe6f5fd8`). These releases are not yet installed and consumer-verified in P05.
-- P01 0.1.1 and P03 remediation wheel provenance remain pending their upstream release commits. No unapproved artifact is treated as integrated.
+- The initial phase-007 note listed P00/P02/P04 releases as not installed and P01/P03 provenance as pending. Those statements are superseded by the verified artifact manifest below.
 - PostgreSQL/pgvector, Redis, LocalStack, Docker runtime, authenticated network MCP, dashboard/alert E2E, and replay/model evaluation remain INCOMPLETE or PENDING until their respective checks run.
+
+## 2026-10-15 — Phase 007 local remediation evidence
+
+- API package is 0.3.0. ADR-005 restores `/healthz`, `/v1/tickets/{ticket_id}/approve`, and `/v1/feedback` additively; `/health` remains a hidden compatibility alias. OpenAPI export check passes.
+- Approved local wheels pin P01 0.1.1, P02 0.2.0, P03 0.3.1, and P04 0.1.2 alongside P00 1.0.1. Provenance is recorded in `sources.lock.json`; P05 package consumers and `verify_packages.py` pass.
+- Deterministic hashed vectors are fake control-flow fixtures, not semantic embeddings. Local hybrid retrieval and the tenant-scoped PostgreSQL pgvector/full-text adapter contract pass. The migration declares pgvector 0.8.7, cosine distance, HNSW, and GIN indexes; PostgreSQL service execution remains INCOMPLETE and semantic quality remains PENDING.
+- MCP 2.3.0 Streamable HTTP bearer verification derives tenant/roles/scopes from trusted SDK request context. Authenticated and cross-tenant calls pass using the official SDK client over in-process ASGI; TCP-hosted service/identity-provider acceptance remains INCOMPLETE.
+- Fake/local checks, package gate, and full gate were rerun; exact outputs are saved in `artifacts/evidence/remediation-*.txt`. PostgreSQL/Redis/LocalStack E2E, dashboard/alert E2E, replay/model evaluation remain INCOMPLETE/PENDING.
+- `docker info` was attempted for service integration and exited 1 because Docker Desktop's Linux engine pipe was unavailable. No Compose or service E2E was run.

@@ -1,6 +1,6 @@
 [project]
 name = "supportops-platform"
-version = "0.2.0"
+version = "0.3.0"
 description = "Tenant-scoped support operations platform with deterministic AI boundaries"
 requires-python = ">=3.13,<3.14"
 dependencies = [
@@ -8,11 +8,11 @@ dependencies = [
   "mcp==2.3.0",
   "pydantic==2.14.1",
   "PyJWT==2.15.1",
-  "supportops-ai-toolkit==0.1.0",
-  "supportops-agents==0.1.0",
+  "supportops-ai-toolkit==0.2.0",
+  "supportops-agents==0.1.1",
   "supportops-foundation==1.0.1",
-  "supportops-obs==0.1.0",
-  "supportops-async==0.1.1",
+  "supportops-obs==0.3.1",
+  "supportops-async==0.1.2",
   "uvicorn==0.46.0",
 ]
 
@@ -35,8 +35,8 @@ line-length = 100
 target-version = "py313"
 
 [tool.uv.sources]
-supportops-ai-toolkit = { path = "artifacts/packages/supportops_ai_toolkit-0.1.0-py3-none-any.whl" }
-supportops-agents = { path = "artifacts/packages/supportops_agents-0.1.0-py3-none-any.whl" }
+supportops-ai-toolkit = { path = "artifacts/packages/supportops_ai_toolkit-0.2.0-py3-none-any.whl" }
+supportops-agents = { path = "artifacts/packages/supportops_agents-0.1.1-py3-none-any.whl" }
 supportops-foundation = { path = "artifacts/packages/supportops_foundation-1.0.1-py3-none-any.whl" }
-supportops-obs = { path = "artifacts/packages/supportops_obs-0.1.0-py3-none-any.whl" }
-supportops-async = { path = "artifacts/packages/supportops_async-0.1.1-py3-none-any.whl" }
+supportops-obs = { path = "artifacts/packages/supportops_obs-0.3.1-py3-none-any.whl" }
+supportops-async = { path = "artifacts/packages/supportops_async-0.1.2-py3-none-any.whl" }

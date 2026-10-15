@@ -20,27 +20,39 @@
     },
     {
       "id": "tenant-rag-agent",
-      "description": "Triage route returns tenant-scoped retrieval citations in fake agent trace",
+      "description": "Fake local hybrid retrieval returns tenant-scoped citations; semantic quality is unmeasured",
       "status": "PASS",
-      "evidence": "artifacts/evidence/followup-focused-tests.txt"
+      "evidence": "artifacts/evidence/remediation-local-tests.txt"
     },
     {
       "id": "approved-packages",
-      "description": "P00-P04 local wheel provenance, locked install and consumer contracts",
+      "description": "Approved P00-P04 local wheels have exact provenance, locked installs, and P05 consumer checks",
       "status": "PASS",
-      "evidence": "artifacts/evidence/followup-full-gate.txt"
+      "evidence": "artifacts/evidence/remediation-package-integration.txt"
     },
     {
       "id": "service-backed-async",
       "description": "PostgreSQL and SQS integration against real services",
       "status": "INCOMPLETE",
-      "evidence": "PENDING service credentials and approved service environment"
+      "evidence": "artifacts/evidence/remediation-service-availability.txt (docker info exit 1: Docker daemon unavailable)"
     },
     {
       "id": "network-mcp-auth",
-      "description": "Authenticated network MCP transport integration",
+      "description": "Verified HTTP bearer context creates tenant principal; actual TCP deployment not exercised",
       "status": "INCOMPLETE",
-      "evidence": "MCP adapter is in-memory only; transport auth not implemented"
+      "evidence": "artifacts/evidence/remediation-local-tests.txt; service network gate not run"
+    },
+    {
+      "id": "pgvector-hybrid-contract",
+      "description": "Tenant-scoped pgvector cosine and PostgreSQL full-text hybrid adapter contract",
+      "status": "PASS",
+      "evidence": "artifacts/evidence/remediation-local-tests.txt"
+    },
+    {
+      "id": "pgvector-service",
+      "description": "PostgreSQL pgvector migration, HNSW index, and hybrid query against a real service",
+      "status": "INCOMPLETE",
+      "evidence": "artifacts/evidence/remediation-service-availability.txt (Docker daemon unavailable; PostgreSQL/pgvector not started)"
     },
     {
       "id": "real-model-evaluation",

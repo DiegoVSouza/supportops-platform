@@ -9,8 +9,8 @@ version, source commit, and artifact digest; no neighboring source paths are imp
 HTTP API -> tenant authorization -> application services -> task adapter
                                       |                    |
                                       |                    +-> P04 adapter contract
-                                      +-> bounded local retrieval -> citations
-                                      +-> LocalToolGateway -> in-memory MCP billing/CRM boundary
+                                      +-> hybrid lexical/fake-vector retrieval -> citations
+                                      +-> LocalToolGateway -> scoped MCP tool boundary
 API / worker / agent / tools -> telemetry adapter -> P03 package contract
 ```
 
@@ -20,10 +20,17 @@ The configured HMAC key verifies local JWTs. Fake mode generates an ephemeral ke
 implemented. P00–P04 use approved local wheels. P04's SQLite/in-memory contract passes,
 while PostgreSQL/SQS service-backed integration remains incomplete.
 
-The lexical retriever has a 100-document, 64 KB per-document, and 10-result limit.
-The MCP SDK server is exercised in memory with synthetic records. The authenticated
-local gateway performs scope and tenant checks; the SDK mock itself has no network
-transport and must not be exposed as an authenticated service.
+The local hybrid retriever has a 100-document, 64 KB per-document, and 10-result
+limit. Deterministic hashed-token vectors exist only for control-flow tests and do
+not represent semantic embeddings. A separate asyncpg-compatible adapter and
+pgvector 0.8.7 migration define cosine/HNSW plus PostgreSQL full-text retrieval;
+neither has been run against a PostgreSQL service. Service acceptance is INCOMPLETE.
+
+MCP now has two boundaries: the offline mock with an injected principal, and a
+Streamable HTTP server factory whose principal is built only from the SDK's verified
+`get_access_token()` request context. Tests use the pinned MCP 2.3.0 client and an
+ASGI transport with bearer tokens, but no TCP-hosted service or external identity
+provider has been exercised. Network deployment acceptance remains INCOMPLETE.
 
 ## Trust boundaries
 

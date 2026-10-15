@@ -1,0 +1,6 @@
+command: uv run --project projects/p05 --locked pytest -q projects/p05/tests/test_api_security.py
+exit_code: 0
+output:
+................                                                         [100%]
+
+classification: unit/contract

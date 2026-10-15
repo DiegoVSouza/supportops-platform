@@ -13,8 +13,9 @@ from supportops_platform.rag.retrieval import KnowledgeDocument, LocalRetriever
 
 def test_approved_package_versions_and_p00_domain_adapter() -> None:
     assert version("supportops-foundation") == "1.0.1"
-    assert version("supportops-ai-toolkit") == "0.1.0"
-    assert version("supportops-obs") == "0.1.0"
+    assert version("supportops-ai-toolkit") == "0.2.0"
+    assert version("supportops-agents") == "0.1.1"
+    assert version("supportops-obs") == "0.3.1"
     principal = Principal(subject="a", tenant_id="t", roles=frozenset(), scopes=frozenset())
     local = Ticket(tenant_id="t", customer_id="c", subject="s", body="b")
     store = InMemoryStore()

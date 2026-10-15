@@ -8,13 +8,17 @@ installed and exercised by a contract test before it can enter the release gate.
 | Project | Package | Version | Source commit | Artifact SHA-256 | Approved |
 | --- | --- | --- | --- | --- | --- |
 | P00 | supportops-foundation | 1.0.1 | `607b7603bd40728ffa58745badac0ffd10c70090` | `DF4292756676D02490A908B609B8F9474F35F3C5F56131809F3E4A83659B4795` | Yes |
-| P01 | supportops-agents | 0.1.0 | `af06f4c564d2e601ac8009ecb32ae7e529b72c83` | `9F360E98FC1DF9D9D10CCDAB51F0AF0CCEF5F1A17CD49CEFEC9E2E3A8A4BED8B` | Yes |
-| P02 | supportops-ai-toolkit | 0.1.0 | `00a5f9b8e1f9c78ea26f09839d24847cfcfbf6f6` | `5B7F1BBD9DD015620D5CB9CBCF6B4B39B1D2DC668805B066E7A2D9A930D48A52` | Yes |
-| P03 | supportops-obs | 0.1.0 | `7d78bf63f42b03c510792773ad2c9915015120e9` | `e4e80cd664c97cf38b8fbe5557f10d4c8d247af275412569fb6a1bcbc0f11575` | Yes |
-| P04 | supportops-async | 0.1.1 | `6a074e906b080fdb837907237787f623f17c3e3c` | `250985c33e334b1e8f1c31bf8dcfe770ed8ff20419b96decaa9adf9d05010c1f` | Yes |
+| P01 | supportops-agents | 0.1.1 | `4c70b1ea3e23606dfe60ffae77567417de53a3f7` | `DD77E9B91F2D9BA7AC84178BBB557E0EA50BDE954554A528B4632DEC18DDB51F` | Yes; P05 installed version assertion passes |
+| P02 | supportops-ai-toolkit | 0.2.0 | `b4966c54fa3feda3ff1eae36ee872e5c407a4102` | `7126517f9c64202b034b8a067dedf29e1313bb3139f15a984e93660654eb4d10` | Yes; P05 installed version assertion passes |
+| P03 | supportops-obs | 0.3.1 | `e191f17d4649f40d6dea7057d3b52729dbbb1389` | `82b3a79aacd0ac4faa1082087c0237487264b2a6497d9b77b79c1d6bb86f66a8` | Yes; P05 installed consumer tests pass |
+| P04 | supportops-async | 0.1.2 | `3aa96ec9d3fa2f85f771d9b5aaa4c5ab3641034d` | `a41c2a5a6c797e3913a510321d6859b5ab3be73b3f796eb7e9b1ea76fe6f5fd8` | Yes; P05 idempotency/worker consumer test passes |
 
-P00–P04 are installed from approved local wheels, hash-checked, and exercised by
-consumer tests. P04 0.1.1 declares FastAPI `>=0.137.1,<0.143.0` and Uvicorn
+P00, P01, P02, and P04 are installed from versioned local wheels and their P05
+consumer checks pass. P03 0.3.0 was superseded after its consumer exposed an
+OpenTelemetry `NonRecordingSpan.status` failure. The replacement 0.3.1 has exact
+upstream source/artifact provenance and passed the isolated producer smoke; P05
+consumer verification passes with the non-recording span regression test. P04 0.1.2 declares FastAPI
+`>=0.137.1,<0.143.0` and Uvicorn
 `==0.46.0`; P05 pins compatible FastAPI 0.142.4 and Uvicorn 0.46.0. PostgreSQL/SQS
 service-backed integration remains `INCOMPLETE`; the local SQLite/in-memory test
 does not represent those external services.

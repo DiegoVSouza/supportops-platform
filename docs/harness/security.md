@@ -14,7 +14,7 @@
 - Credentials live outside source control. CI and default demos use `LLM_MODE=fake` and no provider credentials.
 - MCP allowlist contains local mock billing/CRM only. Deny arbitrary network egress in test/runtime profiles.
 - The API verifies HS256 JWT signature, issuer, expiry, and required claims, using `JWT_SECRET`. The checked-in demo secret and token helper are only for isolated local execution; external identity, key rotation, and production credentials are not implemented.
-- The MCP SDK server currently runs only in memory for contract tests. Its synthetic tenant arguments are test data, not an authentication scheme; do not expose that mock transport to a network. Runtime calls must enter through `LocalToolGateway`, which binds the trusted `Principal` to each tool operation.
+- The offline MCP mock binds an injected principal and is not an authentication scheme. The Streamable HTTP server uses the MCP SDK 2.3.0 bearer verifier and derives tenant, roles, and scopes from the verified access token in request context; model/tool arguments never set identity. The ASGI transport contract passes locally, while TCP-hosted service and identity-provider acceptance remain INCOMPLETE.
 
 ## Required security tests
 - Tenant A cannot access Tenant B resources even with a valid token for A.

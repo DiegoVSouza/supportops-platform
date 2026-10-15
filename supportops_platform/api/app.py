@@ -37,6 +37,11 @@ class ApprovalDecision(BaseModel):
     decision: str
 
 
+class TicketApprovalDecision(BaseModel):
+    approval_id: str | None = Field(default=None, min_length=1, max_length=100)
+    decision: str = "approved"
+
+
 class TaskCreate(BaseModel):
     ticket_id: str = Field(min_length=1, max_length=100)
 
@@ -44,6 +49,10 @@ class TaskCreate(BaseModel):
 class TicketFeedback(BaseModel):
     rating: int = Field(ge=1, le=5)
     comment: str = Field(default="", max_length=1000)
+
+
+class FeedbackSubmission(TicketFeedback):
+    ticket_id: str = Field(min_length=1, max_length=100)
 
 
 def create_app(
@@ -83,7 +92,8 @@ def create_app(
         except InvalidTokenError as exc:
             raise HTTPException(status_code=401, detail="invalid token", headers={"WWW-Authenticate": "Bearer"}) from exc
 
-    @app.get("/health")
+    @app.get("/healthz")
+    @app.get("/health", include_in_schema=False)
     def health() -> dict[str, str]:
         return {"status": "ok", "version": __version__, "llm_mode": os.getenv("LLM_MODE", "fake")}
 
@@ -170,6 +180,36 @@ def create_app(
         except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         return {"id": feedback_id, "status": "recorded"}
+
+    @app.post("/v1/feedback", status_code=201)
+    def submit_feedback_compat(
+        payload: FeedbackSubmission, actor: Principal = Depends(principal)
+    ) -> dict[str, str]:
+        try:
+            feedback_id = app.state.store.add_feedback(
+                actor, payload.ticket_id, payload.rating, payload.comment
+            )
+        except AuthorizationError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return {"id": feedback_id, "status": "recorded"}
+
+    @app.post("/v1/tickets/{ticket_id}/approve")
+    def approve_ticket(
+        ticket_id: str,
+        payload: TicketApprovalDecision,
+        actor: Principal = Depends(principal),
+    ) -> dict[str, str]:
+        try:
+            approval = app.state.store.decide_ticket_approval(
+                actor, ticket_id, payload.approval_id, payload.decision
+            )
+        except AuthorizationError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return {"id": approval.id, "state": approval.state}
 
     @app.post("/v1/tickets/{ticket_id}/refund-approvals", status_code=202)
     def request_refund(

@@ -1,0 +1,8 @@
+command: docker info
+exit_code: 1
+classification: service availability probe
+output:
+Docker client version 29.1.3; context desktop-linux.
+Server: failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.
+
+Result: PostgreSQL/pgvector, Redis, and LocalStack Compose/service checks were not run. Service-backed async and pgvector acceptance remain INCOMPLETE. No service was started or modified.
