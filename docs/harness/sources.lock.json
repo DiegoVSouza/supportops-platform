@@ -1,0 +1,10 @@
+{
+  "python": {"version": "3.13.12", "source": "https://docs.python.org/3.13/", "checked": "2026-10-15"},
+  "fastapi": {"version": "PENDING official docs check", "source": "https://fastapi.tiangolo.com/", "checked": "2026-10-15"},
+  "mcp": {"version": "PENDING official spec and SDK check", "source": "https://modelcontextprotocol.io/specification/", "checked": "2026-10-15"},
+  "langgraph": {"version": "PENDING approved P01 package contract", "source": "https://docs.langchain.com/oss/python/langgraph/overview", "checked": "2026-10-15"},
+  "p01_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"},
+  "p02_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"},
+  "p03_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"},
+  "p04_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"}
+}

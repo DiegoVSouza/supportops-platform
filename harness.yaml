@@ -4,7 +4,7 @@ project:
   stack: { backend: python, frontend: none }
   kit_version: 2.1.0
 builder: { tools: [codex, claude-code], long_running: true, clean_context_reviewer: true, stop_hook_runs_check: true }
-product: { has_agent: true, pattern: agent, runtime: custom-loop, multi_agent: none, rag: false, memory: long-term, tools_via_mcp: true }
-risk: { trifecta: { private_data: true, untrusted_content: true, external_comms: false }, multi_tenant: true, sensitive_data: true, irreversible_actions: [], governance: full }
+product: { has_agent: true, pattern: agent, runtime: custom-loop, multi_agent: none, rag: true, memory: long-term, tools_via_mcp: true }
+risk: { trifecta: { private_data: true, untrusted_content: true, external_comms: false }, multi_tenant: true, sensitive_data: true, irreversible_actions: [issue_refund], governance: full }
 budget: { max_turns: 40, max_usd_per_task: 2.00, tool_timeout_s: 60 }
 evals: { capability: true, regression: true, trials: 5, production_sampling: true, judge: code-first }
