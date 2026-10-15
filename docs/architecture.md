@@ -15,10 +15,10 @@ API / worker / agent / tools -> telemetry adapter -> P03 package contract
 ```
 
 The current runtime uses process-local ticket and approval storage for development.
-The fake credentials in `supportops_platform.api.app` are test fixtures and are not a
-production identity provider. Refund requests create pending approvals; no refund
-effect is implemented. Real persistence, queue delivery, and P01–P04 integration
-remain gated until their approved artifacts and service-backed checks are available.
+The configured HMAC key verifies local JWTs. Fake mode generates an ephemeral key if
+`JWT_SECRET` is absent. Refund requests create pending approvals; no refund effect is
+implemented. P00–P03 use approved local wheels; P04's service-backed integration remains
+gated because its FastAPI pin conflicts with P05's locked version.
 
 The lexical retriever has a 100-document, 64 KB per-document, and 10-result limit.
 The MCP SDK server is exercised in memory with synthetic records. The authenticated
