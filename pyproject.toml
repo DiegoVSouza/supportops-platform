@@ -1,0 +1,29 @@
+[project]
+name = "supportops-platform"
+version = "0.1.0"
+description = "Tenant-scoped support operations platform with deterministic AI boundaries"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi==0.142.4",
+  "mcp==2.3.0",
+  "pydantic==2.12.5",
+  "uvicorn==0.44.0",
+]
+
+[dependency-groups]
+dev = ["httpx==0.28.1", "pytest==9.0.2"]
+
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["supportops_platform"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"

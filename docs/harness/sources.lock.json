@@ -1,10 +1,11 @@
 {
   "python": {"version": "3.13.12", "source": "https://docs.python.org/3.13/", "checked": "2026-10-15"},
-  "fastapi": {"version": "PENDING official docs check", "source": "https://fastapi.tiangolo.com/", "checked": "2026-10-15"},
-  "mcp": {"version": "PENDING official spec and SDK check", "source": "https://modelcontextprotocol.io/specification/", "checked": "2026-10-15"},
+  "fastapi": {"version": "0.142.4", "source": "https://fastapi.tiangolo.com/release-notes/", "checked": "2026-10-15"},
+  "pydantic": {"version": "2.12.5", "source": "https://docs.pydantic.dev/latest/", "checked": "2026-10-15"},
+  "mcp": {"version": "2.3.0", "source": "https://pypi.org/project/mcp/; https://py.sdk.modelcontextprotocol.io/", "checked": "2026-10-15"},
   "langgraph": {"version": "PENDING approved P01 package contract", "source": "https://docs.langchain.com/oss/python/langgraph/overview", "checked": "2026-10-15"},
   "p01_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"},
-  "p02_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"},
-  "p03_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"},
+  "p02_package": {"name": "supportops-ai-toolkit", "version": "0.1.0", "origin_commit": "00a5f9b8e1f9c78ea26f09839d24847cfcfbf6f6", "artifact_sha256": "5B7F1BBD9DD015620D5CB9CBCF6B4B39B1D2DC668805B066E7A2D9A930D48A52", "approved": false},
+  "p03_package": {"name": "supportops_obs", "version": "0.1.0", "origin_commit": "7d78bf63f42b03c510792773ad2c9915015120e9", "artifact_sha256": "e4e80cd664c97cf38b8fbe5557f10d4c8d247af275412569fb6a1bcbc0f11575", "approved": false},
   "p04_package": {"version": "PENDING", "origin_commit": "PENDING", "artifact_sha256": "PENDING"}
 }
