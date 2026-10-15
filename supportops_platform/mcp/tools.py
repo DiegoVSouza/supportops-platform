@@ -115,25 +115,27 @@ class LocalToolGateway:
         )
 
 
-def create_mock_mcp_server(gateway: LocalToolGateway | None = None) -> MCPServer:
-    """Create an in-memory SDK server; no network transport or live effect is enabled."""
+def create_mock_mcp_server(
+    gateway: LocalToolGateway | None = None,
+    authenticated_principal: Principal | None = None,
+) -> MCPServer:
+    """Create an offline server with identity injected outside model-controlled args."""
     gateway = gateway or LocalToolGateway()
-    server = MCPServer("supportops-mock-tools", version="0.1.0")
+    server = MCPServer("supportops-mock-tools", version="0.2.0")
+
+    def require_principal() -> Principal:
+        if authenticated_principal is None:
+            raise AuthorizationError("authenticated principal is required")
+        return authenticated_principal
 
     @server.tool()
-    def lookup_invoice(invoice_id: str, tenant_id: str) -> dict[str, object]:
-        """Return a synthetic invoice summary for a local demo tenant."""
-        invoice = gateway.invoices.get(invoice_id)
-        if invoice is None or invoice.tenant_id != tenant_id:
-            raise ValueError("invoice not found")
-        return {"invoice_id": invoice.invoice_id, "amount_cents": invoice.amount_cents, "status": invoice.status}
+    def lookup_invoice(invoice_id: str) -> dict[str, object]:
+        """Return a synthetic invoice summary for the injected authenticated tenant."""
+        return gateway.lookup_invoice(require_principal(), invoice_id)
 
     @server.tool()
-    def propose_refund(ticket_id: str, tenant_id: str, amount_cents: int) -> dict[str, object]:
+    def propose_refund(ticket_id: str, amount_cents: int) -> dict[str, object]:
         """Create an approval proposal only; this tool never issues a refund."""
-        if amount_cents <= 0 or amount_cents > 5000:
-            raise ValueError("refund exceeds local approval ceiling")
-        return {"ticket_id": ticket_id, "tenant_id": tenant_id, "amount_cents": amount_cents,
-                "state": "needs_approval", "effect_performed": False}
+        return gateway.propose_refund(require_principal(), ticket_id, amount_cents)
 
     return server

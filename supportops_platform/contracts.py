@@ -42,6 +42,7 @@ class Approval:
     action: str
     amount_cents: int
     idempotency_key: str
+    requested_by: str
     id: str = field(default_factory=lambda: str(uuid4()))
     state: str = "pending"
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))

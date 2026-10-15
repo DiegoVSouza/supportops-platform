@@ -1,6 +1,7 @@
 """Integration tests against P04's approved wheel with in-process doubles."""
 
 import pytest
+from importlib.metadata import version
 
 pytest.importorskip("supportops_async")
 
@@ -10,6 +11,7 @@ from supportops_platform.integrations.p04_async import create_p04_local_componen
 
 
 def test_p04_api_idempotency_and_fake_worker_completion() -> None:
+    assert version("supportops-async") == "0.1.1"
     app, store, broker, worker = create_p04_local_components()
     api = TestClient(app)
     first = api.post("/tasks", headers={"Idempotency-Key": "p05-p04-1"}, json={"steps": ["triage"]})

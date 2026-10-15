@@ -8,6 +8,7 @@ from supportops_platform.contracts import Principal, Ticket
 from supportops_platform.integrations.foundation import seeded_foundation_fixture
 from supportops_platform.integrations.toolkit import safe_retrieval_query
 from supportops_platform.repositories import InMemoryStore
+from supportops_platform.rag.retrieval import KnowledgeDocument, LocalRetriever
 
 
 def test_approved_package_versions_and_p00_domain_adapter() -> None:
@@ -49,9 +50,16 @@ def test_p01_core_runner_uses_fake_and_enforces_step_budget() -> None:
     import pytest
 
     ticket = Ticket(tenant_id="t", customer_id="c", subject="Billing", body="Duplicate charge")
-    result = run_fake_triage(ticket, max_steps=4)
+    retriever = LocalRetriever([
+        KnowledgeDocument("refund-policy", "t", "Refund policy", "Duplicate charge refunds require review."),
+        KnowledgeDocument("other-tenant-policy", "other", "Private policy", "Duplicate charge refunds are automatic."),
+    ])
+    execution = run_fake_triage(ticket, retriever, max_steps=4)
+    result = execution.result
     assert result.decision.action == "respond"
     assert result.decision.approved is True
     assert len(result.trace) == 4
+    assert [citation.document_id for citation in execution.citations] == ["refund-policy"]
+    assert "refund-policy#refund-policy:0" in result.trace[1].detail
     with pytest.raises(ValueError, match="max_steps"):
-        run_fake_triage(ticket, max_steps=0)
+        run_fake_triage(ticket, retriever, max_steps=0)

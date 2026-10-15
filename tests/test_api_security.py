@@ -7,9 +7,10 @@ from supportops_platform.api.app import create_app
 
 TEST_SECRET = "p05-test-signing-secret-with-32-bytes-minimum"
 IDENTITIES = {
-    "tenant-a-agent": ("agent-a", "tenant-a", ["agent"], ["ticket:read", "ticket:write", "refund:request", "task:read", "task:write", "feedback:write"]),
+    "tenant-a-agent": ("agent-a", "tenant-a", ["agent"], ["ticket:read", "ticket:write", "refund:request", "task:read", "task:write", "feedback:write", "triage:run"]),
     "tenant-a-approver": ("approver-a", "tenant-a", ["approver"], ["ticket:read", "approval:decide", "task:read"]),
     "tenant-a-reader": ("reader-a", "tenant-a", ["viewer"], ["ticket:read"]),
+    "tenant-a-dual": ("agent-a", "tenant-a", ["agent", "approver"], ["ticket:read", "ticket:write", "refund:request", "approval:decide"]),
     "tenant-b-agent": ("agent-b", "tenant-b", ["agent"], ["ticket:read", "ticket:write", "task:read", "task:write"]),
 }
 
@@ -38,7 +39,7 @@ def test_health_is_fake_by_default_and_openapi_is_versioned() -> None:
     api = client()
     assert api.get("/health").json()["llm_mode"] == "fake"
     schema = api.get("/openapi.json").json()
-    assert schema["info"]["version"] == "0.1.0"
+    assert schema["info"]["version"] == "0.2.0"
     assert "/v1/tickets/{ticket_id}/refund-approvals" in schema["paths"]
     assert "HTTPBearer" in schema["components"]["securitySchemes"]
     assert "/v1/tickets/{ticket_id}/feedback" in schema["paths"]
@@ -125,6 +126,43 @@ def test_only_same_tenant_approver_can_decide_once() -> None:
     approver_headers = auth_headers("tenant-a-approver")
     assert api.post(path, headers=approver_headers, json={"decision": "approved"}).status_code == 200
     assert api.post(path, headers=approver_headers, json={"decision": "approved"}).status_code == 409
+
+
+def test_refund_requester_cannot_approve_their_own_request() -> None:
+    api = client()
+    ticket_id = create_ticket(api)
+    requested = api.post(
+        f"/v1/tickets/{ticket_id}/refund-approvals",
+        headers={**auth_headers("tenant-a-dual"), "Idempotency-Key": "dual-control"},
+        json={"amount_cents": 250},
+    ).json()
+    path = f"/v1/approvals/{requested['id']}/decision"
+    assert api.post(
+        path, headers=auth_headers("tenant-a-dual"), json={"decision": "approved"}
+    ).status_code == 403
+    assert api.post(
+        path, headers=auth_headers("tenant-a-approver"), json={"decision": "approved"}
+    ).status_code == 200
+
+
+def test_triage_returns_only_tenant_scoped_rag_citations() -> None:
+    from supportops_platform.rag.retrieval import KnowledgeDocument, LocalRetriever
+
+    retriever = LocalRetriever([
+        KnowledgeDocument("tenant-a-refunds", "tenant-a", "Refund policy", "Refund requests need supervisor review."),
+        KnowledgeDocument("tenant-b-refunds", "tenant-b", "Private refund policy", "Refunds are automatic."),
+    ])
+    api = TestClient(create_app(token_secret=TEST_SECRET, retriever=retriever))
+    ticket_id = create_ticket(api)
+    response = api.post(f"/v1/tickets/{ticket_id}/triage", headers=auth_headers("tenant-a-agent"))
+    assert response.status_code == 200
+    body = response.json()
+    assert body["llm_mode"] == "fake"
+    assert [citation["document_id"] for citation in body["citations"]] == ["tenant-a-refunds"]
+    assert any("tenant-a-refunds" in step["detail"] for step in body["trace"])
+    assert api.post(
+        f"/v1/tickets/{ticket_id}/triage", headers=auth_headers("tenant-a-reader")
+    ).status_code == 403
 
 
 def test_rate_limit_is_enforced() -> None:

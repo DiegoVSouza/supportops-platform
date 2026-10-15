@@ -13,12 +13,14 @@ from pydantic import BaseModel, Field
 from jwt.exceptions import InvalidTokenError
 
 from supportops_platform import __version__
+from supportops_platform.agents.triage import run_fake_triage
 from supportops_platform.auth.jwt import decode_principal
 from supportops_platform.contracts import Principal, Ticket
 from supportops_platform.async_tasks.queue import LocalTaskQueue
 from supportops_platform.obs.metrics import MetricsRegistry
 from supportops_platform.integrations.observability import configure_telemetry, prometheus_metrics
 from supportops_platform.repositories import AuthorizationError, InMemoryStore
+from supportops_platform.rag.retrieval import LocalRetriever
 
 
 class TicketCreate(BaseModel):
@@ -48,6 +50,7 @@ def create_app(
     store: InMemoryStore | None = None,
     requests_per_minute: int = 60,
     token_secret: str | None = None,
+    retriever: LocalRetriever | None = None,
 ) -> FastAPI:
     if requests_per_minute < 1:
         raise ValueError("requests_per_minute must be positive")
@@ -61,6 +64,7 @@ def create_app(
     app = FastAPI(title="SupportOps Platform", version=__version__)
     configure_telemetry()
     app.state.store = store or InMemoryStore()
+    app.state.retriever = retriever or LocalRetriever([])
     app.state.task_queue = LocalTaskQueue()
     app.state.metrics = MetricsRegistry()
     app.state.token_secret = secret
@@ -114,6 +118,44 @@ def create_app(
             return app.state.store.get_ticket(actor, ticket_id)
         except AuthorizationError as exc:
             raise HTTPException(status_code=404, detail="ticket not found") from exc
+
+    @app.post("/v1/tickets/{ticket_id}/triage")
+    def triage_ticket(ticket_id: str, actor: Principal = Depends(principal)) -> dict[str, object]:
+        if "triage:run" not in actor.scopes:
+            raise HTTPException(status_code=403, detail="triage:run scope required")
+        try:
+            ticket = app.state.store.get_ticket(actor, ticket_id)
+            execution = run_fake_triage(ticket, app.state.retriever)
+        except AuthorizationError as exc:
+            raise HTTPException(status_code=404, detail="ticket not found") from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return {
+            "ticket_id": ticket.id,
+            "decision": {
+                "action": execution.result.decision.action,
+                "category": execution.result.decision.category,
+                "response": execution.result.decision.response,
+                "approved": execution.result.decision.approved,
+                "reason": execution.result.decision.reason,
+            },
+            "trace": [
+                {"step": step.step, "agent": step.agent, "action": step.action, "detail": step.detail}
+                for step in execution.result.trace
+            ],
+            "citations": [
+                {
+                    "document_id": citation.document_id,
+                    "title": citation.title,
+                    "chunk_id": citation.chunk_id,
+                    "text": citation.text,
+                    "score": citation.score,
+                }
+                for citation in execution.citations
+            ],
+            "stop_reason": execution.result.stop_reason,
+            "llm_mode": "fake",
+        }
 
     @app.post("/v1/tickets/{ticket_id}/feedback", status_code=201)
     def submit_feedback(

@@ -71,6 +71,7 @@ class InMemoryStore:
             action="issue_refund",
             amount_cents=amount_cents,
             idempotency_key=idempotency_key,
+            requested_by=principal.subject,
         )
         self.approvals[approval.id] = approval
         self.idempotency[idem] = approval.id
@@ -83,6 +84,8 @@ class InMemoryStore:
             raise AuthorizationError("approval not found")
         if "approval:decide" not in principal.scopes or "approver" not in principal.roles:
             raise AuthorizationError("approver role and approval:decide scope required")
+        if approval.requested_by == principal.subject:
+            raise AuthorizationError("requester cannot approve their own refund")
         if decision not in {"approved", "rejected"}:
             raise ValueError("decision must be approved or rejected")
         if approval.state != "pending":

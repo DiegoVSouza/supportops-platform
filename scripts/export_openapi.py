@@ -16,7 +16,7 @@ args = parser.parse_args()
 if args.check:
     if not TARGET.exists() or TARGET.read_text(encoding="utf-8") != rendered:
         raise SystemExit("openapi.yaml does not match the current API; review and regenerate it")
-    print("OpenAPI contract: PASS (v1 paths, HTTP bearer, 0.1.0 package schema)")
+    print("OpenAPI contract: PASS (v1 paths, HTTP bearer, 0.2.0 package schema)")
 else:
     TARGET.write_text(rendered, encoding="utf-8")
     print(f"Wrote {TARGET.relative_to(ROOT)}")

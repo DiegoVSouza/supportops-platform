@@ -1,0 +1,9 @@
+command: uv run --locked python scripts/demo.py
+exit_code: 0
+output:
+health: {'status': 'ok', 'version': '0.2.0', 'llm_mode': 'fake'}
+ticket: 484a7eb4-3d30-47ef-a51a-e50751722d56
+task: {'id': '935e3f94-3ca1-45eb-879a-7592ac66f9ff', 'status': 'succeeded'}
+triage: {'decision': 'respond', 'citations': ['refund-policy']}
+refund approval: {'id': 'a8a64492-fe50-4ec0-aa13-678b993f08de', 'state': 'approved'} external_effect_performed=false
+demo_mode=fake; provider_calls=0; external_effects=0

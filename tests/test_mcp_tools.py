@@ -46,13 +46,15 @@ def test_tool_allowlist_denies_unknown_and_injection_escalation() -> None:
 
 
 def test_official_mcp_sdk_server_and_client_work_in_memory() -> None:
-    server = create_mock_mcp_server()
+    principal = Principal(
+        subject="agent-a", tenant_id="tenant-a", roles=frozenset({"agent"}),
+        scopes=frozenset({"billing:read"}),
+    )
+    server = create_mock_mcp_server(authenticated_principal=principal)
 
     async def call() -> dict[str, object]:
         async with Client(server) as client:
-            result = await client.call_tool(
-                "lookup_invoice", {"invoice_id": "inv-a-1", "tenant_id": "tenant-a"}
-            )
+            result = await client.call_tool("lookup_invoice", {"invoice_id": "inv-a-1"})
             return result.structured_content
 
     result = asyncio.run(call())
@@ -60,14 +62,56 @@ def test_official_mcp_sdk_server_and_client_work_in_memory() -> None:
 
 
 def test_mcp_refund_does_not_perform_effect() -> None:
-    server = create_mock_mcp_server()
+    principal = Principal(
+        subject="agent-a", tenant_id="tenant-a", roles=frozenset({"agent"}),
+        scopes=frozenset({"refund:request"}),
+    )
+    server = create_mock_mcp_server(authenticated_principal=principal)
 
     async def call() -> dict[str, object]:
         async with Client(server) as client:
             result = await client.call_tool(
                 "propose_refund",
-                {"ticket_id": "t1", "tenant_id": "tenant-a", "amount_cents": 100},
+                {"ticket_id": "t1", "amount_cents": 100},
             )
             return result.structured_content
 
     assert asyncio.run(call())["effect_performed"] is False
+
+
+def test_mcp_server_fails_closed_without_injected_identity() -> None:
+    server = create_mock_mcp_server()
+
+    async def call():
+        async with Client(server) as client:
+            return await client.call_tool("lookup_invoice", {"invoice_id": "inv-a-1"})
+
+    result = asyncio.run(call())
+    assert result.is_error is True
+
+
+def test_mcp_caller_cannot_select_tenant_or_read_other_tenant_invoice() -> None:
+    principal = Principal(
+        subject="agent-a", tenant_id="tenant-a", roles=frozenset({"agent"}),
+        scopes=frozenset({"billing:read"}),
+    )
+    server = create_mock_mcp_server(authenticated_principal=principal)
+
+    async def call():
+        async with Client(server) as client:
+            forged = await client.call_tool(
+                "lookup_invoice", {"invoice_id": "inv-a-1", "tenant_id": "tenant-b"}
+            )
+            cross_tenant = await client.call_tool(
+                "lookup_invoice", {"invoice_id": "inv-b-1"}
+            )
+            own_tenant = await client.call_tool(
+                "lookup_invoice", {"invoice_id": "inv-a-1"}
+            )
+            return forged, cross_tenant, own_tenant
+
+    forged, cross_tenant, own_tenant = asyncio.run(call())
+    # The SDK may ignore unknown fields; either way caller input cannot select scope.
+    assert forged.structured_content["invoice_id"] == "inv-a-1"
+    assert cross_tenant.is_error is True
+    assert own_tenant.structured_content["invoice_id"] == "inv-a-1"

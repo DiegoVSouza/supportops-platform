@@ -1,4 +1,4 @@
-"""P04 package adapter for local SQLite and in-memory broker integration tests."""
+"""P04 0.1.1 package adapter for local SQLite and in-memory broker integration tests."""
 
 from supportops_async.api import create_app
 from supportops_async.queue.memory import InMemoryBroker

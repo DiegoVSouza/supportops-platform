@@ -8,11 +8,14 @@ from supportops_platform.api.app import create_app
 from supportops_platform.auth.jwt import issue_demo_token
 from supportops_platform.rag.retrieval import KnowledgeDocument, LocalRetriever
 
-application = create_app()
+retriever = LocalRetriever(
+    [KnowledgeDocument("refund-policy", "demo-tenant", "Refund policy", "Refund requests require approval.")]
+)
+application = create_app(retriever=retriever)
 secret = application.state.token_secret
 agent = issue_demo_token(
     "demo-agent", "demo-tenant", ["agent"],
-    ["ticket:read", "ticket:write", "refund:request", "task:read", "task:write"],
+    ["ticket:read", "ticket:write", "refund:request", "task:read", "task:write", "triage:run"],
     secret=secret,
 )
 approver = issue_demo_token(
@@ -32,6 +35,8 @@ task = client.post(
     json={"ticket_id": ticket_id},
 )
 task.raise_for_status()
+triage = client.post(f"/v1/tickets/{ticket_id}/triage", headers=agent_headers)
+triage.raise_for_status()
 worker = FakeWorker(application.state.task_queue, "demo-worker", EffectLedger())
 completed_task = worker.run_once()
 approval = client.post(
@@ -46,12 +51,8 @@ decision = client.post(
     json={"decision": "approved"},
 )
 decision.raise_for_status()
-retriever = LocalRetriever(
-    [KnowledgeDocument("refund-policy", "demo-tenant", "Refund policy", "Refund requests require approval.")]
-)
-citations = retriever.search("demo-tenant", "refund approval", top_k=1)
 print("ticket:", ticket_id)
 print("task:", {"id": completed_task.id, "status": completed_task.status.value})
+print("triage:", {"decision": triage.json()["decision"]["action"], "citations": [c["document_id"] for c in triage.json()["citations"]]})
 print("refund approval:", decision.json(), "external_effect_performed=false")
-print("citations:", [{"document_id": c.document_id, "chunk_id": c.chunk_id} for c in citations])
 print("demo_mode=fake; provider_calls=0; external_effects=0")
