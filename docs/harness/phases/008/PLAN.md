@@ -10,7 +10,10 @@ No live/paid LLM, no external identity provider, no external publication/deploy/
 Docker CLI/daemon; isolated PostgreSQL/pgvector and Redis; prior P04 LocalStack stack may be reused only through its published local package/API and loopback endpoint; no port collisions.
 
 ## Observable tasks
-`n- 1. Review P05 architecture/dependencies and create isolated service configuration. `n- 2. Run PostgreSQL pgvector and TCP MCP tests. `n- 3. Attempt feasible product path and tracing/evaluation gates in fake mode. `n- 4. Reconcile evidence-backed state and docs.
+- Review architecture/dependencies and start isolated PostgreSQL and TCP MCP services.
+- Run pgvector migration/index/retrieval tests and authenticated MCP tests over TCP.
+- Attempt feasible fake-mode product path, tracing, eval, and full-gate checks.
+- Reconcile evidence-backed state and docs.
 
 ## Checks
 Migration and HNSW/GIN indexes plus hybrid tenant filtering against PostgreSQL; authenticated bearer MCP over TCP; product integration only if architecture and installed wheels permit; full fake-mode gate; OpenAPI check; trace/eval status.
@@ -20,3 +23,4 @@ External identity, unimplemented durable queue integration, unavailable services
 
 ## Review
 Plan reviewed before execution: scope is evidence-first, tasks are observable, path ownership is explicit, and unavailable services cannot become PASS.
+
