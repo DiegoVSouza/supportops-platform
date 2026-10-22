@@ -1,6 +1,6 @@
 # PLAN — Add OAuth token introspection to authenticated MCP
 
-allowed_write_paths: supportops_platform/mcp/identity.py; supportops_platform/mcp/runtime.py; tests/**; scripts/check_services.py; scripts/check_fast.py; scripts/check_full.py; docs/harness/phases/011/**; docs/harness/feature_list.json; docs/harness/progress.md; docs/harness/agent-card.md; docs/harness/security.md; docs/harness/sources.lock.json; docs/decisions/ADR-008-mcp-token-introspection.md; artifacts/evidence/**; pyproject.toml; uv.lock; supportops_platform/__init__.py; artifacts/packages/**
+allowed_write_paths: supportops_platform/mcp/identity.py; supportops_platform/mcp/runtime.py; tests/**; scripts/check_services.py; scripts/check_fast.py; scripts/check_full.py; scripts/export_openapi.py; scripts/check_wheel_consumer.py; docs/harness/phases/011/**; docs/harness/feature_list.json; docs/harness/progress.md; docs/harness/agent-card.md; docs/harness/security.md; docs/harness/sources.lock.json; docs/decisions/ADR-008-mcp-token-introspection.md; artifacts/evidence/**; artifacts/packages/**; pyproject.toml; uv.lock; supportops_platform/__init__.py; openapi.yaml; .env.example; docker-compose.services.yml
 forbidden_changes: root roadmap; sibling source imports; shared kit; unrelated files/stacks; weakened tests; external deploy/publish/push/PR/merge; Terraform apply; live/paid LLM; publishing packages; storing bearer/client secrets in source, evidence, traces, or logs.
 
 llm_mode: fake
@@ -21,3 +21,6 @@ If local Docker/services are unavailable, keep the corresponding service gate IN
 
 ## Plan review
 Reviewed before implementation: four observable tasks; only P05-owned code/docs/artifacts are writable; internal delegated tokens remain supported; revocation is checked per external MCP request; no source-controlled secrets or live LLM calls.
+
+## Plan amendment
+The release updates the OpenAPI package-version metadata without changing routes or schemas, adds blank optional OIDC variables to `.env.example`, and forwards OIDC settings only to the MCP container. These owned paths are now explicit above; no client secret is stored in the repository.
