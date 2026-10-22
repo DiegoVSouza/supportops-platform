@@ -1,0 +1,9 @@
+Command: Get-FileHash artifacts/packages/supportops_platform-0.4.0-py3-none-any.whl -Algorithm SHA256
+Exit code: 0
+sha256=c571bb27f72e10aa8af599f44833c141607d65c26d8a1f6780ca4b38b0e956fc
+Command: git rev-parse 4807292
+Exit code: 0
+source_commit=480729212dab1e7c5ed8d0c2afdb4d6615b944a0
+Command: git rev-parse 4b4f831
+Exit code: 0
+artifact_commit=4b4f83140e42ece3fe6d7ab87c78e7a18a5b1e79

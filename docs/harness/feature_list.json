@@ -65,6 +65,12 @@
       "description": "Durable authenticated API to P04 worker to P01 agent to PostgreSQL RAG/MCP flow",
       "status": "PASS_LOCAL_SERVICE; INCOMPLETE_EXTERNAL_IDENTITY",
       "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
+    },
+    {
+      "id": "p05-release-wheel",
+      "description": "P05 0.4.0 wheel with packaged migrations, SHA-256 provenance and isolated real PostgreSQL consumer smoke",
+      "status": "PASS_LOCAL_WHEEL",
+      "evidence": "artifacts/evidence/phase-009-wheel-build.txt; phase-009-wheel-consumer.txt"
     }
   ]
 }

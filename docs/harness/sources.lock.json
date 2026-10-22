@@ -204,5 +204,16 @@
       "https://github.com/pgvector/pgvector#docker",
       "https://docs.localstack.cloud/references/coverage/coverage_sqs/"
     ]
+  },
+  "p05_package": {
+    "name": "supportops-platform",
+    "version": "0.4.0",
+    "origin_commit": "4807292",
+    "artifact_commit": "4b4f831",
+    "artifact_sha256": "c571bb27f72e10aa8af599f44833c141607d65c26d8a1f6780ca4b38b0e956fc",
+    "artifact_path": "artifacts/packages/supportops_platform-0.4.0-py3-none-any.whl",
+    "approved": true,
+    "installed_verified": true,
+    "consumer_test": "artifacts/evidence/phase-009-wheel-consumer.txt; importlib.resources loaded and applied migration 003 against PostgreSQL 16/pgvector 0.8.7"
   }
 }

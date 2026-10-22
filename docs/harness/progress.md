@@ -43,3 +43,5 @@
 - Unit/contract/package suite: 86 passed. Native asyncpg/pgvector migration and hybrid tenant retrieval, cross-process Redis, authenticated loopback MCP, durable API restart, HITL, indirect-injection blocks, correlated trace, dashboard/alert and non-root services passed. Worker kill after a committed simulated effect recovered the job with exactly one product ledger row.
 - Fake control quality gate passed ten fixtures; deliberately degraded control returned exit 1 and was rejected. Semantic/model quality, cost and comparable latency remain PENDING. External identity provider remains INCOMPLETE.
 - Full evidence: `artifacts/evidence/phase-009-full-gate-final.txt`; crash evidence: `phase-009-crash-recovery.txt`; versioned API contract: `openapi.yaml`; decision: `docs/decisions/ADR-006-durable-runtime.md`.
+
+- P05 0.4.0 wheel was built from source commit `4807292`, installed in an isolated target, and its packaged migration 003 was loaded/applied against the real PostgreSQL 16/pgvector 0.8.7 service. SHA-256 and artifact commit are recorded in `docs/harness/sources.lock.json`; see `phase-009-wheel-*.txt`.
