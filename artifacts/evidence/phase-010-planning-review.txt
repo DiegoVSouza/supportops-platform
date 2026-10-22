@@ -1,0 +1,9 @@
+Plan review: PASS
+Reviewed phase 010 SPEC, PLAN, and VERIFY before implementation.
+- Four observable tasks; explicit allowed and forbidden paths.
+- Regression must exercise real loopback MCP connection refusal through P04 retry semantics.
+- Exception groups are transient only when every leaf is an approved transport failure; authorization/permanent failures remain fail-closed.
+- Release bump to 0.4.1 protects immutable 0.4.0 wheel provenance.
+- No public contract/schema changes, external effects, or live model calls.
+Command: git diff --check
+Exit code: 0
