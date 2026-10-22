@@ -1,8 +1,8 @@
 # P05 — Plataforma SupportOps
 
-Serviço independente para suporte multi-tenant com API autenticada por JWT, retrieval
-determinístico com citações, fronteira MCP local, tarefas assíncronas, aprovação humana
-para refunds e interfaces de observabilidade. `LLM_MODE=fake` é o padrão.
+Serviço independente para suporte multi-tenant com API JWT, retrieval determinístico
+com citações, fronteira MCP local, tarefas assíncronas, aprovação humana para refunds e
+interfaces de observabilidade. `LLM_MODE=fake` é o padrão.
 
 ## Demonstração local
 
@@ -11,10 +11,9 @@ uv sync --locked
 uv run --locked python scripts/demo.py
 ```
 
-A demonstração usa memória do processo, tokens curtos, documentos sintéticos e nenhum
-provedor de LLM. A aprovação de refund não produz efeito financeiro. Em fake mode, a
-chave JWT é aleatória e efêmera; configure `JWT_SECRET` se os tokens precisarem sobreviver
-a reinícios.
+A demonstração usa memória do processo, tokens curtos e documentos sintéticos. Ela não
+chama provedor de LLM e uma aprovação de refund não produz efeito financeiro. Em fake mode,
+a chave JWT é aleatória e efêmera; defina `JWT_SECRET` se os tokens precisarem sobreviver a reinícios.
 
 ## Validação
 
@@ -36,6 +35,6 @@ asyncpg nativo, fila durável P04/P01, reinício da API, aprovação distinta e 
 ## Limitações
 
 PostgreSQL/pgvector, Redis, LocalStack, recuperação de worker após efeito, MCP TCP,
-tracing, dashboard e alertas locais passaram na fase 009. Identidade externa segue
-INCOMPLETE; avaliação replay/modelo, custo e latência comparável permanecem PENDING.
-A avaliação local de hit@k mede somente fixtures determinísticas, não qualidade de modelo.
+tracing, dashboard e alertas locais passaram. Identidade externa continua INCOMPLETE;
+replay/modelo, custo e latência comparável continuam PENDING. O hit@k local mede apenas
+fixtures determinísticas, não qualidade de modelo.
