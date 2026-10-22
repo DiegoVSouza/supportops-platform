@@ -24,3 +24,15 @@ Reviewed before implementation: four observable tasks; only P05-owned code/docs/
 
 ## Plan amendment
 The release updates the OpenAPI package-version metadata without changing routes or schemas, adds blank optional OIDC variables to `.env.example`, and forwards OIDC settings only to the MCP container. These owned paths are now explicit above; no client secret is stored in the repository.
+
+## Plan amendment — isolated Keycloak interoperability gate
+
+Task 3 now includes an isolated Keycloak 26.8.1 dev container with an imported disposable realm, a confidential introspection client, a test user, and a loopback-only published port. A standalone integration check will obtain a user token, introspect it through the implemented RFC 7662 verifier, revoke it at Keycloak, and prove the same token becomes inactive. Existing MCP loopback TCP tests continue to cover the MCP authorization boundary.
+
+Additional allowed_write_paths: docker-compose.oidc-test.yml; infra/keycloak/**; scripts/check_keycloak_oidc.py; docs/harness/sources.lock.json; docs/harness/phases/011/**; artifacts/evidence/**.
+
+Additional dependencies: Docker Engine; free isolated host port 28180; official Keycloak image quay.io/keycloak/keycloak:26.8.1; local image pull availability. Test-only bootstrap/client/user credentials may appear only in disposable test configuration and must be clearly labeled; never use real credentials or save issued bearer tokens.
+
+Updated checks: verify port 28180 is unoccupied; `docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml config --quiet`; start only the dedicated Keycloak service; wait for readiness; run `uv run --locked python scripts/check_keycloak_oidc.py`; save commands, exit codes and redacted output; stop only the `p05-oidc-011` stack created for this gate. Preserve all other stacks. If Keycloak cannot start or port is occupied, record INCOMPLETE and leave unrelated containers untouched.
+
+Stop condition: local Keycloak proves interoperability with that local provider only. External issuer acceptance, production configuration, API token revocation, and propagation to queued jobs remain INCOMPLETE. Model evaluation remains PENDING without traceable model cassettes or live-run authorization.
