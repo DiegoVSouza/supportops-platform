@@ -36,3 +36,11 @@ Additional dependencies: Docker Engine; free isolated host port 28180; official 
 Updated checks: verify port 28180 is unoccupied; `docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml config --quiet`; start only the dedicated Keycloak service; wait for readiness; run `uv run --locked python scripts/check_keycloak_oidc.py`; save commands, exit codes and redacted output; stop only the `p05-oidc-011` stack created for this gate. Preserve all other stacks. If Keycloak cannot start or port is occupied, record INCOMPLETE and leave unrelated containers untouched.
 
 Stop condition: local Keycloak proves interoperability with that local provider only. External issuer acceptance, production configuration, API token revocation, and propagation to queued jobs remain INCOMPLETE. Model evaluation remains PENDING without traceable model cassettes or live-run authorization.
+
+## Plan amendment — isolated wheel consumer database
+
+Task 4's 0.4.2 wheel consumer smoke will use a disposable PostgreSQL/pgvector service in the same task-owned Compose project, published only on verified-free loopback port 26433. Never point the consumer at the already-running P05 PostgreSQL service because the smoke applies migrations. Start only `postgres-consumer`, use a unique temporary consumer database, and remove only the task-owned `p05-oidc-011` stack after checks.
+
+Additional allowed_write_paths: artifacts/packages/**; artifacts/evidence/**; docs/harness/sources.lock.json; docker-compose.oidc-test.yml; docs/harness/phases/011/**.
+
+Checks: verify 26433 free; validate Compose config; start `postgres-consumer` only; install the built 0.4.2 wheel into a fresh isolated target; run `scripts/check_wheel_consumer.py` using the disposable PostgreSQL DSN; record commit, artifact SHA-256, commands, exit codes and redacted output; stop only `p05-oidc-011`. If the port is occupied or service cannot start, mark the consumer smoke INCOMPLETE and do not use pre-existing databases.
