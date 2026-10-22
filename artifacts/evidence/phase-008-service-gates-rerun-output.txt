@@ -1,0 +1,61 @@
+StreamableHTTP session manager started
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28001/mcp "HTTP/1.1 200 OK"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28001/mcp "HTTP/1.1 202 Accepted"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28001/mcp "HTTP/1.1 200 OK"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28001/mcp "HTTP/1.1 200 OK"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28001/mcp "HTTP/1.1 200 OK"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28001/mcp "HTTP/1.1 202 Accepted"
+Tool 'lookup_invoice' raised an unexpected exception
+Traceback (most recent call last):
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\mcp\server\mcpserver\tools\base.py", line 179, in run
+    result = await self.fn_metadata.call_fn(self.fn, self.is_async, validated, pass_directly)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\mcp\server\mcpserver\utilities\func_metadata.py", line 164, in call_fn
+    return await anyio.to_thread.run_sync(functools.partial(fn, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "C:\estudo\Golpe\lab\projects\p05\supportops_platform\mcp\tools.py", line 187, in lookup_invoice
+    return gateway.lookup_invoice(transport_principal(), invoice_id)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\estudo\Golpe\lab\projects\p05\supportops_platform\mcp\tools.py", line 101, in lookup_invoice
+    raise AuthorizationError("invoice not found")
+supportops_platform.repositories.AuthorizationError: invoice not found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\mcp\server\mcpserver\server.py", line 442, in _handle_call_tool
+    return await self.call_tool(params.name, params.arguments or {}, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\mcp\server\mcpserver\server.py", line 548, in call_tool
+    return await self._tool_manager.call_tool(name, arguments, context, convert_result=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\mcp\server\mcpserver\tools\tool_manager.py", line 87, in call_tool
+    return await tool.run(arguments, context, convert_result=convert_result)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\mcp\server\mcpserver\tools\base.py", line 213, in run
+    raise UnexpectedToolError(f"Error executing tool {self.name}") from exc
+mcp.server.mcpserver.exceptions.UnexpectedToolError: Error executing tool lookup_invoice
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28001/mcp "HTTP/1.1 200 OK"
+HTTP Request: POST http://127.0.0.1:28001/mcp "HTTP/1.1 401 Unauthorized"
+StreamableHTTP session manager shutting down
+pgvector_service: PASS extension=0.8.7 indexes=knowledge_chunks_embedding_hnsw,knowledge_chunks_search_gin tenant_a_results=1 tenant_b_excluded=true embeddings=deterministic-fake
+mcp_tcp_auth: PASS endpoint=http://127.0.0.1:28001/mcp tenant_a_allowed=true tenant_b_denied=true missing_token_http=401 verifier=local-test-double

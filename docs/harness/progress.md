@@ -29,3 +29,9 @@
 - MCP 2.3.0 Streamable HTTP bearer verification derives tenant/roles/scopes from trusted SDK request context. Authenticated and cross-tenant calls pass using the official SDK client over in-process ASGI; TCP-hosted service/identity-provider acceptance remains INCOMPLETE.
 - Fake/local checks, package gate, and full gate were rerun; exact outputs are saved in `artifacts/evidence/remediation-*.txt`. PostgreSQL/Redis/LocalStack E2E, dashboard/alert E2E, replay/model evaluation remain INCOMPLETE/PENDING.
 - `docker info` was attempted for service integration and exited 1 because Docker Desktop's Linux engine pipe was unavailable. No Compose or service E2E was run.
+
+## 2026-10-21 — pgvector and authenticated MCP service gates
+
+- PostgreSQL 16 with pgvector 0.8.7 applied the migration and verified the HNSW and GIN indexes. Hybrid retrieval returned the matching tenant's row and excluded another tenant using deterministic fake vectors. The script used a psycopg adapter for the repository's asyncpg-style placeholders because native asyncpg is absent from the lock; native driver integration remains INCOMPLETE.
+- Authenticated MCP Streamable HTTP ran over loopback TCP. The local verifier allowed the matching tenant, denied cross-tenant retrieval, and rejected a missing bearer with HTTP 401. External identity-provider acceptance remains INCOMPLETE.
+- The full gate remains INCOMPLETE: local tests, package provenance and OpenAPI pass, but the API still lacks a durable PostgreSQL/Redis queue-to-P04 worker-to-P01 agent product path. Semantic evaluation, replay, model quality, cost and comparable latency remain PENDING. Evidence: `artifacts/evidence/phase-008-service-gates-rerun.txt` and `phase-008-full-gate-rerun.txt`.

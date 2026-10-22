@@ -33,14 +33,14 @@
     {
       "id": "service-backed-async",
       "description": "PostgreSQL and SQS integration against real services",
-      "status": "INCOMPLETE",
-      "evidence": "artifacts/evidence/remediation-service-availability.txt (docker info exit 1: Docker daemon unavailable)"
+      "status": "INCOMPLETE_PRODUCT_DURABLE_QUEUE",
+      "evidence": "artifacts/evidence/phase-008-full-gate-rerun.txt (API still uses in-memory queue/store; product worker path not implemented)"
     },
     {
       "id": "network-mcp-auth",
-      "description": "Verified HTTP bearer context creates tenant principal; actual TCP deployment not exercised",
-      "status": "INCOMPLETE",
-      "evidence": "artifacts/evidence/remediation-local-tests.txt; service network gate not run"
+      "description": "Verified bearer creates a tenant principal through authenticated Streamable HTTP over loopback TCP",
+      "status": "PASS_LOCAL_TCP; INCOMPLETE_EXTERNAL_IDENTITY",
+      "evidence": "artifacts/evidence/phase-008-service-gates-rerun.txt"
     },
     {
       "id": "pgvector-hybrid-contract",
@@ -51,14 +51,20 @@
     {
       "id": "pgvector-service",
       "description": "PostgreSQL pgvector migration, HNSW index, and hybrid query against a real service",
-      "status": "INCOMPLETE",
-      "evidence": "artifacts/evidence/remediation-service-availability.txt (Docker daemon unavailable; PostgreSQL/pgvector not started)"
+      "status": "PASS_SERVICE_QUERY; INCOMPLETE_NATIVE_ASYNCPG_DRIVER",
+      "evidence": "artifacts/evidence/phase-008-service-gates-rerun.txt"
     },
     {
       "id": "real-model-evaluation",
       "description": "Replay/live model quality evaluation",
       "status": "PENDING",
       "evidence": "No cassette or authorized live run"
+    },
+    {
+      "id": "product-end-to-end-orchestration",
+      "description": "Durable authenticated API to P04 worker to P01 agent to PostgreSQL RAG/MCP flow",
+      "status": "INCOMPLETE",
+      "evidence": "artifacts/evidence/phase-008-full-gate-rerun.txt; current API queue/store are in-memory and durable integration is not implemented"
     }
   ]
 }
