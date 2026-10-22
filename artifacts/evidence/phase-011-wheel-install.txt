@@ -1,0 +1,9 @@
+P05 0.4.2 isolated consumer installation
+
+COMMAND=uv pip install --offline --no-deps --target <isolated-consumer-target> artifacts/packages/supportops_platform-0.4.2-py3-none-any.whl
+Using CPython 3.13.12 interpreter at: .venv\Scripts\python.exe
+Resolved 1 package in 7ms
+Prepared 1 package in 31ms
+Installed 1 package in 15ms
+ + supportops-platform==0.4.2 (from file:///C:/estudo/Golpe/lab/projects/p05/artifacts/packages/supportops_platform-0.4.2-py3-none-any.whl)
+EXIT_CODE=0

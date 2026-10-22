@@ -1,4 +1,4 @@
-COMMAND: uv run --locked python scripts/check_full.py --skip-services
+COMMAND=uv run --locked python scripts/check_full.py --skip-services
 $ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m compileall -q supportops_platform tests
 layer=compile
 exit_code=0; expected=0
@@ -6,8 +6,8 @@ exit_code=0; expected=0
 $ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m pytest
 layer=unit/contract/package consumer
 exit_code=0; expected=0
-........................................................................ [ 70%]
-..............................                                           [100%]
+........................................................................ [ 69%]
+...............................                                          [100%]
 ============================== warnings summary ===============================
 tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
   C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\websockets\legacy\__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
@@ -18,7 +18,7 @@ tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
     from websockets.server import WebSocketServerProtocol
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-102 passed, 2 warnings in 10.12s
+103 passed, 2 warnings in 10.66s
 
 $ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/eval_retrieval.py
 layer=retrieval fixture
@@ -62,4 +62,4 @@ quality gate: FAIL evaluation regression exceeds 0.000: decision_accuracy: drop=
 required service integration: INCOMPLETE; explicitly omitted
 semantic/model cost/latency evaluation: PENDING; no traceable cassette or authorized model run
 check-full: INCOMPLETE;
-exit_code=2
+EXIT_CODE=2

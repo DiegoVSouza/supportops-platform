@@ -7,6 +7,9 @@
 | Unit/contract/package suite | `uv run --locked pytest -q` | 0 | `artifacts/evidence/phase-011-unit.txt` | PASS; 103 passed |
 | Fast gate | `uv run --locked python scripts/check_fast.py` | 0 | `artifacts/evidence/phase-011-fast.txt` | PASS |
 | OpenAPI package version and compatibility paths | `uv run --locked python scripts/export_openapi.py --check` | 0 | `artifacts/evidence/phase-011-openapi.txt` | PASS; version 0.4.2, routes unchanged |
+| Compose definition for isolated Keycloak and disposable PostgreSQL/pgvector consumer | `docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml config --quiet` | 0 | `artifacts/evidence/phase-011-compose-config.txt` | PASS |
+| P05 0.4.2 wheel build from committed source | `uv build --offline --wheel --out-dir artifacts/packages` | 0 | `artifacts/evidence/phase-011-wheel-build.txt` | PASS; SHA-256 recorded in sources.lock |
+| Isolated 0.4.2 wheel install and packaged migration against disposable PostgreSQL 16/pgvector 0.8.7 | `uv pip install --offline --no-deps --target <isolated-consumer-target> ...; python scripts/check_wheel_consumer.py` | 0 | `artifacts/evidence/phase-011-wheel-install.txt`; `phase-011-wheel-consumer.txt` | PASS_LOCAL_WHEEL_CONSUMER |
 | Compose configuration | `docker compose -f docker-compose.services.yml config --quiet` with local-only placeholder variables | 0 | `artifacts/evidence/phase-011-compose-config.txt` | PASS |
 | Fake control regression | `uv run --locked python scripts/check_quality.py` | 0 | `artifacts/evidence/phase-011-fake-quality.txt` | PASS fixtures only; model quality PENDING |
 | Full gate with existing Docker service stack intentionally not touched | `uv run --locked python scripts/check_full.py --skip-services` | 2 | `artifacts/evidence/phase-011-full-gate-without-existing-stack.txt` | INCOMPLETE by design; unit/package/fake/retrieval gates passed, service-stack gate omitted |

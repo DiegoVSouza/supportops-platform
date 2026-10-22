@@ -1,2 +1,3 @@
 COMMAND=docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml config --quiet
+Services: disposable Keycloak 26.8.1 and PostgreSQL/pgvector 0.8.7; loopback ports 28180 and 26433
 EXIT_CODE=0

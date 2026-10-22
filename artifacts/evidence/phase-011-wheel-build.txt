@@ -1,0 +1,9 @@
+P05 local 0.4.2 wheel build
+Source commit: 7e3e6fca067e41d210e2f9010eb77636a3ca7458
+
+COMMAND=uv build --offline --wheel --out-dir artifacts/packages
+Building wheel...
+Successfully built artifacts\packages\supportops_platform-0.4.2-py3-none-any.whl
+EXIT_CODE=0
+SHA256=65B0CEACEB017CEB2781ABF597ED8C9A70892EEE1933D3942C8B02EE4861EE79
+WHEEL=artifacts/packages/supportops_platform-0.4.2-py3-none-any.whl

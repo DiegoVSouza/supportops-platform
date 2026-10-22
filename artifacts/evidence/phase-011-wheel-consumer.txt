@@ -1,0 +1,6 @@
+P05 0.4.2 isolated wheel consumer smoke
+Database: disposable pgvector/pg16 service in p05-oidc-011 on loopback 26433
+
+COMMAND=python scripts/check_wheel_consumer.py with P05_WHEEL_TARGET=<isolated-consumer-target>, PYTHONPATH=<isolated-consumer-target>, P05_TEST_DSN=<disposable local PostgreSQL>
+isolated wheel consumer: PASS; version=0.4.2; source=C:\estudo\Golpe\lab\projects\p05\artifacts\evidence\p05-wheel-consumer-042\supportops_platform; migration loaded/applied; PostgreSQL pgvector=0.8.7
+EXIT_CODE=0
