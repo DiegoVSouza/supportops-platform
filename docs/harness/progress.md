@@ -83,3 +83,9 @@ A disposable Keycloak 26.8.1 container issued a test token; authenticated RFC 76
 - Phase 015 is planned to add optional RFC 7662 authentication at the API boundary, reusing the existing introspection contract while keeping API scopes and tenant checks local to the route layer. Local fake-mode HS256 remains available for development.
 - The plan includes active/revoked token checks through the API using disposable Keycloak and explicitly excludes revocation of jobs accepted before token revocation. That policy remains pending a separate decision.
 - Review: accepted for implementation. Harness docs check passed with 0 errors and 0 warnings. No product code or identity credentials changed in this planning task.
+
+## 2026-10-22 — Phase 015 API identity implementation
+
+- API authentication can use the configured RFC 7662 verifier (`API_AUTH_MODE=oidc`, `API_OIDC_*`); local HS256 remains the default for fake-mode development. API route scopes and tenant checks still run after token verification.
+- Unit contracts passed (28 tests). Disposable Keycloak 26.8.1 proved an active bearer could call the API and MCP; after revocation both returned HTTP 401. Fast gate passed. Full isolated fake-mode gate passed with 104 tests; local model-quality fixtures remain control-flow only.
+- Keycloak and the isolated full-gate Compose stack were removed. Existing P05 and other lab stacks were preserved. External issuer acceptance remains incomplete. The accepted-job snapshot currently has no expiry enforcement; phase 016 will implement the selected 15-minute lease. Model evaluation remains PENDING by user choice.

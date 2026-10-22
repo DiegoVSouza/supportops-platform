@@ -38,7 +38,8 @@ class JWTTokenVerifier:
 class IntrospectionTokenVerifier:
     """Verify OAuth bearer tokens with RFC 7662 on every request, without caching revocation state."""
 
-    def __init__(self, endpoint, client_id, client_secret, issuer, audience, timeout=3.0):
+    def __init__(self, endpoint, client_id, client_secret, issuer, audience, timeout=3.0,
+                 required_scopes=("billing:read",)):
         parsed = urlsplit(endpoint)
         if parsed.scheme != "https":
             try:
@@ -57,6 +58,7 @@ class IntrospectionTokenVerifier:
         self.issuer = issuer.rstrip("/")
         self.audience = audience
         self.timeout = timeout
+        self.required_scopes = frozenset(required_scopes)
 
     async def verify_token(self, token):
         if not isinstance(token, str) or not token:
@@ -96,7 +98,7 @@ class IntrospectionTokenVerifier:
             ):
                 return None
             scopes = scope.split()
-            if "billing:read" not in scopes:
+            if not self.required_scopes.issubset(scopes):
                 return None
             return AccessToken(
                 token=token,

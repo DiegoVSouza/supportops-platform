@@ -3,6 +3,7 @@
 ## allowed_write_paths
 - `supportops_platform/auth/**`, `supportops_platform/api/app.py`, `supportops_platform/mcp/identity.py`
 - `tests/test_api_security.py`, `tests/test_mcp_oidc.py`, `scripts/check_keycloak_oidc.py`
+- `infra/keycloak/p05-local-realm.json`
 - `docs/harness/phases/015/**`, `docs/harness/security.md`, `docs/harness/feature_list.json`, `docs/harness/progress.md`
 - `artifacts/evidence/phase-015-*`
 
@@ -24,4 +25,4 @@
 - `python scripts/check_keycloak_oidc.py` against disposable local Keycloak
 - `python scripts/harness/check.py --root . --project p05 --docs`
 
-Plan review: pending implementation kickoff.
+Plan review: accepted. Implementation completed within the approved API identity boundary.

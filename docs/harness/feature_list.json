@@ -2,9 +2,9 @@
   "features": [
     {
       "id": "auth-tenant-scope",
-      "description": "JWT principal scopes API and repository access by tenant",
-      "status": "PASS",
-      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
+      "description": "Locally verified JWT or introspected principal scopes API and repository access by tenant",
+      "status": "PASS_LOCAL_HS256_AND_KEYCLOAK_OIDC; INCOMPLETE_EXTERNAL_IDP_ACCEPTANCE",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt; artifacts/evidence/phase-015-keycloak-api.txt"
     },
     {
       "id": "mcp-trusted-principal",
@@ -58,7 +58,7 @@
       "id": "real-model-evaluation",
       "description": "Replay/live model quality evaluation",
       "status": "PENDING",
-      "evidence": "Only fake control fixtures and P00 demo fixture cassette exist; no traceable model cassette for two configurations and no live run authorized"
+      "evidence": "Fake control fixtures are not model quality; user selected to keep evaluation pending until a traceable cassette or separately authorized live run is available"
     },
     {
       "id": "product-end-to-end-orchestration",
@@ -86,7 +86,7 @@
     },
     {
       "id": "durable-authorization-snapshot",
-      "description": "Verified subject, tenant, roles, and scopes remain unchanged through delayed HITL approval resume; external revocation is not observed",
+      "description": "Verified subject, tenant, roles, and scopes remain unchanged through delayed HITL approval resume; selected 15-minute lease enforcement is planned for phase 016",
       "status": "PASS_LOCAL_SERVICE; INCOMPLETE_EXTERNAL_IDENTITY",
       "evidence": "artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-014-service-summary.json"
     },

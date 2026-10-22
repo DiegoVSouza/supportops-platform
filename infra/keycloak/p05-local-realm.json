@@ -14,6 +14,11 @@
       "name": "billing:read",
       "protocol": "openid-connect",
       "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "false" }
+    },
+    {
+      "name": "ticket:read",
+      "protocol": "openid-connect",
+      "attributes": { "include.in.token.scope": "true", "display.on.consent.screen": "false" }
     }
   ],
   "clients": [
@@ -29,7 +34,7 @@
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
       "fullScopeAllowed": true,
-      "optionalClientScopes": ["billing:read"],
+      "optionalClientScopes": ["billing:read", "ticket:read"],
       "protocolMappers": [
         {
           "name": "P05 introspection client audience",

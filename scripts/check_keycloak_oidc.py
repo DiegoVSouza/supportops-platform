@@ -9,11 +9,13 @@ import time
 
 import httpx2
 import uvicorn
+from fastapi.testclient import TestClient
 from mcp.client.session import ClientSession
 from mcp.client.streamable_http import streamable_http_client
 from mcp.server.transport_security import TransportSecuritySettings
 
 from supportops_platform.mcp.identity import IntrospectionTokenVerifier
+from supportops_platform.api.app import create_app
 from supportops_platform.mcp.tools import create_network_mcp_server
 
 
@@ -46,7 +48,7 @@ async def check():
                     "client_secret": CLIENT_SECRET,
                     "username": "agent-a",
                     "password": "p05-test-password-only",
-                    "scope": "openid billing:read",
+                    "scope": "openid billing:read ticket:read",
                 },
             )
             if token_response.is_error:
@@ -84,6 +86,20 @@ async def check():
             }:
                 raise RuntimeError("Keycloak introspection claims did not map to the P05 principal")
             print("PASS Keycloak issued token; introspection accepted expected principal, tenant, role, audience, and scope")
+
+            api_verifier = IntrospectionTokenVerifier(
+                endpoint=ENDPOINT,
+                client_id=CLIENT_ID,
+                client_secret=CLIENT_SECRET,
+                issuer=ISSUER,
+                audience=RESOURCE,
+                required_scopes=(),
+            )
+            api = TestClient(create_app(token_secret="p05-keycloak-test-secret-with-32-bytes", token_verifier=api_verifier))
+            api_headers = {"Authorization": f"Bearer {token}"}
+            if api.get("/v1/tickets", headers=api_headers).status_code != 200:
+                raise RuntimeError("Keycloak bearer could not call an authorized API route")
+            print("PASS Keycloak bearer called the tenant-scoped tickets API")
 
             mcp_server = create_network_mcp_server(verifier, ISSUER, RESOURCE)
             app = mcp_server.streamable_http_app(
@@ -165,7 +181,10 @@ async def check():
             )
             if denied.status_code != 401:
                 raise RuntimeError("MCP did not reject the Keycloak bearer after revocation")
-            print("PASS Keycloak revoked token became inactive and MCP returned HTTP 401")
+            api_denied = api.get("/v1/tickets", headers=api_headers)
+            if api_denied.status_code != 401:
+                raise RuntimeError("API did not reject the Keycloak bearer after revocation")
+            print("PASS Keycloak revoked token became inactive and MCP/API returned HTTP 401")
     finally:
         if uv_server is not None:
             uv_server.should_exit = True

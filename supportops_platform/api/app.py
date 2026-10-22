@@ -17,6 +17,7 @@ from jwt.exceptions import InvalidTokenError
 from supportops_platform import __version__
 from supportops_platform.agents.triage import run_fake_triage
 from supportops_platform.auth.jwt import decode_principal
+from supportops_platform.mcp.identity import IntrospectionTokenVerifier
 from supportops_platform.contracts import Principal, Ticket
 from supportops_platform.async_tasks.queue import LocalTaskQueue
 from supportops_platform.obs.metrics import MetricsRegistry
@@ -64,6 +65,7 @@ def create_app(
     retriever: LocalRetriever | None = None,
     task_queue=None,
     rate_limiter=None,
+    token_verifier=None,
 ) -> FastAPI:
     if requests_per_minute < 1:
         raise ValueError("requests_per_minute must be positive")
@@ -85,17 +87,47 @@ def create_app(
     app.state.rate_limiter = rate_limiter
     app.state.metrics = MetricsRegistry()
     app.state.token_secret = secret
+    auth_mode = os.getenv("API_AUTH_MODE", "local")
+    if auth_mode not in {"local", "oidc"}:
+        raise ValueError("API_AUTH_MODE must be local or oidc")
+    if token_verifier is not None:
+        auth_mode = "oidc"
+    if auth_mode == "oidc" and token_verifier is None:
+        names = {
+            "endpoint": "API_OIDC_INTROSPECTION_URL",
+            "client_id": "API_OIDC_CLIENT_ID",
+            "client_secret": "API_OIDC_CLIENT_SECRET",
+            "issuer": "API_OIDC_ISSUER",
+            "audience": "API_OIDC_AUDIENCE",
+        }
+        values = {key: os.getenv(name) for key, name in names.items()}
+        if not all(values.values()):
+            raise ValueError("API OIDC mode requires all API_OIDC_* settings")
+        token_verifier = IntrospectionTokenVerifier(**values, required_scopes=())
+    app.state.auth_mode = auth_mode
+    app.state.token_verifier = token_verifier
     app.state.rate_limit = requests_per_minute
     app.state.request_times = {}
     app.state.request_times_lock = Lock()
     bearer_scheme = HTTPBearer(auto_error=False)
 
-    def principal(
+    async def principal(
         credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     ) -> Principal:
         if credentials is None:
             raise HTTPException(status_code=401, detail="bearer token required", headers={"WWW-Authenticate": "Bearer"})
         try:
+            if app.state.auth_mode == "oidc":
+                accepted = await app.state.token_verifier.verify_token(credentials.credentials)
+                if accepted is None:
+                    raise InvalidTokenError("external token is inactive or invalid")
+                claims = accepted.claims
+                return Principal(
+                    subject=accepted.subject,
+                    tenant_id=claims["tenant_id"],
+                    roles=frozenset(claims["roles"]),
+                    scopes=frozenset(accepted.scopes),
+                )
             return decode_principal(credentials.credentials, app.state.token_secret)
         except InvalidTokenError as exc:
             raise HTTPException(status_code=401, detail="invalid token", headers={"WWW-Authenticate": "Bearer"}) from exc

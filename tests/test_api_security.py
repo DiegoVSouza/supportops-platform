@@ -1,4 +1,5 @@
 from datetime import timedelta
+from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 
@@ -80,6 +81,28 @@ def test_invalid_signature_and_expired_jwt_are_rejected() -> None:
     for token in (expired, wrong_key, "not-a-jwt"):
         response = api.get("/v1/tickets", headers={"Authorization": f"Bearer {token}"})
         assert response.status_code == 401
+
+
+def test_api_can_use_introspection_verified_principal() -> None:
+    class Verifier:
+        async def verify_token(self, token):
+            if token == "inactive":
+                return None
+            scopes = ["ticket:read"] if token == "reader" else ["ticket:read", "ticket:write"]
+            return SimpleNamespace(
+                subject="issuer-agent",
+                scopes=scopes,
+                claims={"tenant_id": "tenant-a", "roles": ["agent"]},
+            )
+
+    api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=Verifier()))
+    assert api.get("/v1/tickets", headers={"Authorization": "Bearer active"}).status_code == 200
+    assert api.get("/v1/tickets", headers={"Authorization": "Bearer inactive"}).status_code == 401
+    assert api.post(
+        "/v1/tickets",
+        headers={"Authorization": "Bearer reader"},
+        json={"customer_id": "c", "subject": "s", "body": "b"},
+    ).status_code == 403
 
 
 def test_tenant_cannot_read_another_tenant_ticket() -> None:

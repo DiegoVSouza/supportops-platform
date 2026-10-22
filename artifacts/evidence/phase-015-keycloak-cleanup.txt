@@ -1,0 +1,4 @@
+COMMAND=docker ps --filter name=p05-oidc-015
+EXIT_CODE=0
+OUTPUT:
+No isolated Keycloak containers remain.
