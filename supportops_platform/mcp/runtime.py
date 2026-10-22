@@ -11,7 +11,7 @@ from mcp.client.streamable_http import streamable_http_client
 from mcp.server.transport_security import TransportSecuritySettings
 from opentelemetry import propagate, trace
 
-from .identity import JWTTokenVerifier
+from .identity import CompositeTokenVerifier, IntrospectionTokenVerifier, JWTTokenVerifier
 from .tools import create_network_mcp_server
 
 
@@ -28,12 +28,44 @@ def settings():
     return (os.environ["MCP_SIGNING_SECRET"],os.environ["MCP_ISSUER"],os.environ["MCP_URL"])
 
 
+def oidc_settings():
+    names = (
+        "MCP_OIDC_INTROSPECTION_URL",
+        "MCP_OIDC_CLIENT_ID",
+        "MCP_OIDC_CLIENT_SECRET",
+        "MCP_OIDC_ISSUER",
+        "MCP_OIDC_AUDIENCE",
+    )
+    values = {name: os.getenv(name, "").strip() for name in names}
+    if not any(values.values()):
+        return None
+    if not all(values.values()):
+        raise RuntimeError("MCP OIDC introspection requires endpoint, client credentials, issuer, and audience")
+    return values
+
+
 def create_mcp_app():
     from supportops_platform.integrations.observability import configure_telemetry
     configure_telemetry()
     secret,issuer,resource=settings()
-    server=create_network_mcp_server(JWTTokenVerifier(secret,issuer,resource),issuer,resource)
+    local_verifier = JWTTokenVerifier(secret,issuer,resource)
+    external = oidc_settings()
+    verifier = local_verifier
+    server_issuer = issuer
+    if external:
+        verifier = CompositeTokenVerifier(
+            local_verifier,
+            IntrospectionTokenVerifier(
+                endpoint=external["MCP_OIDC_INTROSPECTION_URL"],
+                client_id=external["MCP_OIDC_CLIENT_ID"],
+                client_secret=external["MCP_OIDC_CLIENT_SECRET"],
+                issuer=external["MCP_OIDC_ISSUER"],
+                audience=external["MCP_OIDC_AUDIENCE"],
+            ),
+        )
+        server_issuer = external["MCP_OIDC_ISSUER"]
     host=urlsplit(resource).netloc
+    server=create_network_mcp_server(verifier,server_issuer,resource)
     app=server.streamable_http_app(stateless_http=True,json_response=True,
                                   transport_security=TransportSecuritySettings(allowed_hosts=[host,'127.0.0.1:28001','localhost:28001']))
     return TracedMCP(app)

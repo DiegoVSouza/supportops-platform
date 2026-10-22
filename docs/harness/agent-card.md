@@ -24,6 +24,11 @@ The isolated Compose demo passed durable API submission/restart, P04 worker reco
 - MCP, PostgreSQL, Redis/SQS transport errors are retried only when explicitly classified as temporary; authorization and unknown failures remain fail-closed.
 - Durable jobs retain the verified acceptance-time subject, tenant, roles, and scopes through delayed approval resume. This local snapshot does not track identity-provider revocation; external issuer/delegation remains INCOMPLETE.
 
+## Phase 011 external MCP token verification
+
+- Optional `MCP_OIDC_*` configuration uses an authorization server's RFC 7662 introspection endpoint for direct network MCP callers. Introspection runs for each MCP request; a token reported inactive is rejected. Internal worker delegation continues using the short-lived local signer.
+- The local TCP protocol test proves active-to-revoked behavior. No real external issuer is configured, API bearer verification remains local HS256, and revocation is not propagated to queued work after acceptance; those gates remain INCOMPLETE.
+
 ## Phase 010 release
 
-- P05 0.4.1 is a local versioned wheel with immutable source/artifact provenance and an isolated PostgreSQL migration consumer smoke. This local package gate is not a production-readiness signal.
+- P05 0.4.2 is a local versioned wheel with immutable source/artifact provenance and an isolated PostgreSQL migration consumer smoke. This local package gate is not a production-readiness signal.

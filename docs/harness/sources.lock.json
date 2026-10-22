@@ -17,10 +17,10 @@
   "mcp": {
     "version": "2.3.0",
     "source": "https://pypi.org/project/mcp/2.3.0/; https://py.sdk.modelcontextprotocol.io/run/authorization/; https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/run/asgi.md; https://modelcontextprotocol.io/specification/draft/basic/transports/streamable-http",
-    "checked": "2026-10-21",
-    "tested_api": "MCPServer(token_verifier, auth), streamable_http_app, get_access_token, streamable_http_client; verified by tests/test_mcp_transport_auth.py",
-    "tested_network_transport": "loopback TCP 127.0.0.1:28001; SDK Streamable HTTP; local TestTokenVerifier; tests tenant scoping and missing bearer",
-    "verification_evidence": "artifacts/evidence/phase-008-service-gates.txt"
+    "checked": "2026-10-22",
+    "tested_api": "MCPServer(token_verifier, auth), TokenVerifier.verify_token, streamable_http_app, get_access_token, streamable_http_client; adapter tested in tests/test_mcp_oidc.py",
+    "tested_network_transport": "ephemeral loopback TCP; Streamable HTTP; local RFC 7662 protocol issuer; a token reported inactive after revocation is denied",
+    "verification_evidence": "artifacts/evidence/phase-011-introspection-green.txt; external IdP compatibility remains pending"
   },
   "pgvector": {
     "version": "0.8.7",
@@ -187,8 +187,8 @@
     "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
   },
   "runtime_contract": {
-    "api_version": "0.4.1",
-    "adr": "docs/decisions/ADR-007-transport-retry-and-delegation.md",
+    "api_version": "0.4.2",
+    "adr": "docs/decisions/ADR-008-mcp-token-introspection.md",
     "openapi": "openapi.yaml",
     "mcp_protocol_tested": "2025-11-25",
     "mcp_protocol_source": "https://modelcontextprotocol.io/specification/draft/basic/transports/streamable-http",
@@ -198,12 +198,37 @@
       "https://redis.io/docs/latest/commands/eval/",
       "https://opentelemetry.io/docs/languages/python/propagation/",
       "https://py.sdk.modelcontextprotocol.io/run/authorization/",
+      "https://www.rfc-editor.org/rfc/rfc7662.html",
       "https://modelcontextprotocol.io/specification/draft/basic/transports/streamable-http",
       "https://docs.langchain.com/oss/python/langgraph/persistence",
       "https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/",
       "https://github.com/pgvector/pgvector#docker",
       "https://docs.localstack.cloud/references/coverage/coverage_sqs/"
     ]
+  },
+  "oauth_token_introspection": {
+    "protocol": "RFC 7662",
+    "source": "https://www.rfc-editor.org/rfc/rfc7662.html",
+    "mcp_sdk_docs": "https://py.sdk.modelcontextprotocol.io/run/authorization/",
+    "checked": "2026-10-22",
+    "behavior": "POST token introspection with HTTP Basic resource-client authentication; active, issuer, audience, subject (or username if RFC 7662 omits optional sub), tenant, roles, scope and expiry are required; each external MCP bearer is checked on every request without a positive-result cache",
+    "transport_test": "MCP TCP protocol issuer and actual Keycloak 26.8.1 local container; active token accepted and Keycloak-revoked token becomes inactive; external provider remains unconfigured",
+    "keycloak": {
+      "version": "26.8.1",
+      "image": "quay.io/keycloak/keycloak:26.8.1",
+      "sources": [
+        "https://www.keycloak.org/downloads",
+        "https://www.keycloak.org/getting-started/getting-started-docker",
+        "https://www.keycloak.org/server/importExport",
+        "https://www.keycloak.org/server/containers",
+        "https://www.keycloak.org/docs/latest/authorization_services/index.html",
+        "https://www.keycloak.org/securing-apps/oidc-layers"
+      ],
+      "checked": "2026-10-22",
+      "verification": "Disposable imported realm; direct-grant test user; authenticated token introspection and token revocation; artifacts/evidence/phase-011-keycloak-oidc.txt",
+      "issuer": "http://127.0.0.1:28180/realms/p05-local",
+      "limits": "Local development issuer only; not production TLS, external IdP, API bearer revocation, or queued-job revocation"
+    }
   },
   "p05_package": {
     "name": "supportops-platform",

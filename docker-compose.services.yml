@@ -1,6 +1,6 @@
 x-runtime: &runtime
   build: .
-  image: supportops-platform:0.4.0-local
+  image: supportops-platform:0.4.2-local
   environment: &runtime-env
     LLM_MODE: fake
     P05_RUNTIME: services
@@ -55,6 +55,11 @@ services:
     environment:
       <<: *runtime-env
       OTEL_SERVICE_NAME: p05-mcp
+      MCP_OIDC_INTROSPECTION_URL: ${MCP_OIDC_INTROSPECTION_URL:-}
+      MCP_OIDC_CLIENT_ID: ${MCP_OIDC_CLIENT_ID:-}
+      MCP_OIDC_CLIENT_SECRET: ${MCP_OIDC_CLIENT_SECRET:-}
+      MCP_OIDC_ISSUER: ${MCP_OIDC_ISSUER:-}
+      MCP_OIDC_AUDIENCE: ${MCP_OIDC_AUDIENCE:-}
   otel:
     image: otel/opentelemetry-collector-contrib:0.161.0
     command: [--config=/etc/otelcol/config.yaml]

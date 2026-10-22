@@ -13,8 +13,8 @@
 ## Secrets and egress
 - Credentials live outside source control. CI and default demos use `LLM_MODE=fake` and no provider credentials.
 - MCP allowlist contains local mock billing/CRM only. Deny arbitrary network egress in test/runtime profiles.
-- The API verifies HS256 JWT signature, issuer, expiry, and required claims, using `JWT_SECRET`. The checked-in demo secret and token helper are only for isolated local execution; external identity, key rotation, and production credentials are not implemented.
-- The offline MCP mock binds an injected principal and is not an authentication scheme. The Streamable HTTP server uses the MCP SDK 2.3.0 bearer verifier and derives tenant, roles, and scopes from the verified access token in request context; model/tool arguments never set identity. The signed delegated-token service passes loopback TCP checks, including missing-token rejection and cross-tenant denial. External identity-provider acceptance remains INCOMPLETE.
+- The API verifies HS256 JWT signature, issuer, expiry, and required claims, using `JWT_SECRET`. The checked-in demo secret and token helper are only for isolated local execution; external identity, key rotation, and production credentials are not implemented for the API.
+- The offline MCP mock binds an injected principal and is not an authentication scheme. The Streamable HTTP server uses the MCP SDK 2.3.0 bearer verifier and derives tenant, roles, and scopes from verified access-token context; model/tool arguments never set identity. Optional `MCP_OIDC_*` settings enable RFC 7662 introspection for direct MCP callers. External tokens are checked on every MCP request, without caching a positive result after issuer revocation. The API remains local HS256, while worker calls continue using the persisted acceptance-time authorization snapshot; revocation is not propagated to queued work. External provider acceptance remains INCOMPLETE until the selected issuer is configured and tested.
 
 ## Required security tests
 - Tenant A cannot access Tenant B resources even with a valid token for A.

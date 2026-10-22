@@ -44,3 +44,11 @@ Task 4's 0.4.2 wheel consumer smoke will use a disposable PostgreSQL/pgvector se
 Additional allowed_write_paths: artifacts/packages/**; artifacts/evidence/**; docs/harness/sources.lock.json; docker-compose.oidc-test.yml; docs/harness/phases/011/**.
 
 Checks: verify 26433 free; validate Compose config; start `postgres-consumer` only; install the built 0.4.2 wheel into a fresh isolated target; run `scripts/check_wheel_consumer.py` using the disposable PostgreSQL DSN; record commit, artifact SHA-256, commands, exit codes and redacted output; stop only `p05-oidc-011`. If the port is occupied or service cannot start, mark the consumer smoke INCOMPLETE and do not use pre-existing databases.
+
+## Plan amendment — exercise Keycloak bearer at MCP TCP boundary
+
+The Keycloak integration check will use its issued bearer against a real loopback Streamable HTTP MCP server on verified-free port 28181 before revocation, then prove the same request is rejected after revocation. The test realm's audience mapper includes the exact MCP resource URI used by that ephemeral test server. This joins real local-provider introspection with the already existing protocol-contract TCP test.
+
+Additional dependencies: free loopback port 28181 and a local uvicorn test server. Verify the port before binding; do not alter the pre-existing P05 MCP service on 28001. The test server runs in-process and is stopped by the check.
+
+Updated acceptance: Keycloak token must pass the MCP SDK authorization boundary and call an allowlisted read-only tool; after provider revocation, the same token must receive HTTP 401. Record no token or credential values.

@@ -1,0 +1,29 @@
+services:
+  postgres-consumer:
+    image: pgvector/pgvector:0.8.7-pg16
+    environment:
+      POSTGRES_DB: p05_consumer_test
+      POSTGRES_USER: p05_test
+      POSTGRES_PASSWORD: local-consumer-test-only
+    ports:
+      - "127.0.0.1:26433:5432"
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U p05_test -d p05_consumer_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    command: [start-dev, --import-realm]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: local-admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: local-admin-test-only
+    ports:
+      - "127.0.0.1:28180:8080"
+    volumes:
+      - ./infra/keycloak:/opt/keycloak/data/import:ro
+    healthcheck:
+      test: [CMD-SHELL, "bash -c '</dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 60

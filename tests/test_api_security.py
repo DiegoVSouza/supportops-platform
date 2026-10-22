@@ -40,7 +40,7 @@ def test_health_is_fake_by_default_and_openapi_is_versioned() -> None:
     assert api.get("/health").json()["llm_mode"] == "fake"
     assert api.get("/healthz").json()["status"] == "ok"
     schema = api.get("/openapi.json").json()
-    assert schema["info"]["version"] == "0.4.1"
+    assert schema["info"]["version"] == "0.4.2"
     assert "/healthz" in schema["paths"]
     assert "/health" not in schema["paths"]
     assert "/v1/tickets/{ticket_id}/refund-approvals" in schema["paths"]

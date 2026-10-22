@@ -1,0 +1,2 @@
+COMMAND=docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml config --quiet
+EXIT_CODE=0
