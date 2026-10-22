@@ -46,8 +46,11 @@ uv run --locked python scripts/check_full.py
 `check_full.py` executes unit, contract, package, fixture evaluation, Docker promtool,
 service E2E and worker crash recovery gates. It reports INCOMPLETE and exits nonzero
 when a required local gate is explicitly skipped. Review `artifacts/evidence/` for
-saved command output and gate status. Model quality and cost/latency metrics remain
-PENDING without traceable cassettes or comparable authorized runs.
+saved command output and gate status. To run beside an existing local stack, set a new
+`P05_COMPOSE_PROJECT` and unused loopback port values in `P05_*_PORT`; the gate refuses
+to reuse a non-empty project and removes only the stack it starts. Model quality and
+cost/latency metrics remain PENDING without traceable cassettes or comparable authorized
+runs.
 For an in-process walkthrough of ticket intake, task recovery, RAG citations, and
 human approval, run `uv run --locked python scripts/demo.py`.
 
@@ -58,9 +61,12 @@ tenant-scoped hybrid RAG citations, PostgreSQL/pgvector migration and retrieval,
 atomic Redis limits, durable API→P04 worker→P01 agent execution, TCP-hosted signed MCP,
 checkpoint persistence and correlated traces passed local service checks. Local
 crash-after-effect recovery confirmed one simulated effect row and eventual job
-completion. External identity-provider acceptance, replay/model quality, cost and
-comparable latency remain INCOMPLETE/PENDING. Hashed fake embeddings and deterministic
-fixtures do not establish semantic quality or production readiness.
+completion. The isolated phase 014 full gate passed with 103 tests and repeated the
+service E2E and crash-recovery checks against PostgreSQL, Redis, LocalStack, MCP, and
+observability services. Its temporary Compose resources were removed while the existing
+P05 stack remained running. External identity-provider acceptance, replay/model quality,
+cost and comparable latency remain INCOMPLETE/PENDING. Hashed fake embeddings and
+deterministic fixtures do not establish semantic quality or production readiness.
 
 ## Design decisions
 

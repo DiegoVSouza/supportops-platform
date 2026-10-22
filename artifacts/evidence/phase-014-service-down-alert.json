@@ -1,0 +1,37 @@
+{
+  "status": "success",
+  "data": {
+    "alerts": [
+      {
+        "labels": {
+          "alertname": "P05ServiceDown",
+          "instance": "worker:8001",
+          "job": "p05-worker",
+          "severity": "warning",
+          "synthetic": "true"
+        },
+        "annotations": {
+          "summary": "Required local P05 service is unavailable"
+        },
+        "state": "firing",
+        "activeAt": "2026-10-22T23:09:11.342957545Z",
+        "value": "0e+00"
+      },
+      {
+        "labels": {
+          "alertname": "P05ServiceDown",
+          "instance": "api:8000",
+          "job": "p05-api",
+          "severity": "warning",
+          "synthetic": "true"
+        },
+        "annotations": {
+          "summary": "Required local P05 service is unavailable"
+        },
+        "state": "pending",
+        "activeAt": "2026-10-22T23:09:16.342957545Z",
+        "value": "0e+00"
+      }
+    ]
+  }
+}

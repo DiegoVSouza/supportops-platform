@@ -1,0 +1,4 @@
+command: uv run --locked python scripts/check_fast.py
+exit_code: 0
+output:
+check-fast: OK

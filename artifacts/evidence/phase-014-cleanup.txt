@@ -1,0 +1,9 @@
+command: inspect Docker containers, volumes, and networks for p05-full-gate-014
+exit_code: 0
+containers_remaining: 0
+volumes_remaining: 0
+networks_remaining: 0
+command: docker ps --filter label=com.docker.compose.project=p05-remediation-009
+exit_code: 0
+pre-existing_p05_services_still_running: 10
+p05-remediation-009-worker-1, p05-remediation-009-mcp-1, p05-remediation-009-api-1, p05-remediation-009-postgres-1, p05-remediation-009-prometheus-1, p05-remediation-009-redis-1, p05-remediation-009-localstack-1, p05-remediation-009-jaeger-1, p05-remediation-009-grafana-1, p05-remediation-009-otel-1

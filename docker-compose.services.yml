@@ -20,23 +20,23 @@ services:
   postgres:
     image: pgvector/pgvector:0.8.7-pg16
     environment: {POSTGRES_DB: supportops, POSTGRES_USER: supportops, POSTGRES_PASSWORD: '${P05_DB_PASSWORD:-local-test-only}'}
-    ports: ["127.0.0.1:26432:5432"]
+    ports: ["127.0.0.1:${P05_POSTGRES_PORT:-26432}:5432"]
     volumes: ["postgres-data:/var/lib/postgresql/data"]
     healthcheck: {test: [CMD-SHELL, "pg_isready -U supportops"], interval: 2s, retries: 30}
   redis:
     image: redis@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576
-    ports: ["127.0.0.1:26379:6379"]
+    ports: ["127.0.0.1:${P05_REDIS_PORT:-26379}:6379"]
     command: [redis-server, --appendonly, 'yes']
     volumes: ["redis-data:/data"]
     healthcheck: {test: [CMD, redis-cli, ping], interval: 2s, retries: 30}
   localstack:
     image: localstack/localstack:4.14.0
     environment: {SERVICES: 'sqs,sns', SQS_ENDPOINT_STRATEGY: dynamic}
-    ports: ["127.0.0.1:24566:4566"]
+    ports: ["127.0.0.1:${P05_LOCALSTACK_PORT:-24566}:4566"]
     healthcheck: {test: [CMD, curl, -f, 'http://localhost:4566/_localstack/health'], interval: 2s, retries: 40}
   api:
     <<: *runtime
-    ports: ["127.0.0.1:28000:8000"]
+    ports: ["127.0.0.1:${P05_API_PORT:-28000}:8000"]
     depends_on: {postgres: {condition: service_healthy}, redis: {condition: service_healthy}, localstack: {condition: service_healthy}}
     healthcheck: {test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"], interval: 3s, retries: 40}
   worker:
@@ -51,7 +51,7 @@ services:
   mcp:
     <<: *runtime
     command: [python, -m, uvicorn, supportops_platform.mcp.runtime:create_mcp_app, --factory, --host, 0.0.0.0, --port, '8000']
-    ports: ["127.0.0.1:28001:8000"]
+    ports: ["127.0.0.1:${P05_MCP_PORT:-28001}:8000"]
     environment:
       <<: *runtime-env
       OTEL_SERVICE_NAME: p05-mcp
@@ -64,18 +64,18 @@ services:
     image: otel/opentelemetry-collector-contrib:0.161.0
     command: [--config=/etc/otelcol/config.yaml]
     volumes: ["./infra/otel.yaml:/etc/otelcol/config.yaml:ro"]
-    ports: ["127.0.0.1:25317:4317"]
+    ports: ["127.0.0.1:${P05_OTEL_PORT:-25317}:4317"]
   jaeger:
     image: jaegertracing/jaeger:2.18.0
-    ports: ["127.0.0.1:25686:16686"]
+    ports: ["127.0.0.1:${P05_JAEGER_PORT:-25686}:16686"]
   prometheus:
     image: prom/prometheus:v3.14.0
     volumes: ["./infra/prometheus.yml:/etc/prometheus/prometheus.yml:ro", "./infra/alerts.yml:/etc/prometheus/alerts.yml:ro"]
-    ports: ["127.0.0.1:29091:9090"]
+    ports: ["127.0.0.1:${P05_PROMETHEUS_PORT:-29091}:9090"]
   grafana:
     image: grafana/grafana:12.4.11
     volumes: ["./infra/grafana:/etc/grafana/provisioning:ro", "./infra/dashboards:/dashboards:ro"]
-    ports: ["127.0.0.1:23001:3000"]
+    ports: ["127.0.0.1:${P05_GRAFANA_PORT:-23001}:3000"]
 
 volumes:
   postgres-data:

@@ -34,13 +34,13 @@
       "id": "service-backed-async",
       "description": "PostgreSQL and SQS integration against real services",
       "status": "PASS_LOCAL_SERVICE",
-      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json"
+      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-014-full-gate.txt; artifacts/evidence/phase-014-service-summary.json"
     },
     {
       "id": "network-mcp-auth",
       "description": "Verified bearer creates a tenant principal through authenticated Streamable HTTP over loopback TCP",
       "status": "PASS_LOCAL_HS256_AND_RFC7662_CONTRACT; INCOMPLETE_EXTERNAL_IDP_ACCEPTANCE",
-      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-011-introspection-green.txt"
+      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-011-introspection-green.txt; artifacts/evidence/phase-014-service-summary.json"
     },
     {
       "id": "pgvector-hybrid-contract",
@@ -52,7 +52,7 @@
       "id": "pgvector-service",
       "description": "PostgreSQL pgvector migration, HNSW index, and hybrid query against a real service",
       "status": "PASS_NATIVE_ASYNCPG",
-      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json"
+      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-014-full-gate.txt; artifacts/evidence/phase-014-service-summary.json"
     },
     {
       "id": "real-model-evaluation",
@@ -64,7 +64,7 @@
       "id": "product-end-to-end-orchestration",
       "description": "Durable authenticated API to P04 worker to P01 agent to PostgreSQL RAG/MCP flow",
       "status": "PASS_LOCAL_SERVICE; INCOMPLETE_EXTERNAL_IDENTITY",
-      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json"
+      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-014-full-gate.txt; artifacts/evidence/phase-014-service-summary.json"
     },
     {
       "id": "p05-release-wheel",
@@ -88,7 +88,7 @@
       "id": "durable-authorization-snapshot",
       "description": "Verified subject, tenant, roles, and scopes remain unchanged through delayed HITL approval resume; external revocation is not observed",
       "status": "PASS_LOCAL_SERVICE; INCOMPLETE_EXTERNAL_IDENTITY",
-      "evidence": "artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-010-full-gate.txt"
+      "evidence": "artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-014-service-summary.json"
     },
     {
       "id": "mcp-external-token-introspection",
