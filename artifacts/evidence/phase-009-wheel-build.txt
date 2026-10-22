@@ -1,0 +1,4 @@
+Building wheel...
+Successfully built artifacts\packages\supportops_platform-0.4.0-py3-none-any.whl
+
+Exit code: 0
