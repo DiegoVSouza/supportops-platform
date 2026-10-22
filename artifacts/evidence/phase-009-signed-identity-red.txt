@@ -1,0 +1,17 @@
+
+=================================== ERRORS ====================================
+_____________ ERROR collecting tests/test_signed_mcp_identity.py ______________
+ImportError while importing test module 'C:\estudo\Golpe\lab\projects\p05\tests\test_signed_mcp_identity.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\dvsdi\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_signed_mcp_identity.py:7: in <module>
+    from supportops_platform.mcp.identity import JWTTokenVerifier
+E   ModuleNotFoundError: No module named 'supportops_platform.mcp.identity'
+=========================== short test summary info ===========================
+ERROR tests/test_signed_mcp_identity.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.32s
+Command: uv run --locked pytest tests/test_signed_mcp_identity.py; Exit code: 2

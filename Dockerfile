@@ -1,8 +1,19 @@
+FROM python:3.13.12-slim AS build
+WORKDIR /app
+RUN pip install --no-cache-dir uv==0.12.7
+COPY pyproject.toml uv.lock ./
+COPY artifacts/packages ./artifacts/packages
+COPY migrations ./migrations
+COPY scripts ./scripts
+COPY supportops_platform ./supportops_platform
+RUN uv sync --locked --no-dev
+
 FROM python:3.13.12-slim
 WORKDIR /app
-COPY pyproject.toml uv.lock ./
-COPY supportops_platform ./supportops_platform
-RUN pip install --no-cache-dir uv==0.12.7 && uv sync --locked --no-dev
+RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --home /app app
+COPY --from=build --chown=app:app /app /app
+RUN mkdir -p /app/artifacts && chown app:app /app/artifacts
+USER 10001:10001
 ENV LLM_MODE=fake
-EXPOSE 8080
-CMD ["uv", "run", "--locked", "--no-dev", "python", "-m", "supportops_platform"]
+ENV PATH="/app/.venv/bin:$PATH"
+CMD ["python","-m","uvicorn","supportops_platform.api.app:app","--host","0.0.0.0","--port","8000"]

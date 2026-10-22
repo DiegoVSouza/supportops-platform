@@ -8,3 +8,5 @@ __pycache__/
 *.key
 .pytest_cache/
 .ruff_cache/
+artifacts/runs/*.sqlite*
+artifacts/evidence/wheel-consumer/

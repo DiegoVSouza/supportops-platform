@@ -21,9 +21,10 @@ uv run --locked python scripts/verify_packages.py
 uv run --locked python scripts/check_full.py
 ```
 
-`check_full.py` returns nonzero while any mandatory product feature is INCOMPLETE or
-PENDING. Current service-dependent gates require PostgreSQL with pgvector, Redis, and
-LocalStack. Do not interpret local SQLite/in-memory tests as service acceptance.
+`check_full.py` executes unit, package, fixture, Docker promtool, service and crash
+recovery gates. Missing required services or an explicit `--skip-services` returns
+INCOMPLETE/nonzero. Use the isolated Compose stack on loopback ports; it requires
+PostgreSQL with pgvector, Redis and LocalStack. Fixture model quality remains PENDING.
 
 ## MCP transport boundary
 

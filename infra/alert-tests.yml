@@ -1,0 +1,23 @@
+rule_files: [/rules/alerts.yml]
+evaluation_interval: 5s
+tests:
+  - interval: 5s
+    input_series:
+      - series: 'up{job="p05-worker",synthetic="true"}'
+        values: '0+0x12'
+    alert_rule_test:
+      - eval_time: 30s
+        alertname: P05ServiceDown
+        exp_alerts:
+          - exp_labels: {job: p05-worker, synthetic: 'true', severity: warning}
+            exp_annotations: {summary: Required local P05 service is unavailable}
+  - interval: 1m
+    input_series:
+      - series: 'supportops_tasks_by_type_total{outcome="error",task_type="triage"}'
+        values: '0+1x12'
+    alert_rule_test:
+      - eval_time: 10m
+        alertname: P05TaskErrors
+        exp_alerts:
+          - exp_labels: {outcome: error, task_type: triage, severity: warning}
+            exp_annotations: {summary: A fake-mode product task failed}

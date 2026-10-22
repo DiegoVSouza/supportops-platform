@@ -24,13 +24,13 @@ The local hybrid retriever has a 100-document, 64 KB per-document, and 10-result
 limit. Deterministic hashed-token vectors exist only for control-flow tests and do
 not represent semantic embeddings. A separate asyncpg-compatible adapter and
 pgvector 0.8.7 migration define cosine/HNSW plus PostgreSQL full-text retrieval;
-neither has been run against a PostgreSQL service. Service acceptance is INCOMPLETE.
+the native asyncpg retriever and migration were exercised against the isolated PostgreSQL service. The hashed vectors remain deterministic fixtures; semantic retrieval quality is PENDING.
 
 MCP now has two boundaries: the offline mock with an injected principal, and a
 Streamable HTTP server factory whose principal is built only from the SDK's verified
-`get_access_token()` request context. Tests use the pinned MCP 2.3.0 client and an
-ASGI transport with bearer tokens, but no TCP-hosted service or external identity
-provider has been exercised. Network deployment acceptance remains INCOMPLETE.
+`get_access_token()` request context. The local E2E uses the pinned MCP 2.3.0 SDK over loopback TCP with signed delegated
+tokens, rejects missing bearer tokens and denies cross-tenant access. External identity
+provider and deployment acceptance remain INCOMPLETE.
 
 ## Trust boundaries
 

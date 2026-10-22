@@ -18,16 +18,20 @@ service operation.
 
 ## End-to-end tests
 
-No service-backed E2E test is available. PostgreSQL/SQS task recovery and authenticated
-network MCP transport remain `INCOMPLETE`; the current demo uses process-local doubles.
+Phase 009 exercises native asyncpg against PostgreSQL/pgvector, Redis limits, durable
+API submission through the P04 worker and P01 agent, authenticated MCP over loopback
+TCP, API restart recovery, distinct approval resume and worker death after the simulated
+effect commit. See `artifacts/evidence/phase-009-full-gate-final.txt`. External identity
+provider acceptance remains INCOMPLETE.
 
 ## Agent and retrieval evaluations
 
 `scripts/eval_retrieval.py` evaluates four deterministic retrieval fixtures. Its
 `hit_at_3=4/4` output is fixture coverage only, not agent or LLM quality. Agent behavior
 is tested with the P01 fake runner; no replay cassette, degraded-output regression
-threshold, or authorized live evaluation is available. Those evaluation gates remain
-`PENDING`.
+threshold now rejects a deliberately degraded fake execution. This proves regression
+gate wiring only; semantic and model quality remain `PENDING` without replay cassettes
+or authorized comparable model runs.
 
 The full local command is `uv run --locked python scripts/check_full.py`. Its output and
 exit code are saved in `artifacts/evidence/followup-full-gate.txt`.

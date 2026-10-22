@@ -1,6 +1,8 @@
 """HTTP API with explicit local fake credentials and tenant-bound persistence."""
 
 import os
+import asyncio
+from opentelemetry import propagate, trace
 from secrets import token_urlsafe
 from collections import deque
 from threading import Lock
@@ -60,6 +62,8 @@ def create_app(
     requests_per_minute: int = 60,
     token_secret: str | None = None,
     retriever: LocalRetriever | None = None,
+    task_queue=None,
+    rate_limiter=None,
 ) -> FastAPI:
     if requests_per_minute < 1:
         raise ValueError("requests_per_minute must be positive")
@@ -70,11 +74,15 @@ def create_app(
         raise ValueError("JWT_SECRET is required outside fake mode")
     if len(secret) < 32:
         raise ValueError("JWT_SECRET must contain at least 32 characters")
+    if store is None and os.getenv("P05_RUNTIME") == "services":
+        from supportops_platform.service_runtime import create_components
+        store, retriever, task_queue, rate_limiter = create_components()
     app = FastAPI(title="SupportOps Platform", version=__version__)
     configure_telemetry()
     app.state.store = store or InMemoryStore()
     app.state.retriever = retriever or LocalRetriever([])
-    app.state.task_queue = LocalTaskQueue()
+    app.state.task_queue = task_queue or LocalTaskQueue()
+    app.state.rate_limiter = rate_limiter
     app.state.metrics = MetricsRegistry()
     app.state.token_secret = secret
     app.state.rate_limit = requests_per_minute
@@ -209,6 +217,8 @@ def create_app(
             raise HTTPException(status_code=403, detail=str(exc)) from exc
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
+        if hasattr(app.state.task_queue, "resume"):
+            app.state.task_queue.resume(approval.id)
         return {"id": approval.id, "state": approval.state}
 
     @app.post("/v1/tickets/{ticket_id}/refund-approvals", status_code=202)
@@ -240,6 +250,8 @@ def create_app(
             raise HTTPException(status_code=403, detail=str(exc)) from exc
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
+        if hasattr(app.state.task_queue, "resume"):
+            app.state.task_queue.resume(approval.id)
         return {"id": approval.id, "state": approval.state}
 
     @app.post("/v1/tasks", status_code=202)
@@ -269,7 +281,10 @@ def create_app(
             task = app.state.task_queue.get(actor, task_id)
         except AuthorizationError as exc:
             raise HTTPException(status_code=404, detail="task not found") from exc
-        return {"id": task.id, "status": task.status.value, "attempts": task.attempts}
+        result = {"id": task.id, "status": task.status.value, "attempts": task.attempts}
+        if hasattr(task, "result"):
+            result.update(result=task.result, error=task.last_error)
+        return result
 
     @app.middleware("http")
     async def request_size_limit(request: Request, call_next):
@@ -285,16 +300,42 @@ def create_app(
                 return JSONResponse(status_code=413, content={"detail": "request too large"})
         now = monotonic()
         bucket = request.client.host if request.client else "unknown"
-        with app.state.request_times_lock:
-            events = app.state.request_times.setdefault(bucket, deque())
-            while events and events[0] <= now - 60:
-                events.popleft()
-            if len(events) >= app.state.rate_limit:
-                return JSONResponse(status_code=429, content={"detail": "rate limit exceeded"})
-            events.append(now)
+        if app.state.rate_limiter is not None:
+            authorization=request.headers.get("authorization", "")
+            if authorization.startswith("Bearer "):
+                try:
+                    actor=decode_principal(authorization[7:],app.state.token_secret)
+                    bucket=actor.tenant_id+":"+actor.subject
+                except InvalidTokenError:
+                    pass
+            try:
+                allowed=await asyncio.to_thread(app.state.rate_limiter.allow,bucket,app.state.rate_limit)
+            except Exception:
+                return JSONResponse(status_code=503,content={"detail":"rate-limit service unavailable"})
+            if not allowed:
+                return JSONResponse(status_code=429,content={"detail":"rate limit exceeded"})
+        else:
+            limited=False
+            with app.state.request_times_lock:
+                events = app.state.request_times.setdefault(bucket, deque())
+                while events and events[0] <= now - 60:
+                    events.popleft()
+                limited=len(events) >= app.state.rate_limit
+                if not limited: events.append(now)
+            if limited:
+                return JSONResponse(status_code=429,content={"detail":"rate limit exceeded"})
         response = await call_next(request)
         app.state.metrics.record_request(request.method, response.status_code)
         return response
+
+    @app.middleware("http")
+    async def trace_request(request: Request, call_next):
+        with trace.get_tracer("p05.api").start_as_current_span("api.request",context=propagate.extract(dict(request.headers))) as span:
+            span.set_attribute("http.request.method",request.method)
+            span.set_attribute("llm.mode","fake")
+            response=await call_next(request)
+            response.headers["X-Trace-ID"]=format(span.get_span_context().trace_id,"032x")
+            return response
 
     return app
 

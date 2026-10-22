@@ -4,67 +4,67 @@
       "id": "auth-tenant-scope",
       "description": "JWT principal scopes API and repository access by tenant",
       "status": "PASS",
-      "evidence": "artifacts/evidence/followup-focused-tests.txt"
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "mcp-trusted-principal",
       "description": "In-memory MCP tools use injected principal and fail closed without it",
-      "status": "PASS",
-      "evidence": "artifacts/evidence/followup-focused-tests.txt"
+      "status": "PASS_LOCAL_TCP; INCOMPLETE_EXTERNAL_IDENTITY",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "refund-dual-control",
       "description": "Approval records requester and prevent self-approval",
-      "status": "PASS",
-      "evidence": "artifacts/evidence/followup-focused-tests.txt"
+      "status": "PASS_LOCAL_SERVICE",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "tenant-rag-agent",
       "description": "Fake local hybrid retrieval returns tenant-scoped citations; semantic quality is unmeasured",
-      "status": "PASS",
-      "evidence": "artifacts/evidence/remediation-local-tests.txt"
+      "status": "PASS_LOCAL_FAKE; SEMANTIC_QUALITY_PENDING",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "approved-packages",
       "description": "Approved P00-P04 local wheels have exact provenance, locked installs, and P05 consumer checks",
       "status": "PASS",
-      "evidence": "artifacts/evidence/remediation-package-integration.txt"
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "service-backed-async",
       "description": "PostgreSQL and SQS integration against real services",
-      "status": "INCOMPLETE_PRODUCT_DURABLE_QUEUE",
-      "evidence": "artifacts/evidence/phase-008-full-gate-rerun.txt (API still uses in-memory queue/store; product worker path not implemented)"
+      "status": "PASS_LOCAL_SERVICE",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "network-mcp-auth",
       "description": "Verified bearer creates a tenant principal through authenticated Streamable HTTP over loopback TCP",
       "status": "PASS_LOCAL_TCP; INCOMPLETE_EXTERNAL_IDENTITY",
-      "evidence": "artifacts/evidence/phase-008-service-gates-rerun.txt"
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "pgvector-hybrid-contract",
       "description": "Tenant-scoped pgvector cosine and PostgreSQL full-text hybrid adapter contract",
       "status": "PASS",
-      "evidence": "artifacts/evidence/remediation-local-tests.txt"
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "pgvector-service",
       "description": "PostgreSQL pgvector migration, HNSW index, and hybrid query against a real service",
-      "status": "PASS_SERVICE_QUERY; INCOMPLETE_NATIVE_ASYNCPG_DRIVER",
-      "evidence": "artifacts/evidence/phase-008-service-gates-rerun.txt"
+      "status": "PASS_NATIVE_ASYNCPG",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     },
     {
       "id": "real-model-evaluation",
       "description": "Replay/live model quality evaluation",
       "status": "PENDING",
-      "evidence": "No cassette or authorized live run"
+      "evidence": "No traceable cassette or authorized comparable model run"
     },
     {
       "id": "product-end-to-end-orchestration",
       "description": "Durable authenticated API to P04 worker to P01 agent to PostgreSQL RAG/MCP flow",
-      "status": "INCOMPLETE",
-      "evidence": "artifacts/evidence/phase-008-full-gate-rerun.txt; current API queue/store are in-memory and durable integration is not implemented"
+      "status": "PASS_LOCAL_SERVICE; INCOMPLETE_EXTERNAL_IDENTITY",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
     }
   ]
 }

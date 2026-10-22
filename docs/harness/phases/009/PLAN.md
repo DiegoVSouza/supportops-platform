@@ -1,6 +1,6 @@
 # PLAN — Complete remaining authorized local remediation
 
-allowed_write_paths: supportops_platform/**; scripts/**; tests/**; migrations/**; artifacts/**; docs/**; infra/**; agent/**; evals/**; .github/workflows/**; pyproject.toml; uv.lock; openapi.yaml; docker-compose*.yml; Dockerfile; .env.example; README.md; README.pt-BR.md
+allowed_write_paths: supportops_platform/**; scripts/**; tests/**; migrations/**; artifacts/**; docs/**; infra/**; agent/**; evals/**; .github/workflows/**; .gitignore; .dockerignore; pyproject.toml; uv.lock; openapi.yaml; docker-compose*.yml; Dockerfile; .env.example; README.md; README.pt-BR.md
 
 forbidden_changes: root roadmap, sibling source imports, shared kit changes, unrelated preexisting files/stacks, test weakening, external deploy/publish/push/PR/merge, Terraform apply, live/paid LLM.
 

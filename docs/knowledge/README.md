@@ -75,3 +75,11 @@ same subject also has an approver role. Another authorized subject can decide on
 **PT:** O registro da aprovação guarda `requested_by` a partir do sujeito do token
 verificado. A decisão é negada quando esse sujeito é o mesmo solicitante, mesmo que
 também tenha papel de aprovador. Outro sujeito autorizado pode decidir uma única vez.
+
+## Phase 009 verified durable service flow
+
+**EN:** The isolated local stack passed native asyncpg retrieval and pgvector migration/index checks, Redis atomic limits, signed MCP Streamable HTTP over loopback TCP, and durable API→P04 0.1.3 worker→P01 0.1.1 agent orchestration. It also tested API restart recovery, distinct human approval, indirect-injection blocking, correlated traces, dashboard/alerts, and worker termination after one simulated refund ledger commit. The job completed with one effect row. The API contract is 0.4.0 with additive task result/error fields (ADR-006). External identity, semantic quality, model cost and comparable latency remain INCOMPLETE/PENDING.
+
+**PT:** A stack local isolada passou nos testes de retrieval asyncpg nativo e migration/índices pgvector, limites atômicos do Redis, MCP Streamable HTTP assinado via TCP loopback e fluxo durável API→worker P04 0.1.3→agente P01 0.1.1. Também foram testados reinício da API, aprovação por pessoa distinta, bloqueio de prompt injection indireto, traces correlacionados, dashboard/alertas e encerramento do worker após um único commit de efeito simulado no ledger. A tarefa terminou com uma linha de efeito. O contrato da API é 0.4.0, com campos aditivos de resultado/erro (ADR-006). Identidade externa, qualidade semântica, custo do modelo e latência comparável seguem INCOMPLETE/PENDING.
+
+`artifacts/evidence/phase-009-full-gate-final.txt` is the reproducible acceptance record. `phase-009-crash-recovery.txt` isolates the kill-after-effect scenario. No provider call or external refund was made.

@@ -42,7 +42,7 @@ class PgVectorHybridSQL:
        0.5 * (1 - (embedding <=> $1::vector)) +
        0.5 * ts_rank_cd(search_vector, websearch_to_tsquery('simple', $2)) AS score
 FROM knowledge_chunks
-WHERE tenant_id = $3 AND search_vector @@ websearch_to_tsquery('simple', $2)
+WHERE tenant_id = $3
 ORDER BY score DESC, document_id, chunk_id
 LIMIT $4"""
 

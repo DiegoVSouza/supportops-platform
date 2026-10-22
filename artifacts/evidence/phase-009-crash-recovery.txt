@@ -1,0 +1,3 @@
+product-worker-crash: PASS killed_after_refund_commit=true job_recovered=true effect_rows=1 backend_attempts=1
+
+Exit code: 0

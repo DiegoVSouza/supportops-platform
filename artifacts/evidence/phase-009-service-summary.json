@@ -1,0 +1,19 @@
+{
+  "native_asyncpg": "PASS",
+  "redis_atomic_multi_client": "PASS",
+  "mode": "fake",
+  "semantic_quality": "PENDING",
+  "signed_tcp_mcp_negative_authorization": "PASS",
+  "durable_outbox_and_api_restart": "PASS",
+  "agent_rag_mcp": "PASS",
+  "tenant_isolation": "PASS",
+  "indirect_injection": "PASS",
+  "trace_id": "91d546b077819948da69c57e95c5034c",
+  "hitl_pause_distinct_approval_resume": "PASS",
+  "idempotency": "PASS",
+  "direct_api_adversarial_30": "PASS",
+  "correlated_service_trace": "PASS",
+  "dashboard_and_live_alert": "PASS",
+  "non_root": "PASS",
+  "kill_after_effect_recovery": "PASS"
+}

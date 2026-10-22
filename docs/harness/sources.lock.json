@@ -38,9 +38,10 @@
     "checked": "2026-10-15"
   },
   "langgraph": {
-    "version": "PENDING approved P01 package contract",
-    "source": "https://docs.langchain.com/oss/python/langgraph/overview",
-    "checked": "2026-10-15"
+    "version": "1.1.10",
+    "source": "https://pypi.org/project/langgraph/1.1.10/",
+    "official_docs": "https://docs.langchain.com/oss/python/langgraph/persistence",
+    "verified": "P01 approved local wheel integration; SQLite checkpoint persisted through worker container volume and resumed after distinct approval."
   },
   "p00_package": {
     "name": "supportops-foundation",
@@ -110,14 +111,14 @@
   },
   "p04_package": {
     "name": "supportops-async",
-    "version": "0.1.2",
-    "origin_commit": "3aa96ec9d3fa2f85f771d9b5aaa4c5ab3641034d",
-    "artifact_commit": "d9f01a83bc49990c583250dec8b1d6f5c87923b0",
-    "artifact_sha256": "a41c2a5a6c797e3913a510321d6859b5ab3be73b3f796eb7e9b1ea76fe6f5fd8",
-    "artifact_path": "artifacts/packages/supportops_async-0.1.2-py3-none-any.whl",
+    "version": "0.1.3",
+    "origin_commit": "ef1fe4398d30a91d471ef6ddab226160050c5eaf",
+    "artifact_commit": "2de4a26",
+    "artifact_sha256": "b9e0bc47793c1cebb29471db087084c52495ab20d6ee5debabca95d1d42156f8",
+    "artifact_path": "artifacts/packages/supportops_async-0.1.3-py3-none-any.whl",
     "approved": true,
     "installed_verified": true,
-    "consumer_test": "tests/test_p04_package_integration.py exit 0"
+    "consumer_test": "tests/test_p04_package_integration.py; real service E2E crash recovery"
   },
   "p04_superseded_artifact": {
     "artifact_sha256": "5210a3c87afa7680c81ac6a7d2e37f16651e2ee06981a4ff9c1bc26c51725e23",
@@ -141,5 +142,67 @@
       "url": "https://modelcontextprotocol.io/specification/draft/changelog",
       "checked": "2026-10-21"
     }
+  },
+  "p04_previous_012": {
+    "name": "supportops-async",
+    "version": "0.1.2",
+    "origin_commit": "3aa96ec9d3fa2f85f771d9b5aaa4c5ab3641034d",
+    "artifact_commit": "d9f01a83bc49990c583250dec8b1d6f5c87923b0",
+    "artifact_sha256": "a41c2a5a6c797e3913a510321d6859b5ab3be73b3f796eb7e9b1ea76fe6f5fd8",
+    "artifact_path": "artifacts/packages/supportops_async-0.1.2-py3-none-any.whl",
+    "approved": true,
+    "installed_verified": true,
+    "consumer_test": "tests/test_p04_package_integration.py exit 0"
+  },
+  "checked_at": "2026-10-22",
+  "native_asyncpg": {
+    "version": "0.30.0",
+    "source": "https://pypi.org/project/asyncpg/0.30.0/",
+    "official_docs": "https://magicstack.github.io/asyncpg/current/",
+    "verified": "Native asyncpg connect, tenant-filtered pgvector query, migration and service E2E."
+  },
+  "redis_py": {
+    "version": "6.4.0",
+    "source": "https://pypi.org/project/redis/6.4.0/",
+    "official_docs": "https://redis.readthedocs.io/en/stable/",
+    "verified": "Redis EVAL atomic increment and expiry across two clients; service E2E."
+  },
+  "langgraph_checkpoint_sqlite": {
+    "version": "3.1.2",
+    "source": "https://pypi.org/project/langgraph-checkpoint-sqlite/3.1.2/",
+    "official_docs": "https://docs.langchain.com/oss/python/langgraph/persistence",
+    "verified": "Pinned service checkpoint backend and P01 package integration."
+  },
+  "phase009_services": {
+    "checked": "2026-10-22",
+    "images": {
+      "postgres": "pgvector/pgvector:0.8.7-pg16",
+      "redis": "redis@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576",
+      "localstack": "localstack/localstack:4.14.0",
+      "prometheus": "prom/prometheus:v3.14.0",
+      "grafana": "grafana/grafana:12.4.11",
+      "jaeger": "jaegertracing/jaeger:2.18.0",
+      "otel_collector": "otel/opentelemetry-collector-contrib:0.161.0"
+    },
+    "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
+  },
+  "runtime_contract": {
+    "api_version": "0.4.0",
+    "adr": "docs/decisions/ADR-006-durable-runtime.md",
+    "openapi": "openapi.yaml",
+    "mcp_protocol_tested": "2025-11-25",
+    "mcp_protocol_source": "https://modelcontextprotocol.io/specification/draft/basic/transports/streamable-http",
+    "checked": "2026-10-22",
+    "official_sources": [
+      "https://www.psycopg.org/psycopg3/docs/basic/params.html",
+      "https://redis.io/docs/latest/commands/eval/",
+      "https://opentelemetry.io/docs/languages/python/propagation/",
+      "https://py.sdk.modelcontextprotocol.io/run/authorization/",
+      "https://modelcontextprotocol.io/specification/draft/basic/transports/streamable-http",
+      "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/",
+      "https://github.com/pgvector/pgvector#docker",
+      "https://docs.localstack.cloud/references/coverage/coverage_sqs/"
+    ]
   }
 }

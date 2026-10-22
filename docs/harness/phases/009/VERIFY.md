@@ -1,7 +1,12 @@
-# VERIFY — Complete remaining authorized local remediation
+# VERIFY � Durable local service runtime
 
-| Layer | Command | Exit code | Evidence | Status |
+| Layer | Command | Exit | Evidence | Status |
 | --- | --- | ---: | --- | --- |
-| Awaiting implementation | — | — | — | INCOMPLETE |
+| Unit/contract/package, fixture quality, OpenAPI, provenance, Docker promtool and service E2E | `uv run --locked python scripts/check_full.py` | 0 | `artifacts/evidence/phase-009-full-gate-final.txt`; service summary and Jaeger trace JSON | PASS local fake-mode acceptance |
+| Unit suite | `uv run --locked pytest` | 0 | `artifacts/evidence/phase-009-unit-final.txt` | 86 passed |
+| Deliberately degraded fake evaluation | `uv run --locked python scripts/check_quality.py --degraded` | 1 (expected) | `artifacts/evidence/phase-009-full-gate-final.txt` | Regression rejected |
+| Worker crash after effect commit | `docker compose -p p05-remediation-009 -f docker-compose.services.yml exec -T worker python scripts/check_worker_crash.py` | 0 | `artifacts/evidence/phase-009-crash-recovery.txt` | Job recovered; one product effect row |
+| Required service omission | `uv run --locked python scripts/check_full.py --skip-services` | 2 | `artifacts/evidence/phase-009-required-services-omitted.txt` | INCOMPLETE fail-closed |
+| External identity provider and model evaluation | Not configured/authorized | � | `docs/harness/feature_list.json` | INCOMPLETE / PENDING |
 
-Record exact commands, service/image versions, positive and negative cases, contract compatibility, remaining external/cassette dependencies, reviewed staged paths and local commits.
+`LLM_MODE=fake` was enforced. No live model, external refund, cloud deploy, or Terraform apply occurred.

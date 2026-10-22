@@ -9,6 +9,10 @@ from supportops_agents.fakes import FakeLLMClient
 
 from supportops_platform.contracts import Citation, Ticket
 from supportops_platform.rag.retrieval import LocalRetriever
+from supportops_toolkit.guardrails import ExecutionLimits, guard
+from supportops_obs import LLMResponse, record_llm_call
+from opentelemetry import trace
+from threading import Lock
 
 
 @dataclass(frozen=True)
@@ -18,12 +22,18 @@ class AgentTriageRun:
 
 
 class _RetrievalAwareFakeClient:
-    def __init__(self, citations: tuple[Citation, ...]) -> None:
-        self._fake = FakeLLMClient()
+    def __init__(self, citations: tuple[Citation, ...], refund=False) -> None:
+        self._fake = FakeLLMClient({"billing_agent":[{"context":"Refund requires distinct human approval.","refund_amount":25.0}]} if refund else None)
         self._citations = citations
+        self._limits = ExecutionLimits(max_steps=12,max_tokens=4096,max_seconds=30)
+        self._lock=Lock()
 
     def complete(self, agent: str, payload: Mapping[str, Any]) -> Mapping[str, Any]:
-        response = self._fake.complete(agent, payload)
+        with self._lock: self._limits.consume(steps=1,tokens=sum(len(str(v).split()) for v in payload.values()))
+        with trace.get_tracer("p05.agent").start_as_current_span("llm.fake"):
+            response = self._fake.complete(agent, payload)
+            with self._lock: self._limits.consume(steps=0,tokens=len(str(response).split()))
+            record_llm_call(LLMResponse("fake","fixture-model",0,0,0.0,0.0))
         if agent == "kb_researcher":
             context = "\n".join(
                 f"[{citation.document_id}#{citation.chunk_id}] {citation.text}"
@@ -34,20 +44,26 @@ class _RetrievalAwareFakeClient:
 
 
 def run_fake_triage(
-    ticket: Ticket, retriever: LocalRetriever, *, max_steps: int = 12
+    ticket: Ticket, retriever: LocalRetriever, *, max_steps: int = 12,
+    runner_name: str = "core", resume_key: str | None = None, approved: bool | None = None,
 ) -> AgentTriageRun:
     """Run P01's fake core agent with only citations authorized for the ticket tenant."""
     citations = tuple(
-        retriever.search(ticket.tenant_id, f"{ticket.subject}\n{ticket.body}", top_k=3)
+        citation for citation in retriever.search(ticket.tenant_id, f"{ticket.subject}\n{ticket.body}", top_k=3)
+        if guard(citation.text,role="support").action != "block"
     )
-    runner = get_runner("core")
+    runner = get_runner(runner_name)
+    if runner_name=="langgraph": runner.refund_limit=20.0
     agent_ticket = AgentTicket(
         id=ticket.id,
         subject=ticket.subject,
         description=ticket.body,
         customer_id=ticket.customer_id,
     )
-    result = runner.run(
-        agent_ticket, llm=_RetrievalAwareFakeClient(citations), max_steps=max_steps
-    )
+    client=_RetrievalAwareFakeClient(citations,refund=runner_name=="langgraph" and "refund" in (ticket.subject+ticket.body).lower())
+    if runner_name=="langgraph" and approved is not None:
+        result=runner.resume(agent_ticket,llm=client,approved=approved,resume_key=resume_key)
+    elif runner_name=="langgraph":
+        result=runner.run(agent_ticket,llm=client,max_steps=max_steps,resume_key=resume_key)
+    else: result=runner.run(agent_ticket,llm=client,max_steps=max_steps)
     return AgentTriageRun(result=result, citations=citations)

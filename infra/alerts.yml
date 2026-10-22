@@ -1,0 +1,12 @@
+groups:
+  - name: p05-services
+    rules:
+      - alert: P05ServiceDown
+        expr: up{job=~"p05-api|p05-worker"} == 0
+        for: 15s
+        labels: {severity: warning}
+        annotations: {summary: Required local P05 service is unavailable}
+      - alert: P05TaskErrors
+        expr: increase(supportops_tasks_by_type_total{outcome="error"}[5m]) > 0
+        labels: {severity: warning}
+        annotations: {summary: A fake-mode product task failed}
