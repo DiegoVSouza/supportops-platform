@@ -69,8 +69,8 @@
     {
       "id": "p05-release-wheel",
       "description": "P05 0.4.1 patch wheel with packaged migrations, SHA-256 provenance and isolated real PostgreSQL consumer smoke",
-      "status": "INCOMPLETE_BUILD_PENDING",
-      "evidence": "artifacts/evidence/phase-010-wheel-build.txt (pending)"
+      "status": "PASS_LOCAL_WHEEL",
+      "evidence": "artifacts/evidence/phase-010-wheel-build.txt; phase-010-wheel-install.txt; phase-010-wheel-consumer.txt; docs/harness/sources.lock.json"
     },
     {
       "id": "mcp-transport-retry",

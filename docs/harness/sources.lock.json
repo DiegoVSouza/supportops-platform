@@ -207,14 +207,14 @@
   },
   "p05_package": {
     "name": "supportops-platform",
-    "version": "0.4.0",
-    "origin_commit": "4807292",
-    "artifact_commit": "4b4f831",
-    "artifact_sha256": "c571bb27f72e10aa8af599f44833c141607d65c26d8a1f6780ca4b38b0e956fc",
-    "artifact_path": "artifacts/packages/supportops_platform-0.4.0-py3-none-any.whl",
+    "version": "0.4.1",
+    "origin_commit": "f508d8108b414e3e69ee0cf63eb3d570ef63b858",
+    "artifact_commit": "3fa9ac9e014e51c1d77312fccdd1bc6ef7383580",
+    "artifact_sha256": "E07FA5827255923B4B8C48FC673B7CA222E6DCD46536D2C6089360EECFB495D4",
+    "artifact_path": "artifacts/packages/supportops_platform-0.4.1-py3-none-any.whl",
     "approved": true,
     "installed_verified": true,
-    "consumer_test": "artifacts/evidence/phase-009-wheel-consumer.txt; immutable release retained"
+    "consumer_test": "scripts/check_wheel_consumer.py; artifacts/evidence/phase-010-wheel-consumer.txt; loaded and applied packaged migration against PostgreSQL 16/pgvector 0.8.7"
   },
   "asyncio_exception_groups": {
     "version": "Python 3.13.12",
@@ -233,5 +233,16 @@
     "source": "https://pypi.org/project/httpx2/2.13.1/",
     "checked": "2026-10-22",
     "verified": "TransportError is the parent class of timeout/connect failures and is the explicit MCP HTTP transport retry family."
+  },
+  "p05_superseded_040": {
+    "name": "supportops-platform",
+    "version": "0.4.0",
+    "origin_commit": "4807292",
+    "artifact_commit": "4b4f831",
+    "artifact_sha256": "c571bb27f72e10aa8af599f44833c141607d65c26d8a1f6780ca4b38b0e956fc",
+    "artifact_path": "artifacts/packages/supportops_platform-0.4.0-py3-none-any.whl",
+    "approved": true,
+    "installed_verified": true,
+    "status": "SUPERSEDED_BY_0.4.1; immutable artifact retained"
   }
 }

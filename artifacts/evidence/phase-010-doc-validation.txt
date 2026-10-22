@@ -1,2 +1,2 @@
-JSON: PASS
+provenance JSON: PASS
 exit_code=0
