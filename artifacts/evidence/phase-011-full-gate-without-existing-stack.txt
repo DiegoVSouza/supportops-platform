@@ -18,7 +18,7 @@ tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
     from websockets.server import WebSocketServerProtocol
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-103 passed, 2 warnings in 10.66s
+103 passed, 2 warnings in 10.52s
 
 $ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/eval_retrieval.py
 layer=retrieval fixture

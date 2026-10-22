@@ -1,0 +1,17 @@
+Task-owned local integration stack cleanup
+Only Compose project p05-oidc-011 (Keycloak and disposable postgres-consumer) was targeted.
+Pre-existing P05/P03/P04 and unrelated Docker projects were not targeted.
+
+COMMAND=docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml down
+ Container p05-oidc-011-keycloak-1 Stopping
+ Container p05-oidc-011-postgres-consumer-1 Stopping
+ Container p05-oidc-011-postgres-consumer-1 Stopped
+ Container p05-oidc-011-postgres-consumer-1 Removing
+ Container p05-oidc-011-postgres-consumer-1 Removed
+ Container p05-oidc-011-keycloak-1 Stopped
+ Container p05-oidc-011-keycloak-1 Removing
+ Container p05-oidc-011-keycloak-1 Removed
+ Network p05-oidc-011_default Removing
+ Network p05-oidc-011_default Removed
+EXIT_CODE=0
+TASK_STACK_CONTAINERS_REMAINING=0

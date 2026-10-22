@@ -233,6 +233,17 @@
   },
   "p05_package": {
     "name": "supportops-platform",
+    "version": "0.4.2",
+    "origin_commit": "7e3e6fca067e41d210e2f9010eb77636a3ca7458",
+    "artifact_commit": "092e65a3bf69a1f0d7e70a54a1aaa8642dc56bdc",
+    "artifact_sha256": "65B0CEACEB017CEB2781ABF597ED8C9A70892EEE1933D3942C8B02EE4861EE79",
+    "artifact_path": "artifacts/packages/supportops_platform-0.4.2-py3-none-any.whl",
+    "approved": true,
+    "installed_verified": true,
+    "consumer_test": "scripts/check_wheel_consumer.py; artifacts/evidence/phase-011-wheel-consumer.txt; loaded and applied packaged migration against disposable PostgreSQL 16/pgvector 0.8.7"
+  },
+  "p05_superseded_041": {
+    "name": "supportops-platform",
     "version": "0.4.1",
     "origin_commit": "f508d8108b414e3e69ee0cf63eb3d570ef63b858",
     "artifact_commit": "3fa9ac9e014e51c1d77312fccdd1bc6ef7383580",
@@ -240,7 +251,7 @@
     "artifact_path": "artifacts/packages/supportops_platform-0.4.1-py3-none-any.whl",
     "approved": true,
     "installed_verified": true,
-    "consumer_test": "scripts/check_wheel_consumer.py; artifacts/evidence/phase-010-wheel-consumer.txt; loaded and applied packaged migration against PostgreSQL 16/pgvector 0.8.7"
+    "status": "SUPERSEDED_BY_0.4.2; immutable artifact retained"
   },
   "asyncio_exception_groups": {
     "version": "Python 3.13.12",
@@ -269,6 +280,6 @@
     "artifact_path": "artifacts/packages/supportops_platform-0.4.0-py3-none-any.whl",
     "approved": true,
     "installed_verified": true,
-    "status": "SUPERSEDED_BY_0.4.1; immutable artifact retained"
+    "status": "SUPERSEDED_BY_0.4.2; immutable artifact retained"
   }
 }

@@ -2,7 +2,7 @@
 
 - Purpose: Triage tenant-scoped support tickets through authenticated fake-mode orchestration, tenant-scoped PostgreSQL hybrid retrieval, and signed TCP MCP tools.
 - Unit of work: One authenticated ticket request through bounded fake-mode orchestration, retrieval, approval checks, and persisted status/response.
-- Verifiable success criterion: API and MCP transport identity are verified before access; retrieval citations, tool results, and approvals remain tenant-scoped; sensitive refunds require a distinct approver; missing identity or failed mandatory checks fail closed. Local loopback TCP tests pass; external identity provider remains unverified.
+- Verifiable success criterion: API and MCP transport identity are verified before access; retrieval citations, tool results, and approvals remain tenant-scoped; sensitive refunds require a distinct approver; missing identity or failed mandatory checks fail closed. Local protocol and Keycloak 26.8.1 revocation tests pass over MCP loopback TCP; external identity provider remains unverified.
 - Pattern: agent
 - Runtime: custom-loop
 - Allowed tools: Tenant-scoped knowledge retrieval, read-only billing/CRM lookup, and refund proposal; no direct refund effect or outbound communication.
@@ -26,8 +26,8 @@ The isolated Compose demo passed durable API submission/restart, P04 worker reco
 
 ## Phase 011 external MCP token verification
 
-- Optional `MCP_OIDC_*` configuration uses an authorization server's RFC 7662 introspection endpoint for direct network MCP callers. Introspection runs for each MCP request; a token reported inactive is rejected. Internal worker delegation continues using the short-lived local signer.
-- The local TCP protocol test proves active-to-revoked behavior. No real external issuer is configured, API bearer verification remains local HS256, and revocation is not propagated to queued work after acceptance; those gates remain INCOMPLETE.
+- Optional `MCP_OIDC_*` configuration uses an authorization server's RFC 7662 introspection endpoint for direct network MCP callers. Introspection runs for each MCP request; a token reported inactive is rejected. Internal worker delegation continues using the short-lived local signer. P05 0.4.2 includes this behavior.
+- A disposable Keycloak 26.8.1 issuer token called an allowlisted MCP read tool over TCP, then received HTTP 401 after provider revocation. No external issuer is configured, API bearer verification remains local HS256, and revocation is not propagated to queued work after acceptance; those gates remain INCOMPLETE.
 
 ## Phase 010 release
 
