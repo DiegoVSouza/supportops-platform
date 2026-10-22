@@ -1,0 +1,2 @@
+isolated wheel consumer: PASS; version=0.4.1; source=C:\estudo\Golpe\lab\projects\p05\artifacts\evidence\p05-wheel-consumer-041\supportops_platform; migration loaded/applied; PostgreSQL pgvector=0.8.7
+exit_code=0

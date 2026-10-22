@@ -1,0 +1,6 @@
+Using CPython 3.13.12 interpreter at: .venv\Scripts\python.exe
+Resolved 1 package in 1ms
+Prepared 1 package in 23ms
+Installed 1 package in 16ms
+ + supportops-platform==0.4.1 (from file:///C:/estudo/Golpe/lab/projects/p05/artifacts/packages/supportops_platform-0.4.1-py3-none-any.whl)
+exit_code=0
