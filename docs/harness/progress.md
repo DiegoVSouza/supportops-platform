@@ -77,3 +77,9 @@ A disposable Keycloak 26.8.1 container issued a test token; authenticated RFC 76
 - `uv run --locked python scripts/check_fast.py` passed. `uv run --locked python scripts/check_full.py` passed without `--skip-services`: 103 tests, package and OpenAPI gates, fake-control regression check, PostgreSQL/Redis/LocalStack service flow, API restart recovery, HITL, tenant and injection controls, correlated traces, alerts, and worker crash recovery. Evidence: `artifacts/evidence/phase-014-full-gate.txt` and `phase-014-service-summary.json`.
 - The isolated project left no containers, volumes, or networks. All 10 pre-existing P05 services remained running; see `artifacts/evidence/phase-014-cleanup.txt`.
 - External identity acceptance and revocation of accepted jobs remain INCOMPLETE. Replay/model quality, cost, and comparable latency remain PENDING without authorized model runs or traceable cassettes.
+
+## 2026-10-22 — Phase 015 API identity plan
+
+- Phase 015 is planned to add optional RFC 7662 authentication at the API boundary, reusing the existing introspection contract while keeping API scopes and tenant checks local to the route layer. Local fake-mode HS256 remains available for development.
+- The plan includes active/revoked token checks through the API using disposable Keycloak and explicitly excludes revocation of jobs accepted before token revocation. That policy remains pending a separate decision.
+- Review: accepted for implementation. Harness docs check passed with 0 errors and 0 warnings. No product code or identity credentials changed in this planning task.
