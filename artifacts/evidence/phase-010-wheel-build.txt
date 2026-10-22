@@ -1,3 +1,6 @@
+Command: uv build --offline --wheel --out-dir artifacts/packages
+Source commit: f508d8108b414e3e69ee0cf63eb3d570ef63b858
 Building wheel...
 Successfully built artifacts\packages\supportops_platform-0.4.1-py3-none-any.whl
-exit_code=0
+SHA-256: E07FA5827255923B4B8C48FC673B7CA222E6DCD46536D2C6089360EECFB495D4
+Exit code: 0

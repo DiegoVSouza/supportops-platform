@@ -12,7 +12,7 @@
 | Status/provenance JSON | Validate feature inventory and package source lock | 0 | `artifacts/evidence/phase-010-doc-validation.txt` | PASS |
 | Full fake-mode local gate | `uv run --locked python scripts/check_full.py` | 0 | `artifacts/evidence/phase-010-full-gate.txt`; `artifacts/evidence/phase-010-service-summary.json` | PASS local acceptance; services, auth snapshot and crash recovery verified |
 | Missing required services | `uv run --locked python scripts/check_full.py --skip-services` | 2 expected | `artifacts/evidence/phase-009-required-services-omitted.txt` | INCOMPLETE fail-closed |
-| P05 0.4.1 wheel consumer | Offline build/install and packaged migration against real isolated PostgreSQL/pgvector | 0 | `artifacts/evidence/phase-010-wheel-build.txt`; `phase-010-wheel-install.txt`; `phase-010-wheel-consumer.txt` | PASS; source/artifact commits and SHA-256 in sources lock |
+| P05 0.4.1 wheel consumer | `uv build --offline --wheel`; isolated `uv pip install --offline`; `python scripts/check_wheel_consumer.py` against PostgreSQL/pgvector | 0 | `artifacts/evidence/phase-010-wheel-build.txt`; `phase-010-wheel-install.txt`; `phase-010-wheel-consumer.txt` | PASS; source/artifact commits and SHA-256 in sources lock |
 | External identity/revocation | Not configured | — | `docs/harness/feature_list.json` | INCOMPLETE |
 | Replay/model quality/cost/comparable latency | No traceable cassette or authorized comparable model run | — | `docs/harness/feature_list.json` | PENDING |
 

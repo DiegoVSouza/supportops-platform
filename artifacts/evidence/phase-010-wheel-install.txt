@@ -1,3 +1,4 @@
+Command: uv pip install --offline --no-deps --target <isolated-consumer-target> artifacts/packages/supportops_platform-0.4.1-py3-none-any.whl
 Using CPython 3.13.12 interpreter at: .venv\Scripts\python.exe
 Resolved 1 package in 1ms
 Prepared 1 package in 23ms

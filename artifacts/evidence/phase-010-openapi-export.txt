@@ -1,2 +1,3 @@
+Command: uv run --locked python scripts/export_openapi.py
 Wrote openapi.yaml
 exit_code=0

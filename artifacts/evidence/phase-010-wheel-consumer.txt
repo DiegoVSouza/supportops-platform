@@ -1,2 +1,3 @@
+Command: set P05_WHEEL_TARGET and PYTHONPATH to isolated consumer target; set P05_TEST_DSN to p05-remediation-009 PostgreSQL; .\.venv\Scripts\python.exe scripts/check_wheel_consumer.py
 isolated wheel consumer: PASS; version=0.4.1; source=C:\estudo\Golpe\lab\projects\p05\artifacts\evidence\p05-wheel-consumer-041\supportops_platform; migration loaded/applied; PostgreSQL pgvector=0.8.7
 exit_code=0

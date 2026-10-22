@@ -1,3 +1,4 @@
+Command: uv run --locked pytest tests/test_service_retry_policy.py (before fix; expected failure)
 .FF                                                                      [100%]
 ================================== FAILURES ===================================
 __________ test_real_mcp_connection_refusal_is_retried_by_p04_worker __________
