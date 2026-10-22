@@ -6,6 +6,8 @@ import time
 import psycopg
 import asyncpg
 import httpx2
+from botocore.exceptions import ConnectionClosedError, ConnectTimeoutError, EndpointConnectionError, ReadTimeoutError
+from botocore.exceptions import ConnectionClosedError, ConnectTimeoutError, EndpointConnectionError, ReadTimeoutError
 
 from opentelemetry import propagate, trace
 from supportops_async.worker import Worker
@@ -30,6 +32,64 @@ def create_components():
     return store,PostgresRetriever(dsn),queue,RedisRateLimiter(os.environ["P05_REDIS_URL"])
 
 
+_TRANSIENT_TRANSPORT_ERRORS = (
+    TimeoutError,
+    ConnectionError,
+    httpx2.TransportError,
+    psycopg.OperationalError,
+    psycopg.errors.SerializationFailure,
+    psycopg.errors.DeadlockDetected,
+    asyncpg.PostgresConnectionError,
+    asyncpg.InterfaceError,
+    EndpointConnectionError,
+    ReadTimeoutError,
+    ConnectTimeoutError,
+    ConnectionClosedError,
+)
+
+
+def _is_transient_transport_error(exc):
+    """Accept an exception group only when every leaf is a transient transport error."""
+    if isinstance(exc, BaseExceptionGroup):
+        return bool(exc.exceptions) and all(_is_transient_transport_error(item) for item in exc.exceptions)
+    return isinstance(exc, _TRANSIENT_TRANSPORT_ERRORS)
+
+
+_TRANSIENT_TRANSPORT_ERRORS = (
+    TimeoutError,
+    ConnectionError,
+    httpx2.TransportError,
+    psycopg.OperationalError,
+    psycopg.errors.SerializationFailure,
+    psycopg.errors.DeadlockDetected,
+    asyncpg.PostgresConnectionError,
+    asyncpg.InterfaceError,
+    EndpointConnectionError,
+    ReadTimeoutError,
+    ConnectTimeoutError,
+    ConnectionClosedError,
+)
+
+
+def _is_transient_transport_error(exc):
+    """Accept an exception group only when every leaf is a transient transport error."""
+    if isinstance(exc, BaseExceptionGroup):
+        return bool(exc.exceptions) and all(_is_transient_transport_error(item) for item in exc.exceptions)
+    return isinstance(exc, _TRANSIENT_TRANSPORT_ERRORS)
+
+
+def _run_once_with_retry(worker, *, sleep=time.sleep):
+    """Retry one worker poll after allowlisted dependency outages; surface other failures."""
+    try:
+        return worker.run_once()
+    except Exception as exc:
+        if not _is_transient_transport_error(exc):
+            raise
+        print("temporary worker dependency failure; retrying", flush=True)
+        sleep(1)
+        return False
+
+
 class ServiceWorker:
     def __init__(self, store, retriever, queue):
         self.store,self.retriever,self.queue=store,retriever,queue
@@ -38,9 +98,9 @@ class ServiceWorker:
 
     def run_job(self,payload,step):
         try: return self._run_job(payload,step)
-        except (TimeoutError,ConnectionError,httpx2.HTTPError,psycopg.OperationalError,
-                psycopg.errors.SerializationFailure,psycopg.errors.DeadlockDetected,
-                asyncpg.PostgresConnectionError,asyncpg.InterfaceError) as exc:
+        except Exception as exc:
+            if not _is_transient_transport_error(exc):
+                raise
             raise TransientFailure("temporary service dependency failure") from exc
 
     def _run_job(self,payload,step):
@@ -98,10 +158,7 @@ def main():
     worker=ServiceWorker(store,retriever,queue)
     try:
         while True:
-            try: worker.run_once()
-            except (psycopg.OperationalError,ConnectionError,TimeoutError):
-                print("temporary worker dependency failure; retrying",flush=True)
-                time.sleep(1)
+            _run_once_with_retry(worker)
             flush_telemetry()
             time.sleep(.1)
     finally: flush_telemetry()

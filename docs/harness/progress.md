@@ -45,3 +45,12 @@
 - Full evidence: `artifacts/evidence/phase-009-full-gate-final.txt`; crash evidence: `phase-009-crash-recovery.txt`; versioned API contract: `openapi.yaml`; decision: `docs/decisions/ADR-006-durable-runtime.md`.
 
 - P05 0.4.0 wheel was built from source commit `4807292`, installed in an isolated target, and its packaged migration 003 was loaded/applied against the real PostgreSQL 16/pgvector 0.8.7 service. SHA-256 and artifact commit are recorded in `docs/harness/sources.lock.json`; see `phase-009-wheel-*.txt`.
+
+
+## 2026-10-22 - Phase 010 retry recovery
+
+- Independent review found an MCP connection failure wrapped in `ExceptionGroup` was classified permanent by the P04 adapter. A red test reproduced the P04 job as failed; after allowlisted recursive classification, the same real localhost refusal transitions to retrying and recovers on redelivery. Mixed groups, auth failures, and botocore `ClientError` remain permanent.
+- The standalone worker loop backs off and retries explicit botocore endpoint/connect/read/closed-connection errors instead of exiting. Worker docs disclose the acceptance-time authorization snapshot and its local revocation limit; service E2E records that the snapshot survives delayed human approval unchanged.
+- Phase 010 full fake-mode gate passed (92 tests, package/OpenAPI/fake evaluation gates, Docker promtool, pgvector/Redis/LocalStack/TCP MCP/API-to-worker-to-RAG service path, durable identity snapshot, HITL, correlated traces, alerts and crash recovery). See `artifacts/evidence/phase-010-full-gate.txt` and `phase-010-service-summary.json`.
+- P05 0.4.0 wheel remains immutable; phase 010 releases the fix as 0.4.1 without route/schema changes. Wheel build/consumer evidence follows the source commit.
+- Real model quality, replay, cost, comparable latency remain PENDING; external identity/revocation remains INCOMPLETE. No production claim follows from local fake-mode service evidence.

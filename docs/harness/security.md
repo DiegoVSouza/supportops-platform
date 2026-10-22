@@ -20,3 +20,13 @@
 - Tenant A cannot access Tenant B resources even with a valid token for A.
 - Malicious KB content cannot widen tool permissions or exfiltrate private data.
 - Missing scope, stale approval, wrong tenant, excessive refund, and duplicate effect are denied and recorded.
+
+
+## Durable job authorization snapshot
+
+A queued job stores the verified caller subject, tenant, roles, and scopes as an authorization snapshot when the API accepts the job. Worker retries and human-approval resumes use that persisted snapshot; they do not re-read an external identity provider or follow later JWT revocation. The worker mints a short-lived (120-second) signed MCP delegation from the snapshot for each tool connection. This is a local trust model, not bounded external delegation: production use requires an issuer with revocation/consent semantics or an explicitly bounded delegation policy. The persisted scopes are never expanded from ticket text, tool output, or resume caller input.
+
+
+## Durable job authorization snapshot
+
+A queued job stores the verified caller subject, tenant, roles, and scopes as an authorization snapshot when the API accepts the job. Worker retries and human-approval resumes use that persisted snapshot; they do not re-read an external identity provider or follow later JWT revocation. The worker mints a short-lived (120-second) signed MCP delegation from the snapshot for each tool connection. This is a local trust model, not bounded external delegation: production use requires an issuer with revocation/consent semantics or an explicitly bounded delegation policy. The persisted scopes are never expanded from ticket text, tool output, or resume caller input.

@@ -1,0 +1,6 @@
+   Building supportops-platform @ file:///C:/estudo/Golpe/lab/projects/p05
+      Built supportops-platform @ file:///C:/estudo/Golpe/lab/projects/p05
+Uninstalled 1 package in 2ms
+Installed 1 package in 6ms
+check-fast: OK
+exit_code=0

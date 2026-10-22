@@ -1,0 +1,45 @@
+.FF                                                                      [100%]
+================================== FAILURES ===================================
+__________ test_real_mcp_connection_refusal_is_retried_by_p04_worker __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001CD39F45350>
+
+    def test_real_mcp_connection_refusal_is_retried_by_p04_worker(monkeypatch):
+        import supportops_platform.service_runtime as service_runtime
+
+        monkeypatch.setenv('MCP_SIGNING_SECRET','s'*48)
+        monkeypatch.setenv('MCP_ISSUER','p05-test')
+        monkeypatch.setenv('MCP_URL','http://127.0.0.1:9/mcp')
+        actor=Principal('caller-a','tenant-a',frozenset({'support'}),frozenset({'crm:read'}))
+        calls=[]
+        runtime=ServiceWorker.__new__(ServiceWorker)
+        def execute(payload,step):
+            calls.append(step)
+            if len(calls)==1:
+                return service_runtime.call_tool(actor,'lookup_customer',{'customer_id':'c-1'})
+            return {'recovered':True}
+        runtime._run_job=execute
+        store=SQLiteTaskStore();broker=InMemoryBroker()
+        task,_=store.create({'steps':['triage']},'mcp-transport-retry')
+        broker.publish(BrokerMessage(task.task_id))
+        worker=Worker(store,broker,runner=runtime.run_job)
+        worker.run_once()
+>       assert store.get(task.task_id).status.value=='retrying'
+E       AssertionError: assert 'failed' == 'retrying'
+E
+E         - retrying
+E         + failed
+
+tests\test_service_retry_policy.py:52: AssertionError
+__________ test_auth_failure_inside_exception_group_is_not_transient __________
+
+    def test_auth_failure_inside_exception_group_is_not_transient():
+>       from supportops_platform.service_runtime import _is_transient_transport_error
+E       ImportError: cannot import name '_is_transient_transport_error' from 'supportops_platform.service_runtime' (C:\estudo\Golpe\lab\projects\p05\supportops_platform\service_runtime.py)
+
+tests\test_service_retry_policy.py:60: ImportError
+=========================== short test summary info ===========================
+FAILED tests/test_service_retry_policy.py::test_real_mcp_connection_refusal_is_retried_by_p04_worker
+FAILED tests/test_service_retry_policy.py::test_auth_failure_inside_exception_group_is_not_transient
+2 failed, 1 passed in 3.86s
+exit_code=1

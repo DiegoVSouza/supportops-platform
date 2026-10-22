@@ -1,0 +1,1843 @@
+[
+  {
+    "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+    "spans": [
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "5cd65ee357297211",
+        "operationName": "fastapi.dependencies",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "36ded5edf7db2a9e"
+          }
+        ],
+        "startTime": 1792670902974431,
+        "duration": 933,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "fastapi"
+          },
+          {
+            "key": "otel.scope.version",
+            "type": "string",
+            "value": "0.142.4"
+          },
+          {
+            "key": "code.function.name",
+            "type": "string",
+            "value": "supportops_platform.api.app.create_app.<locals>.enqueue_triage_task"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p1",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "89f94c44765624ab",
+        "operationName": "fastapi.endpoint",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "36ded5edf7db2a9e"
+          }
+        ],
+        "startTime": 1792670902975579,
+        "duration": 108574,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "fastapi"
+          },
+          {
+            "key": "otel.scope.version",
+            "type": "string",
+            "value": "0.142.4"
+          },
+          {
+            "key": "code.function.name",
+            "type": "string",
+            "value": "supportops_platform.api.app.create_app.<locals>.enqueue_triage_task"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p1",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "7c1d2cdcec48e368",
+        "operationName": "fastapi.serialization",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "36ded5edf7db2a9e"
+          }
+        ],
+        "startTime": 1792670903084404,
+        "duration": 271,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "fastapi"
+          },
+          {
+            "key": "otel.scope.version",
+            "type": "string",
+            "value": "0.142.4"
+          },
+          {
+            "key": "code.function.name",
+            "type": "string",
+            "value": "supportops_platform.api.app.create_app.<locals>.enqueue_triage_task"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p1",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "36ded5edf7db2a9e",
+        "operationName": "api.request",
+        "references": [],
+        "startTime": 1792670902971776,
+        "duration": 113098,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.api"
+          },
+          {
+            "key": "http.request.method",
+            "type": "string",
+            "value": "POST"
+          },
+          {
+            "key": "llm.mode",
+            "type": "string",
+            "value": "fake"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p1",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "b5ff6c6872d8a9f9",
+        "operationName": "database.ticket.get",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "67aef8cdf25be993"
+          }
+        ],
+        "startTime": 1792670902989074,
+        "duration": 50,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.operation.kind",
+            "type": "string",
+            "value": "database"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p1",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "67aef8cdf25be993",
+        "operationName": "database.ticket.get",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "89f94c44765624ab"
+          }
+        ],
+        "startTime": 1792670902975618,
+        "duration": 89975,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.operation.kind",
+            "type": "string",
+            "value": "database"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p1",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "498fbb61a61b4991",
+        "operationName": "queue.enqueue",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "89f94c44765624ab"
+          }
+        ],
+        "startTime": 1792670903065808,
+        "duration": 18301,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.durable"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p1",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "04c2da33eeafa057",
+        "operationName": "queue.publish",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "498fbb61a61b4991"
+          }
+        ],
+        "startTime": 1792670930094413,
+        "duration": 16419,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.durable"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": [
+          "clock skew adjustment disabled; not applying calculated delta of -27.027664067s"
+        ]
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "2c385cad70ec65fb",
+        "operationName": "database.ticket.get",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6740e259dd85967e"
+          }
+        ],
+        "startTime": 1792670930171334,
+        "duration": 128,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.operation.kind",
+            "type": "string",
+            "value": "database"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "6740e259dd85967e",
+        "operationName": "database.ticket.get",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670930160587,
+        "duration": 67320,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.operation.kind",
+            "type": "string",
+            "value": "database"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "4c7f19cfbd99883f",
+        "operationName": "database.knowledge.hybrid_search",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "caeb1598376d7c4b"
+          }
+        ],
+        "startTime": 1792670930228080,
+        "duration": 42576,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.operation.kind",
+            "type": "string",
+            "value": "database"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "49e2ef85a3f21082",
+        "operationName": "llm.inference",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "65e474d9bc906766"
+          }
+        ],
+        "startTime": 1792670931667840,
+        "duration": 26,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.llm.cost_usd",
+            "type": "float64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.input_tokens",
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.latency_seconds",
+            "type": "float64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.model",
+            "type": "string",
+            "value": "fixture-model"
+          },
+          {
+            "key": "supportops.llm.output_tokens",
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.provider",
+            "type": "string",
+            "value": "fake"
+          },
+          {
+            "key": "supportops.llm.success",
+            "type": "bool",
+            "value": true
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "236e6f8782181fe2",
+        "operationName": "llm.inference",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "5afa4ed1b82f3093"
+          }
+        ],
+        "startTime": 1792670931670875,
+        "duration": 18,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.llm.cost_usd",
+            "type": "float64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.input_tokens",
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.latency_seconds",
+            "type": "float64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.model",
+            "type": "string",
+            "value": "fixture-model"
+          },
+          {
+            "key": "supportops.llm.output_tokens",
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.provider",
+            "type": "string",
+            "value": "fake"
+          },
+          {
+            "key": "supportops.llm.success",
+            "type": "bool",
+            "value": true
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "4919f987d783ce46",
+        "operationName": "llm.inference",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "9c72eb50818d3f58"
+          }
+        ],
+        "startTime": 1792670931671645,
+        "duration": 15,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.llm.cost_usd",
+            "type": "float64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.input_tokens",
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.latency_seconds",
+            "type": "float64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.model",
+            "type": "string",
+            "value": "fixture-model"
+          },
+          {
+            "key": "supportops.llm.output_tokens",
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.provider",
+            "type": "string",
+            "value": "fake"
+          },
+          {
+            "key": "supportops.llm.success",
+            "type": "bool",
+            "value": true
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "af3f52ae00251c3c",
+        "operationName": "llm.inference",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "76fb91c7e7f5a13d"
+          }
+        ],
+        "startTime": 1792670931673424,
+        "duration": 14,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "supportops_obs"
+          },
+          {
+            "key": "supportops.llm.cost_usd",
+            "type": "float64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.input_tokens",
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.latency_seconds",
+            "type": "float64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.model",
+            "type": "string",
+            "value": "fixture-model"
+          },
+          {
+            "key": "supportops.llm.output_tokens",
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "key": "supportops.llm.provider",
+            "type": "string",
+            "value": "fake"
+          },
+          {
+            "key": "supportops.llm.success",
+            "type": "bool",
+            "value": true
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "65e474d9bc906766",
+        "operationName": "llm.fake",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "caeb1598376d7c4b"
+          }
+        ],
+        "startTime": 1792670931667677,
+        "duration": 208,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.agent"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "5afa4ed1b82f3093",
+        "operationName": "llm.fake",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "caeb1598376d7c4b"
+          }
+        ],
+        "startTime": 1792670931670813,
+        "duration": 93,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.agent"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "9c72eb50818d3f58",
+        "operationName": "llm.fake",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "caeb1598376d7c4b"
+          }
+        ],
+        "startTime": 1792670931671593,
+        "duration": 78,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.agent"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "76fb91c7e7f5a13d",
+        "operationName": "llm.fake",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "caeb1598376d7c4b"
+          }
+        ],
+        "startTime": 1792670931673379,
+        "duration": 70,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.agent"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "caeb1598376d7c4b",
+        "operationName": "agent.triage",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670930228050,
+        "duration": 1493079,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.worker"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "6031b745f4864f33",
+        "operationName": "worker.run",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "04c2da33eeafa057"
+          }
+        ],
+        "startTime": 1792670930160504,
+        "duration": 1792400,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.worker"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "6d3773a6b5526394",
+        "operationName": "MCP send initialize",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "80bc21f45dc42f26"
+          }
+        ],
+        "startTime": 1792670931829648,
+        "duration": 5801,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "1"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "initialize"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "client"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "ddef7b8c150965f1",
+        "operationName": "MCP send tools/call lookup_customer",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "80bc21f45dc42f26"
+          }
+        ],
+        "startTime": 1792670931836299,
+        "duration": 6285,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "2"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "tools/call"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "client"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "3cbe0a49f40a0883",
+        "operationName": "MCP send tools/list",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "80bc21f45dc42f26"
+          }
+        ],
+        "startTime": 1792670931842808,
+        "duration": 2644,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "3"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "tools/list"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "client"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "c02f1cc7e5c19cb2",
+        "operationName": "MCP send initialize",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "15df14dd052ea28b"
+          }
+        ],
+        "startTime": 1792670931925906,
+        "duration": 5288,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "1"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "initialize"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "client"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "0eec1e9d9add5208",
+        "operationName": "MCP send tools/call lookup_invoice",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "15df14dd052ea28b"
+          }
+        ],
+        "startTime": 1792670931931497,
+        "duration": 6585,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "2"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "tools/call"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "client"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "db5dacf0d5b3c1e3",
+        "operationName": "MCP send tools/list",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "15df14dd052ea28b"
+          }
+        ],
+        "startTime": 1792670931938263,
+        "duration": 2371,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "3"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "tools/list"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "client"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "80bc21f45dc42f26",
+        "operationName": "mcp.client.lookup_customer",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931721540,
+        "duration": 202888,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "15df14dd052ea28b",
+        "operationName": "mcp.client.lookup_invoice",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931924770,
+        "duration": 17448,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p2",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "c2e9ab7c43b41db2",
+        "operationName": "initialize",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6d3773a6b5526394"
+          }
+        ],
+        "startTime": 1792670931833885,
+        "duration": 247,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "1"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "initialize"
+          },
+          {
+            "key": "mcp.protocol.version",
+            "type": "string",
+            "value": "2025-03-26"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "server"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "3555b912bcbfd5ec",
+        "operationName": "notifications/initialized",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "352d916702837533"
+          }
+        ],
+        "startTime": 1792670931838309,
+        "duration": 30,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "notifications/initialized"
+          },
+          {
+            "key": "mcp.protocol.version",
+            "type": "string",
+            "value": "2025-11-25"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "server"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": [
+          "clock skew adjustment disabled; not applying calculated delta of -666.824\u00b5s"
+        ]
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "894b5c96eb54687d",
+        "operationName": "tools/call lookup_customer",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "ddef7b8c150965f1"
+          }
+        ],
+        "startTime": 1792670931840920,
+        "duration": 909,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "gen_ai.operation.name",
+            "type": "string",
+            "value": "execute_tool"
+          },
+          {
+            "key": "gen_ai.tool.name",
+            "type": "string",
+            "value": "lookup_customer"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "2"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "tools/call"
+          },
+          {
+            "key": "mcp.protocol.version",
+            "type": "string",
+            "value": "2025-11-25"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "server"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "24e156db3a30cbf1",
+        "operationName": "tools/list",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "3cbe0a49f40a0883"
+          }
+        ],
+        "startTime": 1792670931844321,
+        "duration": 189,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "3"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "tools/list"
+          },
+          {
+            "key": "mcp.protocol.version",
+            "type": "string",
+            "value": "2025-11-25"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "server"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "a208c4419551655b",
+        "operationName": "initialize",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "c02f1cc7e5c19cb2"
+          }
+        ],
+        "startTime": 1792670931929969,
+        "duration": 175,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "1"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "initialize"
+          },
+          {
+            "key": "mcp.protocol.version",
+            "type": "string",
+            "value": "2025-03-26"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "server"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "77be5f39a5c9f28b",
+        "operationName": "notifications/initialized",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "b1d2f2c287a8b85a"
+          }
+        ],
+        "startTime": 1792670931933546,
+        "duration": 32,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "notifications/initialized"
+          },
+          {
+            "key": "mcp.protocol.version",
+            "type": "string",
+            "value": "2025-11-25"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "server"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": [
+          "clock skew adjustment disabled; not applying calculated delta of -720.331\u00b5s"
+        ]
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "220c0f586910535d",
+        "operationName": "tools/call lookup_invoice",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "0eec1e9d9add5208"
+          }
+        ],
+        "startTime": 1792670931936221,
+        "duration": 1049,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "gen_ai.operation.name",
+            "type": "string",
+            "value": "execute_tool"
+          },
+          {
+            "key": "gen_ai.tool.name",
+            "type": "string",
+            "value": "lookup_invoice"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "2"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "tools/call"
+          },
+          {
+            "key": "mcp.protocol.version",
+            "type": "string",
+            "value": "2025-11-25"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "server"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "dc002df2174a27c0",
+        "operationName": "tools/list",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "db5dacf0d5b3c1e3"
+          }
+        ],
+        "startTime": 1792670931939619,
+        "duration": 167,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "mcp-python-sdk"
+          },
+          {
+            "key": "jsonrpc.request.id",
+            "type": "string",
+            "value": "3"
+          },
+          {
+            "key": "mcp.method.name",
+            "type": "string",
+            "value": "tools/list"
+          },
+          {
+            "key": "mcp.protocol.version",
+            "type": "string",
+            "value": "2025-11-25"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "server"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "f4c9634b2ba416b7",
+        "operationName": "mcp.request",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931832765,
+        "duration": 2126,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "352d916702837533",
+        "operationName": "mcp.request",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931837181,
+        "duration": 952,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "db94f578ab5d4be6",
+        "operationName": "mcp.request",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931840190,
+        "duration": 2083,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "518b27c4b5885bc9",
+        "operationName": "mcp.request",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931843560,
+        "duration": 1505,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "e3c04c6566383083",
+        "operationName": "mcp.request",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931928514,
+        "duration": 2222,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "b1d2f2c287a8b85a",
+        "operationName": "mcp.request",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931932335,
+        "duration": 1014,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "eb976561329df2a4",
+        "operationName": "mcp.request",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931935515,
+        "duration": 2235,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "5cc1f0a1e543e423",
+        "operationName": "mcp.request",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "6031b745f4864f33"
+          }
+        ],
+        "startTime": 1792670931938991,
+        "duration": 1319,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.mcp"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "31ec43e2497f4cbc",
+        "operationName": "tool.lookup_customer",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "894b5c96eb54687d"
+          }
+        ],
+        "startTime": 1792670931841195,
+        "duration": 338,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.tools"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      },
+      {
+        "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+        "spanID": "8762c77442197ff7",
+        "operationName": "tool.lookup_invoice",
+        "references": [
+          {
+            "refType": "CHILD_OF",
+            "traceID": "80b0db87d38dd3137dcfa882b66ffe08",
+            "spanID": "220c0f586910535d"
+          }
+        ],
+        "startTime": 1792670931936595,
+        "duration": 363,
+        "tags": [
+          {
+            "key": "otel.scope.name",
+            "type": "string",
+            "value": "p05.tools"
+          },
+          {
+            "key": "span.kind",
+            "type": "string",
+            "value": "internal"
+          }
+        ],
+        "logs": [],
+        "processID": "p3",
+        "warnings": null
+      }
+    ],
+    "processes": {
+      "p1": {
+        "serviceName": "supportops-platform",
+        "tags": [
+          {
+            "key": "service.instance.id",
+            "type": "string",
+            "value": "63e4f2f1-83c1-4586-9ba9-643c8cf5a9c6"
+          },
+          {
+            "key": "telemetry.sdk.language",
+            "type": "string",
+            "value": "python"
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "type": "string",
+            "value": "opentelemetry"
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "type": "string",
+            "value": "1.45.1"
+          }
+        ]
+      },
+      "p2": {
+        "serviceName": "p05-worker",
+        "tags": [
+          {
+            "key": "service.instance.id",
+            "type": "string",
+            "value": "d3cf2eb7-f8e6-4bff-82c8-407d6f470d93"
+          },
+          {
+            "key": "telemetry.sdk.language",
+            "type": "string",
+            "value": "python"
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "type": "string",
+            "value": "opentelemetry"
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "type": "string",
+            "value": "1.45.1"
+          }
+        ]
+      },
+      "p3": {
+        "serviceName": "p05-mcp",
+        "tags": [
+          {
+            "key": "service.instance.id",
+            "type": "string",
+            "value": "6c953660-acf7-456f-8317-c41ff456344e"
+          },
+          {
+            "key": "telemetry.sdk.language",
+            "type": "string",
+            "value": "python"
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "type": "string",
+            "value": "opentelemetry"
+          },
+          {
+            "key": "telemetry.sdk.version",
+            "type": "string",
+            "value": "1.45.1"
+          }
+        ]
+      }
+    },
+    "warnings": null
+  }
+]

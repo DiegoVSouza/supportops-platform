@@ -138,7 +138,7 @@ def run(start=True,crash=True):
             if any(a['labels']['alertname']=='P05ServiceDown' and a['state']=='firing' for a in alerts['data']['alerts']): break
             if time.monotonic()>deadline: raise TimeoutError('P05ServiceDown did not fire')
             time.sleep(2)
-        (EVIDENCE/'phase-009-service-down-alert.json').write_text(json.dumps(alerts,indent=2)+'\n')
+        (EVIDENCE/'phase-010-service-down-alert.json').write_text(json.dumps(alerts,indent=2)+'\n')
         command(['start','worker'])
         done=wait_task(api,task_id,own)
         assert done['result']['runner']=='P01 installed langgraph'
@@ -157,6 +157,10 @@ def run(start=True,crash=True):
         refund_job=first.json()['id']
         paused=wait_task(api,refund_job,own,'needs_approval')
         approval_id=paused['result']['approval_id']
+        with psycopg.connect(DSN) as conn:
+            saved_identity=conn.execute('SELECT principal FROM platform_jobs WHERE id=%s',(refund_job,)).fetchone()[0]
+        assert saved_identity['tenant_id']=='tenant-a' and saved_identity['subject'].startswith('agent-')
+        assert set(saved_identity['scopes'])=={'ticket:read','ticket:write','task:read','task:write','triage:run','billing:read','crm:read','refund:request','feedback:write'}
         assert api.post('/v1/tickets/'+refund+'/approve',headers=own,json={'approval_id':approval_id}).status_code==403
         accepted=api.post('/v1/tickets/'+refund+'/approve',headers=approver,json={'approval_id':approval_id})
         assert accepted.status_code==200,accepted.text
@@ -164,7 +168,10 @@ def run(start=True,crash=True):
         assert complete['result']['refund']['simulated'] is True
         with psycopg.connect(DSN) as conn:
             assert conn.execute('SELECT count(*) FROM platform_effects WHERE job_id=%s',(refund_job,)).fetchone()[0]==1
-        proof.update(hitl_pause_distinct_approval_resume='PASS',idempotency='PASS')
+        with psycopg.connect(DSN) as conn:
+            resumed_identity=conn.execute('SELECT principal FROM platform_jobs WHERE id=%s',(refund_job,)).fetchone()[0]
+        assert resumed_identity==saved_identity
+        proof.update(hitl_pause_distinct_approval_resume='PASS',durable_authorization_snapshot='PASS',idempotency='PASS')
         feedback=api.post('/v1/feedback',headers=own,json={'ticket_id':refund,'rating':5})
         assert feedback.status_code==201
         for group in range(5):
@@ -186,7 +193,7 @@ def run(start=True,crash=True):
         if time.monotonic()>deadline: raise AssertionError('correlated trace missing stages: '+str(required-names))
         time.sleep(1)
     assert len({p['serviceName'] for item in exported for p in item['processes'].values()})>=3
-    (EVIDENCE/'phase-009-product-trace.json').write_text(json.dumps(exported,indent=2)+'\n')
+    (EVIDENCE/'phase-010-product-trace.json').write_text(json.dumps(exported,indent=2)+'\n')
     dashboard=httpx.get('http://127.0.0.1:23001/api/search?query=P05',auth=('admin','admin')).json()
     assert any(d['uid']=='p05-supportops' for d in dashboard)
     assert command(['exec','-T','api','id','-u']).strip()=='10001'
@@ -196,7 +203,7 @@ def run(start=True,crash=True):
         command(['exec','-T','worker','python','scripts/check_worker_crash.py'])
         proof['kill_after_effect_recovery']='PASS'
     else: proof['kill_after_effect_recovery']='INCOMPLETE'
-    (EVIDENCE/'phase-009-service-summary.json').write_text(json.dumps(proof,indent=2)+'\n')
+    (EVIDENCE/'phase-010-service-summary.json').write_text(json.dumps(proof,indent=2)+'\n')
     print(json.dumps(proof,indent=2),flush=True)
     return 0 if crash else 2
 

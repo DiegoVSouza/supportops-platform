@@ -17,3 +17,9 @@ The migration and hybrid SQL were exercised against PostgreSQL 16 with pgvector 
 ## Phase 009 service acceptance
 
 The isolated Compose demo passed durable API submission/restart, P04 worker recovery after a committed simulated effect, P01 LangGraph checkpoint resume, signed tenant-scoped MCP over TCP, PostgreSQL/pgvector retrieval, Redis limits, HITL, and correlated traces. Semantic/model quality, cost, comparable latency and external identity-provider acceptance remain PENDING/INCOMPLETE.
+
+
+## Phase 010 retry and identity boundary
+
+- MCP, PostgreSQL, Redis/SQS transport errors are retried only when explicitly classified as temporary; authorization and unknown failures remain fail-closed.
+- Durable jobs retain the verified acceptance-time subject, tenant, roles, and scopes through delayed approval resume. This local snapshot does not track identity-provider revocation; external issuer/delegation remains INCOMPLETE.

@@ -1,0 +1,2 @@
+OpenAPI contract: PASS (v1 compatibility paths, HTTP bearer, package schema 0.4.1)
+exit_code=0

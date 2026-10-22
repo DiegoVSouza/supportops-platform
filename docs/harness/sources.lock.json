@@ -187,8 +187,8 @@
     "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
   },
   "runtime_contract": {
-    "api_version": "0.4.0",
-    "adr": "docs/decisions/ADR-006-durable-runtime.md",
+    "api_version": "0.4.1",
+    "adr": "docs/decisions/ADR-007-transport-retry-and-delegation.md",
     "openapi": "openapi.yaml",
     "mcp_protocol_tested": "2025-11-25",
     "mcp_protocol_source": "https://modelcontextprotocol.io/specification/draft/basic/transports/streamable-http",
@@ -214,6 +214,24 @@
     "artifact_path": "artifacts/packages/supportops_platform-0.4.0-py3-none-any.whl",
     "approved": true,
     "installed_verified": true,
-    "consumer_test": "artifacts/evidence/phase-009-wheel-consumer.txt; importlib.resources loaded and applied migration 003 against PostgreSQL 16/pgvector 0.8.7"
+    "consumer_test": "artifacts/evidence/phase-009-wheel-consumer.txt; immutable release retained"
+  },
+  "asyncio_exception_groups": {
+    "version": "Python 3.13.12",
+    "source": "https://docs.python.org/3.13/library/asyncio-task.html",
+    "checked": "2026-10-22",
+    "verified": "TaskGroup raises ExceptionGroup/BaseExceptionGroup for child failures; P05 recursively classifies nested transport leaves."
+  },
+  "botocore_transient_errors": {
+    "version": "1.43.114",
+    "source": "https://botocore.amazonaws.com/v1/documentation/api/1.43.114/reference/exceptions.html",
+    "checked": "2026-10-22",
+    "verified": "EndpointConnectionError, ReadTimeoutError, ConnectTimeoutError and ConnectionClosedError are explicit transient classes; ClientError is not classified transient."
+  },
+  "httpx2_transport_errors": {
+    "version": "2.13.1",
+    "source": "https://pypi.org/project/httpx2/2.13.1/",
+    "checked": "2026-10-22",
+    "verified": "TransportError is the parent class of timeout/connect failures and is the explicit MCP HTTP transport retry family."
   }
 }
