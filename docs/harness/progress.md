@@ -37,7 +37,7 @@
 - The full gate remains INCOMPLETE: local tests, package provenance and OpenAPI pass, but the API still lacks a durable PostgreSQL/Redis queue-to-P04 worker-to-P01 agent product path. Semantic evaluation, replay, model quality, cost and comparable latency remain PENDING. Evidence: `artifacts/evidence/phase-008-service-gates-rerun.txt` and `phase-008-full-gate-rerun.txt`.
 
 
-## 2026-10-22 — Phase 009 durable local runtime
+## 2026-10-22 â€” Phase 009 durable local runtime
 
 - ADR-006 and version 0.4.0 add PostgreSQL product state/outbox, native asyncpg pgvector retrieval, Redis atomic rate limiting, signed delegated MCP tokens, P04 0.1.3 queue/worker, P01 0.1.1 LangGraph, approval resume and fake-only execution.
 - Unit/contract/package suite: 86 passed. Native asyncpg/pgvector migration and hybrid tenant retrieval, cross-process Redis, authenticated loopback MCP, durable API restart, HITL, indirect-injection blocks, correlated trace, dashboard/alert and non-root services passed. Worker kill after a committed simulated effect recovered the job with exactly one product ledger row.

@@ -1,4 +1,4 @@
-# ADR-007 — Transport retry boundaries and durable authorization snapshot
+# ADR-007 â€” Transport retry boundaries and durable authorization snapshot
 
 Status: accepted and implemented in 0.4.1, 2026-10-22.
 

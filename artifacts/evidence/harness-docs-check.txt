@@ -1,0 +1,4 @@
+command: python scripts/harness/check.py --root . --project p05 --docs
+exit_code: 0
+output:
+check: OK (0 erros, 0 avisos)
