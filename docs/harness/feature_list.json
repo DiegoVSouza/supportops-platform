@@ -86,9 +86,9 @@
     },
     {
       "id": "durable-authorization-snapshot",
-      "description": "Verified subject, tenant, roles, and scopes remain unchanged through delayed HITL approval resume; selected 15-minute lease enforcement is planned for phase 016",
-      "status": "PASS_LOCAL_SERVICE; INCOMPLETE_EXTERNAL_IDENTITY",
-      "evidence": "artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-014-service-summary.json"
+      "description": "Verified subject, tenant, roles, and scopes remain unchanged; durable job authorization expires 15 minutes after acceptance and expired HITL resumes are denied",
+      "status": "PASS_LOCAL_15_MINUTE_LEASE; INCOMPLETE_EXTERNAL_IDENTITY",
+      "evidence": "artifacts/evidence/phase-016-full-gate.txt; artifacts/evidence/phase-016-final-service-summary.json"
     },
     {
       "id": "mcp-external-token-introspection",

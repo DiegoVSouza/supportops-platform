@@ -10,7 +10,7 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from supportops_obs.instrumentation import traced_operation
 
-from .contracts import Approval, Ticket
+from .contracts import Approval, AuthorizationLeaseExpired, Ticket
 from .repositories import InMemoryStore
 
 
@@ -29,7 +29,7 @@ class PostgresStore:
         if not (root / "migrations").is_dir(): root = root.parent
         with psycopg.connect(self.dsn) as conn:
             conn.execute("SELECT pg_advisory_xact_lock(991005)")
-            for name in ("002_pgvector_knowledge.sql", "003_product_state.sql"):
+            for name in ("002_pgvector_knowledge.sql", "003_product_state.sql", "004_authorization_lease.sql"):
                 conn.execute((root / "migrations" / name).read_text(encoding="utf-8"))
 
     @contextmanager
@@ -91,6 +91,15 @@ class PostgresStore:
     def simulated_refund(self, job_id, amount_cents):
         result = {"simulated": True, "amount_cents": amount_cents, "effect_performed": True}
         with psycopg.connect(self.dsn) as conn:
+            existing = conn.execute("SELECT result FROM platform_effects WHERE job_id=%s", (job_id,)).fetchone()
+            if existing is not None:
+                return existing[0]
+            authorized = conn.execute(
+                "SELECT 1 FROM platform_jobs WHERE id=%s AND authorization_expires_at > clock_timestamp() FOR UPDATE",
+                (job_id,),
+            ).fetchone()
+            if authorized is None:
+                raise AuthorizationLeaseExpired("job authorization lease expired")
             conn.execute("INSERT INTO platform_effects(job_id,result) VALUES(%s,%s) ON CONFLICT DO NOTHING",
                          (job_id, Jsonb(result)))
             return conn.execute("SELECT result FROM platform_effects WHERE job_id=%s", (job_id,)).fetchone()[0]

@@ -18,6 +18,7 @@ from supportops_toolkit.guardrails import guard
 from .agents.triage import run_fake_triage
 from .async_tasks.durable import DurableQueue
 from .auth.rate_limit import RedisRateLimiter
+from .contracts import AuthorizationLeaseExpired
 from .mcp.runtime import call_tool
 from .persistence import PostgresStore
 from .rag.postgres import PostgresRetriever
@@ -98,6 +99,9 @@ class ServiceWorker:
 
     def run_job(self,payload,step):
         try: return self._run_job(payload,step)
+        except AuthorizationLeaseExpired:
+            self.queue.expire(payload["job_id"],payload.get("generation",0))
+            return {"authorization_expired":True}
         except Exception as exc:
             if not _is_transient_transport_error(exc):
                 raise
@@ -106,6 +110,10 @@ class ServiceWorker:
     def _run_job(self,payload,step):
         job=self.queue.job(payload["job_id"])
         if payload.get("generation",0)!=job["generation"]: return {"superseded":True}
+        active=self.queue.authorization_active(job["id"],job["generation"])
+        if not active and not self.queue.effect_exists(job["id"]):
+            self.queue.expire(job["id"],job["generation"])
+            return {"authorization_expired":True}
         with trace.get_tracer("p05.worker").start_as_current_span("worker.run",context=propagate.extract(job["trace_context"])):
             actor=self.queue.actor(job)
             ticket=self.store.get_ticket(actor,job["ticket_id"])
@@ -121,6 +129,10 @@ class ServiceWorker:
             with trace.get_tracer("p05.worker").start_as_current_span("agent.triage"):
                 execution=run_fake_triage(ticket,self.retriever,runner_name="langgraph",resume_key=job["id"],approved=approved)
                 record_agent_execution(steps=len(execution.result.trace),success=True,task_type="triage")
+            active=self.queue.authorization_active(job["id"],job["generation"])
+            if not active and not self.queue.effect_exists(job["id"]):
+                self.queue.expire(job["id"],job["generation"])
+                return {"authorization_expired":True}
             customer=call_tool(actor,"lookup_customer",{"customer_id":ticket.customer_id})
             invoice_id="inv-a-1" if actor.tenant_id=="tenant-a" else "inv-b-1"
             invoice=call_tool(actor,"lookup_invoice",{"invoice_id":invoice_id})
@@ -131,14 +143,24 @@ class ServiceWorker:
             if "refund" in (ticket.subject+" "+ticket.body).lower():
                 approval=self.store.approval(actor,job["approval_id"]) if job["approval_id"] else None
                 if approval is None:
+                    if not self.queue.authorization_active(job["id"],job["generation"]):
+                        self.queue.expire(job["id"],job["generation"])
+                        return {"authorization_expired":True}
                     proposal=call_tool(actor,"propose_refund",{"ticket_id":ticket.id,"amount_cents":2500})
                     approval=self.store.request_refund(actor,ticket.id,proposal["amount_cents"],"job:"+job["id"])
                 result["approval_id"]=approval.id
                 result["approval_state"]=approval.state
                 if approval.state=="pending":
+                    if not self.queue.authorization_active(job["id"],job["generation"]):
+                        self.queue.expire(job["id"],job["generation"])
+                        return {"authorization_expired":True}
                     self.queue.finish(job["id"],"needs_approval",result,approval.id,generation=job["generation"])
                     return result
-                if approval.state=="approved": result["refund"]=self.store.simulated_refund(job["id"],approval.amount_cents)
+                if approval.state=="approved":
+                    result["refund"]=self.store.simulated_refund(job["id"],approval.amount_cents)
+            if not self.queue.authorization_active(job["id"],job["generation"]) and not self.queue.effect_exists(job["id"]):
+                self.queue.expire(job["id"],job["generation"])
+                return {"authorization_expired":True}
             self.queue.finish(job["id"],"succeeded",result,generation=job["generation"])
             return result
 

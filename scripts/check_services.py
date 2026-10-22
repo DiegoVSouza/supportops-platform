@@ -64,7 +64,7 @@ def wait_task(api,identifier,headers,wanted='succeeded',seconds=60):
         response.raise_for_status()
         task=response.json()
         if task['status']==wanted: return task
-        if task['status']=='failed': raise AssertionError('task failed: '+str(task.get('error')))
+        if task['status']=='failed' and wanted!='failed': raise AssertionError('task failed: '+str(task.get('error')))
         time.sleep(1)
     raise TimeoutError('task never reached '+wanted)
 
@@ -169,7 +169,7 @@ def run_checks(crash):
         paused=wait_task(api,refund_job,own,'needs_approval')
         approval_id=paused['result']['approval_id']
         with psycopg.connect(DSN) as conn:
-            saved_identity=conn.execute('SELECT principal FROM platform_jobs WHERE id=%s',(refund_job,)).fetchone()[0]
+            saved_identity,authorization_expiry=conn.execute('SELECT principal,authorization_expires_at FROM platform_jobs WHERE id=%s',(refund_job,)).fetchone()
         assert saved_identity['tenant_id']=='tenant-a' and saved_identity['subject'].startswith('agent-')
         assert set(saved_identity['scopes'])=={'ticket:read','ticket:write','task:read','task:write','triage:run','billing:read','crm:read','refund:request','feedback:write'}
         assert api.post('/v1/tickets/'+refund+'/approve',headers=own,json={'approval_id':approval_id}).status_code==403
@@ -180,9 +180,34 @@ def run_checks(crash):
         with psycopg.connect(DSN) as conn:
             assert conn.execute('SELECT count(*) FROM platform_effects WHERE job_id=%s',(refund_job,)).fetchone()[0]==1
         with psycopg.connect(DSN) as conn:
-            resumed_identity=conn.execute('SELECT principal FROM platform_jobs WHERE id=%s',(refund_job,)).fetchone()[0]
-        assert resumed_identity==saved_identity
+            resumed_identity,resumed_expiry=conn.execute('SELECT principal,authorization_expires_at FROM platform_jobs WHERE id=%s',(refund_job,)).fetchone()
+        assert resumed_identity==saved_identity and resumed_expiry==authorization_expiry
         proof.update(hitl_pause_distinct_approval_resume='PASS',durable_authorization_snapshot='PASS',idempotency='PASS')
+        expired_refund=ticket('Refund invoice request after lease expiry')
+        expired_submission=api.post('/v1/tasks',headers={**own,'Idempotency-Key':uuid4().hex},json={'ticket_id':expired_refund})
+        assert expired_submission.status_code==202,expired_submission.text
+        expired_job=expired_submission.json()['id']
+        expired_paused=wait_task(api,expired_job,own,'needs_approval')
+        with psycopg.connect(DSN) as conn:
+            conn.execute("UPDATE platform_jobs SET authorization_expires_at=clock_timestamp()-interval '1 second' WHERE id=%s",(expired_job,))
+        late_approval=api.post('/v1/tickets/'+expired_refund+'/approve',headers=approver,json={'approval_id':expired_paused['result']['approval_id']})
+        assert late_approval.status_code==409,f'late approval status={late_approval.status_code}, body={late_approval.text}'
+        expired_status=api.get('/v1/tasks/'+expired_job,headers=own).json()
+        assert expired_status['status']=='failed' and 'authorization lease expired' in expired_status.get('error',''),f'expired job status={expired_status}'
+        with psycopg.connect(DSN) as conn:
+            assert conn.execute('SELECT count(*) FROM platform_effects WHERE job_id=%s',(expired_job,)).fetchone()[0]==0
+        proof['expired_hitl_resume_denied_without_effect']='PASS'
+        command(['stop','worker'])
+        expired_queued_ticket=ticket('Invoice request must expire before dispatch')
+        queued_response=api.post('/v1/tasks',headers={**own,'Idempotency-Key':uuid4().hex},json={'ticket_id':expired_queued_ticket})
+        assert queued_response.status_code==202,queued_response.text
+        expired_queued_job=queued_response.json()['id']
+        with psycopg.connect(DSN) as conn:
+            conn.execute("UPDATE platform_jobs SET authorization_expires_at=clock_timestamp()-interval '1 second' WHERE id=%s",(expired_queued_job,))
+        command(['start','worker'])
+        failed_before_dispatch=wait_task(api,expired_queued_job,own,'failed')
+        assert 'authorization lease expired' in failed_before_dispatch.get('error',''),f'expired before dispatch status={failed_before_dispatch}'
+        proof['expired_job_rejected_before_dispatch']='PASS'
         feedback=api.post('/v1/feedback',headers=own,json={'ticket_id':refund,'rating':5})
         assert feedback.status_code==201
         for group in range(5):

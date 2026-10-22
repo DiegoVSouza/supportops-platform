@@ -68,3 +68,7 @@ class PackageProvenance:
 
 class ContractError(ValueError):
     """Raised when a boundary contract receives an invalid value."""
+
+
+class AuthorizationLeaseExpired(ValueError):
+    """A durable task outlived its original authorization lease."""

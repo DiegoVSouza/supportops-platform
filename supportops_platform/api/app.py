@@ -18,7 +18,7 @@ from supportops_platform import __version__
 from supportops_platform.agents.triage import run_fake_triage
 from supportops_platform.auth.jwt import decode_principal
 from supportops_platform.mcp.identity import IntrospectionTokenVerifier
-from supportops_platform.contracts import Principal, Ticket
+from supportops_platform.contracts import AuthorizationLeaseExpired, Principal, Ticket
 from supportops_platform.async_tasks.queue import LocalTaskQueue
 from supportops_platform.obs.metrics import MetricsRegistry
 from supportops_platform.integrations.observability import configure_telemetry, prometheus_metrics
@@ -250,7 +250,10 @@ def create_app(
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
         if hasattr(app.state.task_queue, "resume"):
-            app.state.task_queue.resume(approval.id)
+            try:
+                app.state.task_queue.resume(approval.id)
+            except AuthorizationLeaseExpired as exc:
+                raise HTTPException(status_code=409, detail=str(exc)) from exc
         return {"id": approval.id, "state": approval.state}
 
     @app.post("/v1/tickets/{ticket_id}/refund-approvals", status_code=202)
@@ -283,7 +286,10 @@ def create_app(
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
         if hasattr(app.state.task_queue, "resume"):
-            app.state.task_queue.resume(approval.id)
+            try:
+                app.state.task_queue.resume(approval.id)
+            except AuthorizationLeaseExpired as exc:
+                raise HTTPException(status_code=409, detail=str(exc)) from exc
         return {"id": approval.id, "state": approval.state}
 
     @app.post("/v1/tasks", status_code=202)

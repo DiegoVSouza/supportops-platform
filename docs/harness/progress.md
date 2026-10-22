@@ -88,4 +88,11 @@ A disposable Keycloak 26.8.1 container issued a test token; authenticated RFC 76
 
 - API authentication can use the configured RFC 7662 verifier (`API_AUTH_MODE=oidc`, `API_OIDC_*`); local HS256 remains the default for fake-mode development. API route scopes and tenant checks still run after token verification.
 - Unit contracts passed (28 tests). Disposable Keycloak 26.8.1 proved an active bearer could call the API and MCP; after revocation both returned HTTP 401. Fast gate passed. Full isolated fake-mode gate passed with 104 tests; local model-quality fixtures remain control-flow only.
-- Keycloak and the isolated full-gate Compose stack were removed. Existing P05 and other lab stacks were preserved. External issuer acceptance remains incomplete. The accepted-job snapshot currently has no expiry enforcement; phase 016 will implement the selected 15-minute lease. Model evaluation remains PENDING by user choice.
+- Keycloak and the isolated full-gate Compose stack were removed. Existing P05 and other lab stacks were preserved. External issuer acceptance remains incomplete. At that point expiry enforcement was pending; see phase 016 below for the selected lease and its verification. Model evaluation remains PENDING by user choice.
+
+## 2026-10-22 — Phase 016 durable authorization lease
+
+- Applied the selected 15-minute lease from initial task acceptance. Migration 004 backfills existing jobs from `created_at`; retries and HITL resumes do not renew expiry. Expired jobs fail before dispatch/execution, and an expired approval resume returns HTTP 409; callers must submit a new task with fresh authorization and a new idempotency key. The simulated refund transaction also enforces the expiry.
+- The first service run exposed that raising the expiry error inside the transaction rolled back the `failed` state. The expiry update now commits before HTTP 409 is raised; the corrected full gate passed.
+- Fast gate and harness documentation gate passed. Full isolated service acceptance passed with 104 tests, including expired pre-dispatch and post-approval cases, the prior service flow, and worker crash recovery. Evidence: `artifacts/evidence/phase-016-full-gate.txt`; temporary Compose resources were removed.
+- Replay/model evaluation remains PENDING per user choice; local fake controls make no model-quality claim. External issuer acceptance remains INCOMPLETE.

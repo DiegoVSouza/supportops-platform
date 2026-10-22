@@ -12,7 +12,7 @@ from supportops_async.queue.contracts import BrokerMessage
 from supportops_async.queue.memory import SqsBroker
 from supportops_async.store.postgres import PostgresTaskStore
 
-from supportops_platform.contracts import Principal, TaskStatus
+from supportops_platform.contracts import AuthorizationLeaseExpired, Principal, TaskStatus
 from supportops_platform.repositories import AuthorizationError
 
 TRACER = trace.get_tracer("p05.durable")
@@ -80,7 +80,10 @@ class DurableQueue:
     def dispatch_pending(self):
         count=0
         with psycopg.connect(self.dsn, row_factory=dict_row) as conn:
-            rows=conn.execute("SELECT * FROM platform_jobs WHERE NOT dispatched ORDER BY created_at "
+            conn.execute("UPDATE platform_jobs SET status='failed',error='authorization lease expired' "
+                         "WHERE status='queued' AND NOT dispatched AND authorization_expires_at<=clock_timestamp()")
+            rows=conn.execute("SELECT * FROM platform_jobs WHERE status='queued' AND NOT dispatched "
+                              "AND authorization_expires_at>clock_timestamp() ORDER BY created_at "
                               "FOR UPDATE SKIP LOCKED LIMIT 20").fetchall()
             for row in rows:
                 with TRACER.start_as_current_span("queue.publish",context=propagate.extract(row["trace_context"])):
@@ -95,15 +98,52 @@ class DurableQueue:
         return count
 
     def resume(self, approval_id):
-        with psycopg.connect(self.dsn) as conn:
-            conn.execute("UPDATE platform_jobs SET status='queued',generation=generation+1,dispatched=false "
-                         "WHERE approval_id=%s AND status='needs_approval'",(approval_id,))
+        lease_expired = False
+        with psycopg.connect(self.dsn, row_factory=dict_row) as conn:
+            resumed=conn.execute("UPDATE platform_jobs SET status='queued',generation=generation+1,dispatched=false "
+                                  "WHERE approval_id=%s AND status='needs_approval' "
+                                  "AND authorization_expires_at>clock_timestamp() RETURNING id",(approval_id,)).fetchone()
+            if resumed is not None:
+                return True
+            expired=conn.execute("UPDATE platform_jobs SET status='failed',error='authorization lease expired' "
+                                 "WHERE approval_id=%s AND status='needs_approval' "
+                                 "AND authorization_expires_at<=clock_timestamp() RETURNING id",(approval_id,)).fetchone()
+            if expired is not None:
+                lease_expired = True
+            else:
+                prior=conn.execute("SELECT error FROM platform_jobs WHERE approval_id=%s AND status='failed'",
+                                   (approval_id,)).fetchone()
+                lease_expired = prior is not None and prior["error"] == "authorization lease expired"
+        if lease_expired:
+            raise AuthorizationLeaseExpired("job authorization lease expired; resubmit with fresh authorization")
+        return False
 
     def reconcile_approvals(self):
         with psycopg.connect(self.dsn) as conn:
+            conn.execute("UPDATE platform_jobs SET status='failed',error='authorization lease expired' "
+                         "WHERE status='needs_approval' AND authorization_expires_at<=clock_timestamp()")
             conn.execute("UPDATE platform_jobs j SET status='queued',generation=generation+1,dispatched=false "
                          "FROM platform_objects a WHERE j.status='needs_approval' AND a.kind='approval' "
-                         "AND a.tenant_id=j.tenant_id AND a.id=j.approval_id AND a.data->>'state' IN ('approved','rejected')")
+                         "AND a.tenant_id=j.tenant_id AND a.id=j.approval_id AND a.data->>'state' IN ('approved','rejected') "
+                         "AND j.authorization_expires_at>clock_timestamp()")
+
+    def authorization_active(self, identifier, generation):
+        with psycopg.connect(self.dsn) as conn:
+            return conn.execute("SELECT 1 FROM platform_jobs WHERE id=%s AND generation=%s "
+                                "AND status NOT IN ('failed','succeeded') "
+                                "AND authorization_expires_at>clock_timestamp()",
+                                (identifier,generation)).fetchone() is not None
+
+    def effect_exists(self, identifier):
+        with psycopg.connect(self.dsn) as conn:
+            return conn.execute("SELECT 1 FROM platform_effects WHERE job_id=%s",(identifier,)).fetchone() is not None
+
+    def expire(self, identifier, generation):
+        with psycopg.connect(self.dsn) as conn:
+            return conn.execute("UPDATE platform_jobs SET status='failed',error='authorization lease expired' "
+                                "WHERE id=%s AND generation=%s AND status NOT IN ('failed','succeeded') "
+                                "AND authorization_expires_at<=clock_timestamp() RETURNING id",
+                                (identifier,generation)).fetchone() is not None
 
     def finish(self, identifier, status, result, approval_id=None, *, generation):
         with psycopg.connect(self.dsn) as conn:

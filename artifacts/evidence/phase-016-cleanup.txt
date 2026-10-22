@@ -1,0 +1,4 @@
+COMMAND=docker ps --filter name=p05-full-gate-016c
+EXIT_CODE=0
+OUTPUT:
+No phase-016 Compose containers remain.
