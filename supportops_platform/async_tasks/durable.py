@@ -95,7 +95,6 @@ class DurableQueue:
         return count
 
     def resume(self, approval_id):
-        # The approval is committed first; an interrupted resume is repaired by reconcile_approvals.
         with psycopg.connect(self.dsn) as conn:
             conn.execute("UPDATE platform_jobs SET status='queued',generation=generation+1,dispatched=false "
                          "WHERE approval_id=%s AND status='needs_approval'",(approval_id,))
