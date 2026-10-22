@@ -3,8 +3,8 @@
 | Layer / gate | Command | Exit | Evidence | Status |
 | --- | --- | ---: | --- | --- |
 | RFC 7662 verifier unit/contract and MCP loopback TCP active-to-revoked flow | `uv run --locked pytest tests/test_mcp_oidc.py -q` | 0 | `artifacts/evidence/phase-011-introspection-green.txt` | PASS_LOCAL_PROTOCOL; this uses a local test issuer |
-| Keycloak-issued token, authenticated RFC 7662 introspection, then provider revocation | `uv run --locked python scripts/check_keycloak_oidc.py` with isolated compose project `p05-oidc-011` | 0 | `artifacts/evidence/phase-011-keycloak-oidc.txt` | PASS_LOCAL_KEYCLOAK_26.8.1; not external-provider or production acceptance |
-| Unit/contract/package suite | `uv run --locked pytest -q` | 0 | `artifacts/evidence/phase-011-unit.txt` | PASS; 102 passed |
+| Keycloak-issued token calls MCP over loopback TCP; provider revocation then yields HTTP 401 | `uv run --locked python scripts/check_keycloak_oidc.py` with isolated compose project `p05-oidc-011` | 0 | `artifacts/evidence/phase-011-keycloak-oidc.txt` | PASS_LOCAL_KEYCLOAK_26.8.1; not external-provider or production acceptance |
+| Unit/contract/package suite | `uv run --locked pytest -q` | 0 | `artifacts/evidence/phase-011-unit.txt` | PASS; 103 passed |
 | Fast gate | `uv run --locked python scripts/check_fast.py` | 0 | `artifacts/evidence/phase-011-fast.txt` | PASS |
 | OpenAPI package version and compatibility paths | `uv run --locked python scripts/export_openapi.py --check` | 0 | `artifacts/evidence/phase-011-openapi.txt` | PASS; version 0.4.2, routes unchanged |
 | Compose configuration | `docker compose -f docker-compose.services.yml config --quiet` with local-only placeholder variables | 0 | `artifacts/evidence/phase-011-compose-config.txt` | PASS |

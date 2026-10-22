@@ -32,11 +32,22 @@
       "optionalClientScopes": ["billing:read"],
       "protocolMappers": [
         {
-          "name": "P05 audience",
+          "name": "P05 introspection client audience",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-audience-mapper",
           "config": {
             "included.client.audience": "p05-resource",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "P05 MCP resource audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.custom.audience": "http://127.0.0.1:28181/mcp",
             "id.token.claim": "false",
             "access.token.claim": "true",
             "introspection.token.claim": "true"

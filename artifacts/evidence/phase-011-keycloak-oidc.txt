@@ -1,34 +1,35 @@
-Keycloak local IdP interoperability gate
+Keycloak and MCP TCP local identity gate
 Image: quay.io/keycloak/keycloak:26.8.1
 Compose project: p05-oidc-011
-Host bind: 127.0.0.1:28180 (verified free before start)
+Keycloak bind: 127.0.0.1:28180; MCP bind: 127.0.0.1:28181
 Realm issuer: http://127.0.0.1:28180/realms/p05-local
-Credentials and bearer token are disposable test-only; no token or credential values are recorded.
+Test credentials and bearer are disposable; values are not recorded.
 
-COMMAND=docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml config --quiet
+COMMAND=docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml up -d keycloak (port 28180 preflight free)
 EXIT_CODE=0
+COMMAND=GET http://127.0.0.1:28180/realms/p05-local/.well-known/openid-configuration
+EXIT_CODE=0; HTTP_STATUS=200; issuer matches local realm
 COMMAND=uv run --locked python scripts/check_keycloak_oidc.py
+StreamableHTTP session manager started
+HTTP Request: GET http://127.0.0.1:28181/mcp "HTTP/1.1 401 Unauthorized"
+HTTP Request: POST http://127.0.0.1:28180/realms/p05-local/protocol/openid-connect/token/introspect "HTTP/1.1 200 OK"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28181/mcp "HTTP/1.1 200 OK"
+HTTP Request: POST http://127.0.0.1:28180/realms/p05-local/protocol/openid-connect/token/introspect "HTTP/1.1 200 OK"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28181/mcp "HTTP/1.1 202 Accepted"
+HTTP Request: POST http://127.0.0.1:28180/realms/p05-local/protocol/openid-connect/token/introspect "HTTP/1.1 200 OK"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28181/mcp "HTTP/1.1 200 OK"
+HTTP Request: POST http://127.0.0.1:28180/realms/p05-local/protocol/openid-connect/token/introspect "HTTP/1.1 200 OK"
+Terminating session: None
+HTTP Request: POST http://127.0.0.1:28181/mcp "HTTP/1.1 200 OK"
+HTTP Request: POST http://127.0.0.1:28180/realms/p05-local/protocol/openid-connect/revoke "HTTP/1.1 200 OK"
+HTTP Request: POST http://127.0.0.1:28180/realms/p05-local/protocol/openid-connect/token/introspect "HTTP/1.1 200 OK"
+HTTP Request: POST http://127.0.0.1:28180/realms/p05-local/protocol/openid-connect/token/introspect "HTTP/1.1 200 OK"
+HTTP Request: POST http://127.0.0.1:28181/mcp "HTTP/1.1 401 Unauthorized"
+StreamableHTTP session manager shutting down
+PASS Keycloak issued token; introspection accepted expected principal, tenant, role, audience, and scope
+PASS Keycloak bearer called lookup_invoice over MCP Streamable HTTP TCP
+PASS Keycloak revoked token became inactive and MCP returned HTTP 401
 EXIT_CODE=0
-PASS token issued; authenticated introspection accepted subject, tenant, role, audience, and scope
-PASS revoked token became inactive at Keycloak introspection
-COMMAND=uv run --locked pytest tests/test_mcp_oidc.py -q
-EXIT_CODE=0
-...........                                                              [100%]
-============================== warnings summary ===============================
-tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
-  C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\websockets\legacy\__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
-    warnings.warn(  # deprecated in 14.0 - 2024-11-09
-
-tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
-  C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py:17: DeprecationWarning: websockets.server.WebSocketServerProtocol is deprecated
-    from websockets.server import WebSocketServerProtocol
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-COMMAND=docker compose -p p05-oidc-011 -f docker-compose.oidc-test.yml down (stopped only this task-owned test stack)
-EXIT_CODE=0
- Container p05-oidc-011-keycloak-1 Stopping 
- Container p05-oidc-011-keycloak-1 Stopped 
- Container p05-oidc-011-keycloak-1 Removing 
- Container p05-oidc-011-keycloak-1 Removed 
- Network p05-oidc-011_default Removing 
- Network p05-oidc-011_default Removed 

@@ -25,6 +25,6 @@ No HTTP route or MCP tool schema changes. Bump the P05 package to 0.4.2 because 
 
 ## Verification and limits
 
-The local protocol issuer test exercises active-to-revoked behavior over MCP loopback TCP. The Keycloak 26.8.1 container test additionally obtains a token from a real local issuer, introspects its claims, revokes it, and confirms introspection returns inactive. Neither test represents an external/production provider. API bearer auth and revocation of already-queued work remain outside this decision.
+The local protocol issuer test exercises active-to-revoked behavior over MCP loopback TCP. The Keycloak 26.8.1 container test obtains a token from a real local issuer, introspects its claims, calls an allowlisted read tool over MCP loopback TCP, revokes the token, and confirms the same MCP resource returns HTTP 401. Neither test represents an external/production provider. API bearer auth and revocation of already-queued work remain outside this decision.
 
 Sources: [RFC 7662](https://www.rfc-editor.org/rfc/rfc7662.html); [MCP Python SDK authorization](https://py.sdk.modelcontextprotocol.io/run/authorization/); [Keycloak Docker](https://www.keycloak.org/getting-started/getting-started-docker); [Keycloak realm import](https://www.keycloak.org/server/importExport).

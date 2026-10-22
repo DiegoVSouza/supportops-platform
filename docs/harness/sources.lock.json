@@ -212,7 +212,7 @@
     "mcp_sdk_docs": "https://py.sdk.modelcontextprotocol.io/run/authorization/",
     "checked": "2026-10-22",
     "behavior": "POST token introspection with HTTP Basic resource-client authentication; active, issuer, audience, subject (or username if RFC 7662 omits optional sub), tenant, roles, scope and expiry are required; each external MCP bearer is checked on every request without a positive-result cache",
-    "transport_test": "MCP TCP protocol issuer and actual Keycloak 26.8.1 local container; active token accepted and Keycloak-revoked token becomes inactive; external provider remains unconfigured",
+    "transport_test": "Loopback MCP TCP protocol issuer plus actual Keycloak 26.8.1 local container; Keycloak-issued token called an allowlisted read tool and was denied with HTTP 401 after revocation; external provider remains unconfigured",
     "keycloak": {
       "version": "26.8.1",
       "image": "quay.io/keycloak/keycloak:26.8.1",
@@ -222,7 +222,8 @@
         "https://www.keycloak.org/server/importExport",
         "https://www.keycloak.org/server/containers",
         "https://www.keycloak.org/docs/latest/authorization_services/index.html",
-        "https://www.keycloak.org/securing-apps/oidc-layers"
+        "https://www.keycloak.org/securing-apps/oidc-layers",
+        "https://www.keycloak.org/admin-api/protocol-mappers"
       ],
       "checked": "2026-10-22",
       "verification": "Disposable imported realm; direct-grant test user; authenticated token introspection and token revocation; artifacts/evidence/phase-011-keycloak-oidc.txt",
