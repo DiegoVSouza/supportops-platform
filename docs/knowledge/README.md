@@ -14,19 +14,20 @@ Escopo ausente é negado; recursos de outro tenant retornam como não encontrado
 
 ## Como a recuperação de falhas funciona?
 
-**EN:** The local queue contract uses tenant-scoped idempotency keys, bounded retries,
-and expiring worker leases. A redelivery reuses the same task identity; downstream
-effects must also deduplicate by that stable identity. The current queue is an in-memory
-double, so process-crash durability remains incomplete until PostgreSQL and SQS
-service-backed gates pass. The approved P04 0.1.1 package is installed and its local
-consumer contract passes.
+**EN:** PostgreSQL stores authoritative task state and the outbox. Redis Streams carries
+delivery through consumer groups, with delayed retries, visibility-based reclaim and a
+dead-letter stream. Tenant-scoped idempotency and effect-ledger checks make redelivery
+safe. The isolated service gate killed a worker after a simulated effect commit and
+verified recovery with one effect row. This is local fake-mode evidence, not a claim of
+exactly-once external effects.
 
-**PT:** O contrato local da fila usa chaves de idempotência por tenant, tentativas
-limitadas e leases com expiração. Uma nova entrega reutiliza a identidade da tarefa; o
-efeito downstream também deve deduplicar por essa identidade estável. A fila atual é um
-double em memória, então a durabilidade após queda do processo segue incompleta até que
-os gates com PostgreSQL e SQS reais passem. O pacote P04 0.1.1 está instalado e seu
-contrato consumidor local passou.
+**PT:** O PostgreSQL guarda o estado autoritativo das tarefas e a outbox. O Redis Streams
+transporta as entregas por consumer groups, com retries agendados, recuperação após o
+tempo de visibilidade e uma stream de dead-letter. A idempotência por tenant e o ledger
+de efeitos tornam a redelivery segura. O gate isolado encerrou um worker depois do commit
+de um efeito simulado e confirmou a retomada com uma única linha de efeito. Isso é
+evidência local em modo fake, não uma garantia de exatamente uma execução em efeitos
+externos.
 
 ## Como o RAG trata prompt injection?
 
@@ -83,6 +84,27 @@ também tenha papel de aprovador. Outro sujeito autorizado pode decidir uma úni
 **PT:** A stack local isolada passou nos testes de retrieval asyncpg nativo e migration/índices pgvector, limites atômicos do Redis, MCP Streamable HTTP assinado via TCP loopback e fluxo durável API→worker P04 0.1.3→agente P01 0.1.1. Também foram testados reinício da API, aprovação por pessoa distinta, bloqueio de prompt injection indireto, traces correlacionados, dashboard/alertas e encerramento do worker após um único commit de efeito simulado no ledger. A tarefa terminou com uma linha de efeito. O contrato da API é 0.4.0, com campos aditivos de resultado/erro (ADR-006). Identidade externa, qualidade semântica, custo do modelo e latência comparável seguem INCOMPLETE/PENDING.
 
 `artifacts/evidence/phase-009-full-gate-final.txt` is the reproducible acceptance record. `phase-009-crash-recovery.txt` isolates the kill-after-effect scenario. No provider call or external refund was made.
+
+## Phase 017 — Redis Streams queue and P05 0.4.3
+
+**EN:** P05 consumes the P04 0.1.4 Redis Streams wheel. PostgreSQL remains the task
+ledger; Redis persists queue delivery with AOF in the local Compose profile. The full
+isolated service gate passed API restart recovery, expired authorization rejection,
+human approval, MCP tenant controls, and worker crash recovery after a simulated effect.
+P05 0.4.3's packaged migration also passed an isolated PostgreSQL 16/pgvector 0.8.7
+consumer check. Model quality remains pending because the gate uses fake fixtures.
+
+**PT:** O P05 consome o wheel P04 0.1.4 com Redis Streams. O PostgreSQL continua como
+ledger das tarefas; o Redis persiste a fila com AOF no Compose local. O gate completo
+isolado passou na recuperação após reinício da API, rejeição de autorização expirada,
+aprovação humana, controles de tenant no MCP e retomada do worker após um efeito
+simulado. A migration empacotada no P05 0.4.3 também passou em um teste consumidor
+isolado com PostgreSQL 16/pgvector 0.8.7. A qualidade do modelo continua pendente porque
+os fixtures do gate usam modo fake.
+
+Evidence: `artifacts/evidence/phase-017-full-gate.txt`,
+`phase-017-service-summary.json`, `phase-017-wheel-build.txt`, and
+`phase-017-wheel-consumer.txt`.
 
 
 ## Phase 010 — retry recovery and release provenance

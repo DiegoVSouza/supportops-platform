@@ -69,7 +69,7 @@
     {
       "id": "p05-release-wheel",
       "description": "Versioned P05 wheel with packaged migrations, SHA-256 provenance and isolated real PostgreSQL consumer smoke",
-      "status": "IN_PROGRESS_0.4.3",
+      "status": "PASS_LOCAL_WHEEL_0.4.3",
       "evidence": "docs/harness/sources.lock.json; artifacts/evidence/phase-017-wheel-build.txt; artifacts/evidence/phase-017-wheel-consumer.txt"
     },
     {

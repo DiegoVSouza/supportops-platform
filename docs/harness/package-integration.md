@@ -14,15 +14,15 @@ installed and exercised by a contract test before it can enter the release gate.
 | P04 | supportops-async | 0.1.4 | `f4b5df828b397e7ecbb9fa87c0ef77485d829dca` | `FEFB871993591CABE9F7BABA132E9F430DDBD65DD730C6789E22DC86D4D87C3F` | Yes; P05 Redis Streams/worker recovery E2E passes |
 
 P00, P01, P02, and P04 are installed from versioned local wheels and their P05
-consumer checks pass. P05 itself is released locally as 0.4.1; source commit, artifact
-commit, wheel SHA-256, and isolated real PostgreSQL migration consumer are recorded
-in `sources.lock.json` and `phase-010-wheel-*.txt`. P03 0.3.0 was superseded after its consumer exposed an
+consumer checks pass. P05 0.4.3 is released locally; source commit, artifact commit,
+wheel SHA-256, and isolated real PostgreSQL migration consumer are recorded in
+`sources.lock.json` and `phase-017-wheel-*.txt`. P03 0.3.0 was superseded after its consumer exposed an
 OpenTelemetry `NonRecordingSpan.status` failure. The replacement 0.3.1 has exact
 upstream source/artifact provenance and passed the isolated producer smoke; P05
 consumer verification passes with the non-recording span regression test. P04 0.1.2 declares FastAPI
 `>=0.137.1,<0.143.0` and Uvicorn
-`==0.46.0`; P05 pins compatible FastAPI 0.142.4 and Uvicorn 0.46.0. PostgreSQL/SQS
-service-backed P04 integration passes in the named isolated local E2E; it is not an
+`==0.46.0`; P05 pins compatible FastAPI 0.142.4 and Uvicorn 0.46.0. PostgreSQL and
+Redis Streams-backed P04 integration passes in the named isolated local E2E; it is not an
 external deployment or a claim of exactly-once effects outside the product ledger.
 
 Run `uv run --locked python scripts/verify_packages.py` to evaluate the manifest.

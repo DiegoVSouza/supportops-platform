@@ -56,6 +56,9 @@ human approval, run `uv run --locked python scripts/demo.py`.
 
 ## Results
 
+P05 0.4.3 is released as a local wheel with verified source and artifact provenance.
+Its packaged migration passed an isolated PostgreSQL 16/pgvector 0.8.7 consumer check.
+
 API compatibility and authentication, tenant filtering, dual-control refund approval,
 tenant-scoped hybrid RAG citations, PostgreSQL/pgvector migration and retrieval,
 atomic Redis limits, durable API→P04 worker→P01 agent execution, TCP-hosted signed MCP,

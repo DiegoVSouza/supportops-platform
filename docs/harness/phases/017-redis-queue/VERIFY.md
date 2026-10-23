@@ -13,6 +13,10 @@ INCOMPLETE/PENDING as recorded in their existing gates.
   temporary test signing keys supplied through the environment.
 - `uv run --locked python scripts/check_full.py`: PASS, exit 0. Evidence is in
   `artifacts/evidence/phase-017-full-gate.txt`.
+- P05 0.4.3 wheel built from source commit `a77a16c2f461b16a674323fa2205cd4943a12ed5`
+  and installed into an isolated target. The packaged migration applied against
+  disposable PostgreSQL 16/pgvector 0.8.7; see `phase-017-wheel-build.txt` and
+  `phase-017-wheel-consumer.txt`.
 - The isolated service run verified PostgreSQL/pgvector, Redis Streams delivery,
   API restart recovery, MCP authorization, tenant isolation, authorization lease
   expiry, human approval, worker crash recovery after effect, one effect row,

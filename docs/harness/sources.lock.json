@@ -154,7 +154,7 @@
     "installed_verified": true,
     "consumer_test": "tests/test_p04_package_integration.py exit 0"
   },
-  "checked_at": "2026-10-22",
+  "checked_at": "2026-10-23",
   "native_asyncpg": {
     "version": "0.30.0",
     "source": "https://pypi.org/project/asyncpg/0.30.0/",
@@ -233,14 +233,14 @@
   },
   "p05_package": {
     "name": "supportops-platform",
-    "version": "0.4.2",
-    "origin_commit": "7e3e6fca067e41d210e2f9010eb77636a3ca7458",
-    "artifact_commit": "092e65a3bf69a1f0d7e70a54a1aaa8642dc56bdc",
-    "artifact_sha256": "65B0CEACEB017CEB2781ABF597ED8C9A70892EEE1933D3942C8B02EE4861EE79",
-    "artifact_path": "artifacts/packages/supportops_platform-0.4.2-py3-none-any.whl",
+    "version": "0.4.3",
+    "origin_commit": "a77a16c2f461b16a674323fa2205cd4943a12ed5",
+    "artifact_commit": "1f7ced7a86eba520c7f81ef9aa6c6d4cc166298b",
+    "artifact_sha256": "345530D274C192F596C2959D0958365613E86A49FCC43DC36A4D95BE384D3F80",
+    "artifact_path": "artifacts/packages/supportops_platform-0.4.3-py3-none-any.whl",
     "approved": true,
     "installed_verified": true,
-    "consumer_test": "scripts/check_wheel_consumer.py; artifacts/evidence/phase-011-wheel-consumer.txt; loaded and applied packaged migration against disposable PostgreSQL 16/pgvector 0.8.7"
+    "consumer_test": "scripts/check_wheel_consumer.py; artifacts/evidence/phase-017-wheel-consumer.txt; packaged migration applied against disposable PostgreSQL 16/pgvector 0.8.7"
   },
   "p05_superseded_041": {
     "name": "supportops-platform",
@@ -281,5 +281,17 @@
     "approved": true,
     "installed_verified": true,
     "status": "SUPERSEDED_BY_0.4.2; immutable artifact retained"
+  },
+  "p05_previous_042": {
+    "name": "supportops-platform",
+    "version": "0.4.2",
+    "origin_commit": "7e3e6fca067e41d210e2f9010eb77636a3ca7458",
+    "artifact_commit": "092e65a3bf69a1f0d7e70a54a1aaa8642dc56bdc",
+    "artifact_sha256": "65B0CEACEB017CEB2781ABF597ED8C9A70892EEE1933D3942C8B02EE4861EE79",
+    "artifact_path": "artifacts/packages/supportops_platform-0.4.2-py3-none-any.whl",
+    "approved": true,
+    "installed_verified": true,
+    "consumer_test": "scripts/check_wheel_consumer.py; artifacts/evidence/phase-011-wheel-consumer.txt; loaded and applied packaged migration against disposable PostgreSQL 16/pgvector 0.8.7",
+    "status": "SUPERSEDED_BY_0.4.3; immutable artifact retained"
   }
 }
