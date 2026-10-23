@@ -29,7 +29,7 @@ def create_components():
     dsn=os.environ["P05_POSTGRES_DSN"]
     store=PostgresStore(dsn)
     store.migrate()
-    queue=DurableQueue(dsn,os.environ["P05_LOCALSTACK_ENDPOINT"],os.getenv("P05_QUEUE_NAME","p05-tasks"))
+    queue=DurableQueue(dsn,os.environ["P05_REDIS_URL"],os.getenv("P05_QUEUE_NAME","p05-tasks"))
     return store,PostgresRetriever(dsn),queue,RedisRateLimiter(os.environ["P05_REDIS_URL"])
 
 

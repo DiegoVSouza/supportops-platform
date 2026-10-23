@@ -7,7 +7,7 @@
 - Runtime: custom-loop
 - Allowed tools: Tenant-scoped knowledge retrieval, read-only billing/CRM lookup, and refund proposal; no direct refund effect or outbound communication.
 - Human approval points: Refunds above the configured threshold require a distinct authorized approver.
-- Limits: `LLM_MODE=fake` in CI; deterministic hashed vectors are not semantic embeddings; bounded retrieval/tools/steps/time; no live provider calls without separate authorization. The local service gate proves PostgreSQL/pgvector, Redis, LocalStack, TCP MCP, and durable worker flow. It does not prove external identity, semantic model quality, or production behavior.
+- Limits: `LLM_MODE=fake` in CI; deterministic hashed vectors are not semantic embeddings; bounded retrieval/tools/steps/time; no live provider calls without separate authorization. The local service gate proves PostgreSQL/pgvector, Redis Streams, TCP MCP, and durable worker flow. It does not prove external identity, semantic model quality, or production behavior.
 
 ## Phase 008 service evidence
 

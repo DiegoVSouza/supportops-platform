@@ -3,13 +3,13 @@
 from dataclasses import dataclass
 from uuid import uuid4
 
-import boto3
 import psycopg
+import redis
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from opentelemetry import propagate, trace
 from supportops_async.queue.contracts import BrokerMessage
-from supportops_async.queue.memory import SqsBroker
+from supportops_async.queue.memory import RedisStreamBroker
 from supportops_async.store.postgres import PostgresTaskStore
 
 from supportops_platform.contracts import AuthorizationLeaseExpired, Principal, TaskStatus
@@ -28,14 +28,13 @@ class DurableTask:
 
 
 class DurableQueue:
-    def __init__(self, dsn, endpoint, queue_name="p05-tasks"):
+    def __init__(self, dsn, redis_url, queue_name="p05-tasks"):
         self.dsn = dsn
         self.backend = PostgresTaskStore(dsn)
-        client = boto3.client("sqs", endpoint_url=endpoint, region_name="us-east-1",
-                              aws_access_key_id="test", aws_secret_access_key="test")
-        main = client.create_queue(QueueName=queue_name)["QueueUrl"]
-        dead = client.create_queue(QueueName=queue_name+"-dlq")["QueueUrl"]
-        self.broker = SqsBroker(client, main, dead)
+        client = redis.Redis.from_url(redis_url, decode_responses=True)
+        self.broker = RedisStreamBroker(
+            client, queue_name, queue_name + ":dlq", visibility_timeout=5,
+        )
 
     def enqueue(self, actor, task_type, payload, idempotency_key):
         if "triage:run" not in actor.scopes:

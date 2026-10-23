@@ -17,8 +17,10 @@ API / worker / agent / tools -> telemetry adapter -> P03 package contract
 The current runtime uses process-local ticket and approval storage for development.
 The configured HMAC key verifies local JWTs. Fake mode generates an ephemeral key if
 `JWT_SECRET` is absent. Refund requests create pending approvals; no refund effect is
-implemented. P00–P04 use approved local wheels. P04's SQLite/in-memory contract passes,
-while PostgreSQL/SQS service-backed integration remains incomplete.
+implemented. P00–P04 use approved local wheels. P04 provides the in-memory development
+adapter and Redis Streams transport. PostgreSQL remains the authoritative task ledger;
+Redis carries queued delivery and delayed retries. The service-backed flow is covered
+by phase 017.
 
 The local hybrid retriever has a 100-document, 64 KB per-document, and 10-result
 limit. Deterministic hashed-token vectors exist only for control-flow tests and do

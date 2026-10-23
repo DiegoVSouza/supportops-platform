@@ -1,6 +1,6 @@
 x-runtime: &runtime
   build: .
-  image: supportops-platform:0.4.2-local
+  image: supportops-platform:0.4.3-local
   environment: &runtime-env
     LLM_MODE: fake
     P05_RUNTIME: services
@@ -10,7 +10,6 @@ x-runtime: &runtime
     MCP_URL: http://mcp:8000/mcp
     P05_POSTGRES_DSN: postgresql://supportops:${P05_DB_PASSWORD:-local-test-only}@postgres:5432/supportops
     P05_REDIS_URL: redis://redis:6379/0
-    P05_LOCALSTACK_ENDPOINT: http://localstack:4566
     P05_QUEUE_NAME: p05-product-tasks
     OTEL_EXPORTER_OTLP_ENDPOINT: http://otel:4317
     SUPPORTOPS_LANGGRAPH_DB: /app/artifacts/langgraph-checkpoints.sqlite
@@ -29,15 +28,10 @@ services:
     command: [redis-server, --appendonly, 'yes']
     volumes: ["redis-data:/data"]
     healthcheck: {test: [CMD, redis-cli, ping], interval: 2s, retries: 30}
-  localstack:
-    image: localstack/localstack:4.14.0
-    environment: {SERVICES: 'sqs,sns', SQS_ENDPOINT_STRATEGY: dynamic}
-    ports: ["127.0.0.1:${P05_LOCALSTACK_PORT:-24566}:4566"]
-    healthcheck: {test: [CMD, curl, -f, 'http://localhost:4566/_localstack/health'], interval: 2s, retries: 40}
   api:
     <<: *runtime
     ports: ["127.0.0.1:${P05_API_PORT:-28000}:8000"]
-    depends_on: {postgres: {condition: service_healthy}, redis: {condition: service_healthy}, localstack: {condition: service_healthy}}
+    depends_on: {postgres: {condition: service_healthy}, redis: {condition: service_healthy}}
     healthcheck: {test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"], interval: 3s, retries: 40}
   worker:
     <<: *runtime

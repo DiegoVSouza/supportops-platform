@@ -11,7 +11,7 @@ installed and exercised by a contract test before it can enter the release gate.
 | P01 | supportops-agents | 0.1.1 | `4c70b1ea3e23606dfe60ffae77567417de53a3f7` | `DD77E9B91F2D9BA7AC84178BBB557E0EA50BDE954554A528B4632DEC18DDB51F` | Yes; P05 installed version assertion passes |
 | P02 | supportops-ai-toolkit | 0.2.0 | `b4966c54fa3feda3ff1eae36ee872e5c407a4102` | `7126517f9c64202b034b8a067dedf29e1313bb3139f15a984e93660654eb4d10` | Yes; P05 installed version assertion passes |
 | P03 | supportops-obs | 0.3.1 | `e191f17d4649f40d6dea7057d3b52729dbbb1389` | `82b3a79aacd0ac4faa1082087c0237487264b2a6497d9b77b79c1d6bb86f66a8` | Yes; P05 installed consumer tests pass |
-| P04 | supportops-async | 0.1.3 | `ef1fe4398d30a91d471ef6ddab226160050c5eaf` | `b9e0bc47793c1cebb29471db087084c52495ab20d6ee5debabca95d1d42156f8` | Yes; P05 durable SQS/worker recovery E2E passes |
+| P04 | supportops-async | 0.1.4 | `f4b5df828b397e7ecbb9fa87c0ef77485d829dca` | `FEFB871993591CABE9F7BABA132E9F430DDBD65DD730C6789E22DC86D4D87C3F` | Yes; P05 Redis Streams/worker recovery E2E passes |
 
 P00, P01, P02, and P04 are installed from versioned local wheels and their P05
 consumer checks pass. P05 itself is released locally as 0.4.1; source commit, artifact

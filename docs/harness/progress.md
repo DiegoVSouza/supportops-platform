@@ -96,3 +96,10 @@ A disposable Keycloak 26.8.1 container issued a test token; authenticated RFC 76
 - The first service run exposed that raising the expiry error inside the transaction rolled back the `failed` state. The expiry update now commits before HTTP 409 is raised; the corrected full gate passed.
 - Fast gate and harness documentation gate passed. Full isolated service acceptance passed with 104 tests, including expired pre-dispatch and post-approval cases, the prior service flow, and worker crash recovery. Evidence: `artifacts/evidence/phase-016-full-gate.txt`; temporary Compose resources were removed.
 - Replay/model evaluation remains PENDING per user choice; local fake controls make no model-quality claim. External issuer acceptance remains INCOMPLETE.
+
+## 2026-10-23 — Phase 017 Redis Streams transport
+
+- P05 durable delivery now uses the approved P04 0.1.4 Redis Streams wheel. PostgreSQL remains the source of task state; Redis Streams consumer groups handle delivery, delayed retries, reclaim and dead-letter routing. Local service Compose no longer needs LocalStack SQS.
+- Updated the immutable P04 wheel provenance and P05 dependency lock. Unit and contract suite passed (104 tests); OpenAPI, package provenance and Docker Compose configuration checks passed.
+- The isolated full fake-mode service gate passed with PostgreSQL/pgvector and Redis. It covered API restart recovery, tenant isolation, MCP auth, 15-minute authorization expiry, HITL, worker crash after a committed effect, and one ledger effect. Evidence: `artifacts/evidence/phase-017-full-gate.txt`, `phase-017-service-summary.json`, `phase-017-product-trace.json`, and `phase-017-service-down-alert.json`. Gate-created containers, network, and volumes were removed; existing stacks were preserved.
+- Model quality, replay, provider cost/latency, and external IdP acceptance remain PENDING/INCOMPLETE. The deterministic fixtures are not model-quality evidence.

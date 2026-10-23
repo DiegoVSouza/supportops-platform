@@ -31,7 +31,7 @@ The default API uses in-memory development storage and signed local demo tokens.
 [package integration gate](docs/harness/package-integration.md). See also the
 [test classification](docs/harness/test-classification.md). P00–P04 use approved
 local wheels in the lock. The isolated Compose profile also exercises PostgreSQL,
-pgvector, Redis, LocalStack SQS, P04 0.1.3 and P01 0.1.1 through an authenticated
+pgvector, Redis Streams, P04 0.1.4 and P01 0.1.1 through an authenticated
 durable service flow. See `docker-compose.services.yml` and phase 009 evidence. The
 service stack uses local fixture credentials and ephemeral signing keys. No live LLM
 or external refund effect runs.
@@ -62,7 +62,7 @@ atomic Redis limits, durable API→P04 worker→P01 agent execution, TCP-hosted 
 checkpoint persistence and correlated traces passed local service checks. Local
 crash-after-effect recovery confirmed one simulated effect row and eventual job
 completion. The isolated phase 014 full gate passed with 103 tests and repeated the
-service E2E and crash-recovery checks against PostgreSQL, Redis, LocalStack, MCP, and
+service E2E and crash-recovery checks against PostgreSQL, Redis, MCP, and
 observability services. Its temporary Compose resources were removed while the existing
 P05 stack remained running. External identity-provider acceptance, replay/model quality,
 cost and comparable latency remain INCOMPLETE/PENDING. Hashed fake embeddings and

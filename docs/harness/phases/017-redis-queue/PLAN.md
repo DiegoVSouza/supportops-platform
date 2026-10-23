@@ -1,6 +1,6 @@
 # PLAN — P05 Redis queue transport
 
-allowed_write_paths: `supportops_platform/async_tasks/**`; `supportops_platform/service_runtime.py`; `pyproject.toml`; `uv.lock`; `artifacts/packages/**`; `scripts/**`; `tests/**`; `docs/harness/**`; `docs/decisions/**`; `artifacts/evidence/phase-017-*`.
+allowed_write_paths: `supportops_platform/async_tasks/**`; `supportops_platform/service_runtime.py`; `supportops_platform/__init__.py`; `pyproject.toml`; `uv.lock`; `docker-compose.services.yml`; `openapi.yaml`; `artifacts/packages/**`; `scripts/**`; `tests/**`; `docs/harness/**`; `docs/decisions/**`; `docs/architecture.md`; `docs/knowledge/**`; `README.md`; `artifacts/evidence/phase-017-*`.
 
 forbidden: change API/MCP contracts, weaken tenant/auth/lease controls, persist bearer tokens in Redis, use live LLMs, or modify another project.
 

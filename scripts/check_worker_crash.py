@@ -59,8 +59,10 @@ while not worker.run_once(): time.sleep(.2)
         print(f'product-worker-crash: PASS killed_after_refund_commit=true job_recovered=true effect_rows=1 backend_attempts={attempts}')
     finally:
         if child.poll() is None: child.terminate();child.wait(timeout=5)
-        queue.broker.client.delete_queue(QueueUrl=queue.broker.queue_url)
-        queue.broker.client.delete_queue(QueueUrl=queue.broker.dlq_url)
+        queue.broker.client.delete(
+            queue.broker.queue_name, queue.broker.dlq_name,
+            queue.broker.attempts_key, queue.broker.delayed_key,
+        )
 
 
 if __name__=='__main__': main()
