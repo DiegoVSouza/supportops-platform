@@ -1,0 +1,9 @@
+8bd4d6cd05f8db9f35945c36b26bb66670e99df995d2e90eb265eba89f1b5cd0
+Using CPython 3.13.12 interpreter at: .venv\Scripts\python.exe
+Resolved 1 package in 17ms
+Prepared 1 package in 81ms
+Installed 1 package in 33ms
+ + supportops-platform==0.4.3 (from file:///C:/estudo/Golpe/lab/projects/p05/artifacts/packages/supportops_platform-0.4.3-py3-none-any.whl)
+isolated wheel consumer: PASS; version=0.4.3; source=C:\estudo\Golpe\lab\projects\p05\artifacts\evidence\p05-wheel-consumer-043\supportops_platform; migration loaded/applied; PostgreSQL pgvector=0.8.7
+SHA256=345530D274C192F596C2959D0958365613E86A49FCC43DC36A4D95BE384D3F80
+EXIT_CODE=0

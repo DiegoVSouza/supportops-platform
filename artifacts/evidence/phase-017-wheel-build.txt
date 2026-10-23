@@ -1,0 +1,7 @@
+P05 0.4.3 wheel build
+Source commit: a77a16c2f461b16a674323fa2205cd4943a12ed5
+
+COMMAND=uv build --offline --wheel --out-dir artifacts/packages
+EXIT_CODE=0
+SHA256=345530D274C192F596C2959D0958365613E86A49FCC43DC36A4D95BE384D3F80
+WHEEL=artifacts/packages/supportops_platform-0.4.3-py3-none-any.whl
