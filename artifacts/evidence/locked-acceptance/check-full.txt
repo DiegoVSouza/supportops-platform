@@ -247,79 +247,79 @@ Exit code: 0
 
 #20 resolving provenance for metadata file
 #20 DONE 0.0s
- Image supportops-platform:0.4.3-local Building 
- Image supportops-platform:0.4.3-local Built 
+ Image supportops-platform:0.4.3-local Building
+ Image supportops-platform:0.4.3-local Built
 
 Command: docker compose -p p05-locked-acceptance-021 -f docker-compose.services.yml up --no-build -d --wait
 Exit code: 0
- Network p05-locked-acceptance-021_default Creating 
- Network p05-locked-acceptance-021_default Created 
- Volume p05-locked-acceptance-021_redis-data Creating 
- Volume p05-locked-acceptance-021_redis-data Created 
- Volume p05-locked-acceptance-021_postgres-data Creating 
- Volume p05-locked-acceptance-021_postgres-data Created 
- Volume p05-locked-acceptance-021_graph-data Creating 
- Volume p05-locked-acceptance-021_graph-data Created 
- Container p05-locked-acceptance-021-redis-1 Creating 
- Container p05-locked-acceptance-021-postgres-1 Creating 
- Container p05-locked-acceptance-021-prometheus-1 Creating 
- Container p05-locked-acceptance-021-jaeger-1 Creating 
- Container p05-locked-acceptance-021-grafana-1 Creating 
- Container p05-locked-acceptance-021-mcp-1 Creating 
- Container p05-locked-acceptance-021-otel-1 Creating 
- Container p05-locked-acceptance-021-otel-1 Created 
- Container p05-locked-acceptance-021-redis-1 Created 
- Container p05-locked-acceptance-021-jaeger-1 Created 
- Container p05-locked-acceptance-021-mcp-1 Created 
- Container p05-locked-acceptance-021-prometheus-1 Created 
- Container p05-locked-acceptance-021-grafana-1 Created 
- Container p05-locked-acceptance-021-postgres-1 Created 
- Container p05-locked-acceptance-021-api-1 Creating 
- Container p05-locked-acceptance-021-api-1 Created 
- Container p05-locked-acceptance-021-worker-1 Creating 
- Container p05-locked-acceptance-021-worker-1 Created 
- Container p05-locked-acceptance-021-postgres-1 Starting 
- Container p05-locked-acceptance-021-otel-1 Starting 
- Container p05-locked-acceptance-021-redis-1 Starting 
- Container p05-locked-acceptance-021-jaeger-1 Starting 
- Container p05-locked-acceptance-021-grafana-1 Starting 
- Container p05-locked-acceptance-021-mcp-1 Starting 
- Container p05-locked-acceptance-021-prometheus-1 Starting 
- Container p05-locked-acceptance-021-mcp-1 Started 
- Container p05-locked-acceptance-021-redis-1 Started 
- Container p05-locked-acceptance-021-jaeger-1 Started 
- Container p05-locked-acceptance-021-otel-1 Started 
- Container p05-locked-acceptance-021-postgres-1 Started 
- Container p05-locked-acceptance-021-redis-1 Waiting 
- Container p05-locked-acceptance-021-postgres-1 Waiting 
- Container p05-locked-acceptance-021-prometheus-1 Started 
- Container p05-locked-acceptance-021-grafana-1 Started 
- Container p05-locked-acceptance-021-redis-1 Healthy 
- Container p05-locked-acceptance-021-postgres-1 Healthy 
- Container p05-locked-acceptance-021-api-1 Starting 
- Container p05-locked-acceptance-021-api-1 Started 
- Container p05-locked-acceptance-021-api-1 Waiting 
- Container p05-locked-acceptance-021-api-1 Healthy 
- Container p05-locked-acceptance-021-worker-1 Starting 
- Container p05-locked-acceptance-021-worker-1 Started 
- Container p05-locked-acceptance-021-prometheus-1 Waiting 
- Container p05-locked-acceptance-021-grafana-1 Waiting 
- Container p05-locked-acceptance-021-otel-1 Waiting 
- Container p05-locked-acceptance-021-redis-1 Waiting 
- Container p05-locked-acceptance-021-api-1 Waiting 
- Container p05-locked-acceptance-021-postgres-1 Waiting 
- Container p05-locked-acceptance-021-mcp-1 Waiting 
- Container p05-locked-acceptance-021-jaeger-1 Waiting 
- Container p05-locked-acceptance-021-worker-1 Waiting 
- Container p05-locked-acceptance-021-mcp-1 Healthy 
- Container p05-locked-acceptance-021-grafana-1 Healthy 
- Container p05-locked-acceptance-021-postgres-1 Healthy 
- Container p05-locked-acceptance-021-worker-1 Healthy 
- Container p05-locked-acceptance-021-redis-1 Healthy 
- Container p05-locked-acceptance-021-prometheus-1 Healthy 
- Container p05-locked-acceptance-021-otel-1 Healthy 
- Container p05-locked-acceptance-021-jaeger-1 Healthy 
- Container p05-locked-acceptance-021-api-1 Healthy 
+ Network p05-locked-acceptance-021_default Creating
+ Network p05-locked-acceptance-021_default Created
+ Volume p05-locked-acceptance-021_redis-data Creating
+ Volume p05-locked-acceptance-021_redis-data Created
+ Volume p05-locked-acceptance-021_postgres-data Creating
+ Volume p05-locked-acceptance-021_postgres-data Created
+ Volume p05-locked-acceptance-021_graph-data Creating
+ Volume p05-locked-acceptance-021_graph-data Created
+ Container p05-locked-acceptance-021-redis-1 Creating
+ Container p05-locked-acceptance-021-postgres-1 Creating
+ Container p05-locked-acceptance-021-prometheus-1 Creating
+ Container p05-locked-acceptance-021-jaeger-1 Creating
+ Container p05-locked-acceptance-021-grafana-1 Creating
+ Container p05-locked-acceptance-021-mcp-1 Creating
+ Container p05-locked-acceptance-021-otel-1 Creating
+ Container p05-locked-acceptance-021-otel-1 Created
+ Container p05-locked-acceptance-021-redis-1 Created
+ Container p05-locked-acceptance-021-jaeger-1 Created
+ Container p05-locked-acceptance-021-mcp-1 Created
+ Container p05-locked-acceptance-021-prometheus-1 Created
+ Container p05-locked-acceptance-021-grafana-1 Created
+ Container p05-locked-acceptance-021-postgres-1 Created
+ Container p05-locked-acceptance-021-api-1 Creating
+ Container p05-locked-acceptance-021-api-1 Created
+ Container p05-locked-acceptance-021-worker-1 Creating
+ Container p05-locked-acceptance-021-worker-1 Created
+ Container p05-locked-acceptance-021-postgres-1 Starting
+ Container p05-locked-acceptance-021-otel-1 Starting
+ Container p05-locked-acceptance-021-redis-1 Starting
+ Container p05-locked-acceptance-021-jaeger-1 Starting
+ Container p05-locked-acceptance-021-grafana-1 Starting
+ Container p05-locked-acceptance-021-mcp-1 Starting
+ Container p05-locked-acceptance-021-prometheus-1 Starting
+ Container p05-locked-acceptance-021-mcp-1 Started
+ Container p05-locked-acceptance-021-redis-1 Started
+ Container p05-locked-acceptance-021-jaeger-1 Started
+ Container p05-locked-acceptance-021-otel-1 Started
+ Container p05-locked-acceptance-021-postgres-1 Started
+ Container p05-locked-acceptance-021-redis-1 Waiting
+ Container p05-locked-acceptance-021-postgres-1 Waiting
+ Container p05-locked-acceptance-021-prometheus-1 Started
+ Container p05-locked-acceptance-021-grafana-1 Started
+ Container p05-locked-acceptance-021-redis-1 Healthy
+ Container p05-locked-acceptance-021-postgres-1 Healthy
+ Container p05-locked-acceptance-021-api-1 Starting
+ Container p05-locked-acceptance-021-api-1 Started
+ Container p05-locked-acceptance-021-api-1 Waiting
+ Container p05-locked-acceptance-021-api-1 Healthy
+ Container p05-locked-acceptance-021-worker-1 Starting
+ Container p05-locked-acceptance-021-worker-1 Started
+ Container p05-locked-acceptance-021-prometheus-1 Waiting
+ Container p05-locked-acceptance-021-grafana-1 Waiting
+ Container p05-locked-acceptance-021-otel-1 Waiting
+ Container p05-locked-acceptance-021-redis-1 Waiting
+ Container p05-locked-acceptance-021-api-1 Waiting
+ Container p05-locked-acceptance-021-postgres-1 Waiting
+ Container p05-locked-acceptance-021-mcp-1 Waiting
+ Container p05-locked-acceptance-021-jaeger-1 Waiting
+ Container p05-locked-acceptance-021-worker-1 Waiting
+ Container p05-locked-acceptance-021-mcp-1 Healthy
+ Container p05-locked-acceptance-021-grafana-1 Healthy
+ Container p05-locked-acceptance-021-postgres-1 Healthy
+ Container p05-locked-acceptance-021-worker-1 Healthy
+ Container p05-locked-acceptance-021-redis-1 Healthy
+ Container p05-locked-acceptance-021-prometheus-1 Healthy
+ Container p05-locked-acceptance-021-otel-1 Healthy
+ Container p05-locked-acceptance-021-jaeger-1 Healthy
+ Container p05-locked-acceptance-021-api-1 Healthy
 
 Command: docker run --rm --entrypoint promtool -v C:\estudo\Golpe\lab\projects\p05\infra:/rules:ro prom/prometheus:v3.14.0 check rules /rules/alerts.yml
 Exit code: 0
@@ -338,40 +338,40 @@ network_mcp_auth=PASS; unauthenticated and cross-tenant access denied
 
 Command: docker compose -p p05-locked-acceptance-021 -f docker-compose.services.yml stop worker
 Exit code: 0
- Container p05-locked-acceptance-021-worker-1 Stopping 
- Container p05-locked-acceptance-021-worker-1 Stopped 
+ Container p05-locked-acceptance-021-worker-1 Stopping
+ Container p05-locked-acceptance-021-worker-1 Stopped
 
 Command: docker compose -p p05-locked-acceptance-021 -f docker-compose.services.yml restart api
 Exit code: 0
- Container p05-locked-acceptance-021-api-1 Restarting 
- Container p05-locked-acceptance-021-api-1 Started 
+ Container p05-locked-acceptance-021-api-1 Restarting
+ Container p05-locked-acceptance-021-api-1 Started
 
 Command: docker compose -p p05-locked-acceptance-021 -f docker-compose.services.yml start worker
 Exit code: 0
- Container p05-locked-acceptance-021-redis-1 Waiting 
- Container p05-locked-acceptance-021-postgres-1 Waiting 
- Container p05-locked-acceptance-021-redis-1 Healthy 
- Container p05-locked-acceptance-021-postgres-1 Healthy 
- Container p05-locked-acceptance-021-api-1 Waiting 
- Container p05-locked-acceptance-021-api-1 Healthy 
- Container p05-locked-acceptance-021-worker-1 Starting 
- Container p05-locked-acceptance-021-worker-1 Started 
+ Container p05-locked-acceptance-021-redis-1 Waiting
+ Container p05-locked-acceptance-021-postgres-1 Waiting
+ Container p05-locked-acceptance-021-redis-1 Healthy
+ Container p05-locked-acceptance-021-postgres-1 Healthy
+ Container p05-locked-acceptance-021-api-1 Waiting
+ Container p05-locked-acceptance-021-api-1 Healthy
+ Container p05-locked-acceptance-021-worker-1 Starting
+ Container p05-locked-acceptance-021-worker-1 Started
 
 Command: docker compose -p p05-locked-acceptance-021 -f docker-compose.services.yml stop worker
 Exit code: 0
- Container p05-locked-acceptance-021-worker-1 Stopping 
- Container p05-locked-acceptance-021-worker-1 Stopped 
+ Container p05-locked-acceptance-021-worker-1 Stopping
+ Container p05-locked-acceptance-021-worker-1 Stopped
 
 Command: docker compose -p p05-locked-acceptance-021 -f docker-compose.services.yml start worker
 Exit code: 0
- Container p05-locked-acceptance-021-postgres-1 Waiting 
- Container p05-locked-acceptance-021-redis-1 Waiting 
- Container p05-locked-acceptance-021-postgres-1 Healthy 
- Container p05-locked-acceptance-021-redis-1 Healthy 
- Container p05-locked-acceptance-021-api-1 Waiting 
- Container p05-locked-acceptance-021-api-1 Healthy 
- Container p05-locked-acceptance-021-worker-1 Starting 
- Container p05-locked-acceptance-021-worker-1 Started 
+ Container p05-locked-acceptance-021-postgres-1 Waiting
+ Container p05-locked-acceptance-021-redis-1 Waiting
+ Container p05-locked-acceptance-021-postgres-1 Healthy
+ Container p05-locked-acceptance-021-redis-1 Healthy
+ Container p05-locked-acceptance-021-api-1 Waiting
+ Container p05-locked-acceptance-021-api-1 Healthy
+ Container p05-locked-acceptance-021-worker-1 Starting
+ Container p05-locked-acceptance-021-worker-1 Started
 
 Command: docker compose -p p05-locked-acceptance-021 -f docker-compose.services.yml exec -T api id -u
 Exit code: 0
@@ -409,50 +409,50 @@ product-worker-crash: PASS killed_after_refund_commit=true job_recovered=true ef
 }
 Command: docker compose -p p05-locked-acceptance-021 -f docker-compose.services.yml down --volumes --remove-orphans
 Exit code: 0
- Container p05-locked-acceptance-021-otel-1 Stopping 
- Container p05-locked-acceptance-021-jaeger-1 Stopping 
- Container p05-locked-acceptance-021-worker-1 Stopping 
- Container p05-locked-acceptance-021-prometheus-1 Stopping 
- Container p05-locked-acceptance-021-grafana-1 Stopping 
- Container p05-locked-acceptance-021-mcp-1 Stopping 
- Container p05-locked-acceptance-021-jaeger-1 Stopped 
- Container p05-locked-acceptance-021-jaeger-1 Removing 
- Container p05-locked-acceptance-021-jaeger-1 Removed 
- Container p05-locked-acceptance-021-otel-1 Stopped 
- Container p05-locked-acceptance-021-otel-1 Removing 
- Container p05-locked-acceptance-021-otel-1 Removed 
- Container p05-locked-acceptance-021-prometheus-1 Stopped 
- Container p05-locked-acceptance-021-prometheus-1 Removing 
- Container p05-locked-acceptance-021-prometheus-1 Removed 
- Container p05-locked-acceptance-021-grafana-1 Stopped 
- Container p05-locked-acceptance-021-grafana-1 Removing 
- Container p05-locked-acceptance-021-grafana-1 Removed 
- Container p05-locked-acceptance-021-mcp-1 Stopped 
- Container p05-locked-acceptance-021-mcp-1 Removing 
- Container p05-locked-acceptance-021-worker-1 Stopped 
- Container p05-locked-acceptance-021-worker-1 Removing 
- Container p05-locked-acceptance-021-mcp-1 Removed 
- Container p05-locked-acceptance-021-worker-1 Removed 
- Container p05-locked-acceptance-021-api-1 Stopping 
- Container p05-locked-acceptance-021-api-1 Stopped 
- Container p05-locked-acceptance-021-api-1 Removing 
- Container p05-locked-acceptance-021-api-1 Removed 
- Container p05-locked-acceptance-021-postgres-1 Stopping 
- Container p05-locked-acceptance-021-redis-1 Stopping 
- Container p05-locked-acceptance-021-redis-1 Stopped 
- Container p05-locked-acceptance-021-redis-1 Removing 
- Container p05-locked-acceptance-021-redis-1 Removed 
- Container p05-locked-acceptance-021-postgres-1 Stopped 
- Container p05-locked-acceptance-021-postgres-1 Removing 
- Container p05-locked-acceptance-021-postgres-1 Removed 
- Network p05-locked-acceptance-021_default Removing 
- Volume p05-locked-acceptance-021_graph-data Removing 
- Volume p05-locked-acceptance-021_redis-data Removing 
- Volume p05-locked-acceptance-021_postgres-data Removing 
- Volume p05-locked-acceptance-021_graph-data Removed 
- Volume p05-locked-acceptance-021_redis-data Removed 
- Volume p05-locked-acceptance-021_postgres-data Removed 
- Network p05-locked-acceptance-021_default Removed 
+ Container p05-locked-acceptance-021-otel-1 Stopping
+ Container p05-locked-acceptance-021-jaeger-1 Stopping
+ Container p05-locked-acceptance-021-worker-1 Stopping
+ Container p05-locked-acceptance-021-prometheus-1 Stopping
+ Container p05-locked-acceptance-021-grafana-1 Stopping
+ Container p05-locked-acceptance-021-mcp-1 Stopping
+ Container p05-locked-acceptance-021-jaeger-1 Stopped
+ Container p05-locked-acceptance-021-jaeger-1 Removing
+ Container p05-locked-acceptance-021-jaeger-1 Removed
+ Container p05-locked-acceptance-021-otel-1 Stopped
+ Container p05-locked-acceptance-021-otel-1 Removing
+ Container p05-locked-acceptance-021-otel-1 Removed
+ Container p05-locked-acceptance-021-prometheus-1 Stopped
+ Container p05-locked-acceptance-021-prometheus-1 Removing
+ Container p05-locked-acceptance-021-prometheus-1 Removed
+ Container p05-locked-acceptance-021-grafana-1 Stopped
+ Container p05-locked-acceptance-021-grafana-1 Removing
+ Container p05-locked-acceptance-021-grafana-1 Removed
+ Container p05-locked-acceptance-021-mcp-1 Stopped
+ Container p05-locked-acceptance-021-mcp-1 Removing
+ Container p05-locked-acceptance-021-worker-1 Stopped
+ Container p05-locked-acceptance-021-worker-1 Removing
+ Container p05-locked-acceptance-021-mcp-1 Removed
+ Container p05-locked-acceptance-021-worker-1 Removed
+ Container p05-locked-acceptance-021-api-1 Stopping
+ Container p05-locked-acceptance-021-api-1 Stopped
+ Container p05-locked-acceptance-021-api-1 Removing
+ Container p05-locked-acceptance-021-api-1 Removed
+ Container p05-locked-acceptance-021-postgres-1 Stopping
+ Container p05-locked-acceptance-021-redis-1 Stopping
+ Container p05-locked-acceptance-021-redis-1 Stopped
+ Container p05-locked-acceptance-021-redis-1 Removing
+ Container p05-locked-acceptance-021-redis-1 Removed
+ Container p05-locked-acceptance-021-postgres-1 Stopped
+ Container p05-locked-acceptance-021-postgres-1 Removing
+ Container p05-locked-acceptance-021-postgres-1 Removed
+ Network p05-locked-acceptance-021_default Removing
+ Volume p05-locked-acceptance-021_graph-data Removing
+ Volume p05-locked-acceptance-021_redis-data Removing
+ Volume p05-locked-acceptance-021_postgres-data Removing
+ Volume p05-locked-acceptance-021_graph-data Removed
+ Volume p05-locked-acceptance-021_redis-data Removed
+ Volume p05-locked-acceptance-021_postgres-data Removed
+ Network p05-locked-acceptance-021_default Removed
 
 
 semantic/model cost/latency evaluation: PENDING; no traceable cassette or authorized model run
