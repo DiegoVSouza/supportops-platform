@@ -1,0 +1,36 @@
+[
+  {
+    "container": "p05-live-020-worker-1",
+    "exit_code": 0,
+    "diagnosis_lines": [
+      "psycopg.OperationalError: [Errno -2] Name or service not known",
+      "psycopg.OperationalError: [Errno -2] Name or service not known"
+    ],
+    "command": "docker logs --tail 30 p05-live-020-worker-1"
+  },
+  {
+    "container": "p05-live-020-api-1",
+    "exit_code": 0,
+    "diagnosis_lines": [
+      "psycopg.OperationalError: [Errno -2] Name or service not known"
+    ],
+    "command": "docker logs --tail 30 p05-live-020-api-1"
+  },
+  {
+    "container": "p05-remediation-009-worker-1",
+    "exit_code": 0,
+    "diagnosis_lines": [
+      "psycopg.OperationalError: [Errno -2] Name or service not known",
+      "psycopg.OperationalError: [Errno -2] Name or service not known"
+    ],
+    "command": "docker logs --tail 30 p05-remediation-009-worker-1"
+  },
+  {
+    "container": "p05-remediation-009-api-1",
+    "exit_code": 0,
+    "diagnosis_lines": [
+      "psycopg.OperationalError: [Errno -2] Name or service not known"
+    ],
+    "command": "docker logs --tail 30 p05-remediation-009-api-1"
+  }
+]

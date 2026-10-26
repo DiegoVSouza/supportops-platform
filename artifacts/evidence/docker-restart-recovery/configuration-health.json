@@ -1,0 +1,34 @@
+{
+  "compose_command": [
+    "docker",
+    "compose",
+    "-f",
+    "docker-compose.services.yml",
+    "config",
+    "--format",
+    "json"
+  ],
+  "compose_exit_code": 0,
+  "policies": {
+    "api": "unless-stopped",
+    "grafana": "unless-stopped",
+    "jaeger": "unless-stopped",
+    "mcp": "unless-stopped",
+    "otel": "unless-stopped",
+    "postgres": "unless-stopped",
+    "prometheus": "unless-stopped",
+    "redis": "unless-stopped",
+    "worker": "unless-stopped"
+  },
+  "default_mode": "fake",
+  "health": {
+    "28000": {
+      "status_code": 200
+    },
+    "58000": {
+      "status_code": 200
+    }
+  },
+  "existing_fake_api_and_worker_mode": "fake",
+  "live_worker": "exited"
+}

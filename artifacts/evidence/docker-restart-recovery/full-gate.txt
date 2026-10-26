@@ -1,0 +1,465 @@
+Command: uv run --locked python scripts/check_full.py
+Compose project: p05-recovery-021; isolated loopback ports 38100..38107; LLM_MODE=fake
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m compileall -q supportops_platform tests
+layer=compile
+exit_code=0; expected=0
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m pytest
+layer=unit/contract/package consumer
+exit_code=0; expected=0
+........................................................................ [ 60%]
+................................................                         [100%]
+============================== warnings summary ===============================
+tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
+  C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\websockets\legacy\__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
+    warnings.warn(  # deprecated in 14.0 - 2024-11-09
+
+tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
+  C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py:17: DeprecationWarning: websockets.server.WebSocketServerProtocol is deprecated
+    from websockets.server import WebSocketServerProtocol
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/eval_retrieval.py
+layer=retrieval fixture
+exit_code=0; expected=0
+evaluation=deterministic-local-retrieval
+cases=4
+hit_at_3=4/4 (1.000)
+interpretation=fixture coverage only; not LLM quality
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/export_openapi.py --check
+layer=OpenAPI
+exit_code=0; expected=0
+OpenAPI contract: PASS (v1 compatibility paths, HTTP bearer, package schema 0.4.3)
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/verify_packages.py
+layer=package provenance
+exit_code=0; expected=0
+  version=1.0.1 sha256=DF4292756676D02490A908B609B8F9474F35F3C5F56131809F3E4A83659B4795 source_commit=607b7603bd40728ffa58745badac0ffd10c70090
+P00 foundation: READY
+  version=0.1.1 sha256=DD77E9B91F2D9BA7AC84178BBB557E0EA50BDE954554A528B4632DEC18DDB51F source_commit=4c70b1ea3e23606dfe60ffae77567417de53a3f7
+P01 orchestration: READY
+  version=0.2.0 sha256=7126517F9C64202B034B8A067DEDF29E1313BB3139F15A984E93660654EB4D10 source_commit=b4966c54fa3feda3ff1eae36ee872e5c407a4102
+P02 toolkit: READY
+  version=0.3.1 sha256=82B3A79AACD0AC4FAA1082087C0237487264B2A6497D9B77B79C1D6BB86F66A8 source_commit=e191f17d4649f40d6dea7057d3b52729dbbb1389
+P03 observability: READY
+  version=0.1.4 sha256=FEFB871993591CABE7F9BABA132E9F430DDBD65DD730C6789E22DC86D4D87C3F source_commit=f4b5df828b397e7ecbb9fa87c0ef77485d829dca
+P04 async: READY
+Package integration gate: PASS
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/check_quality.py
+layer=fake control evaluation
+exit_code=0; expected=0
+{"fixture_only": true, "model_quality": "PENDING", "total": 10, "decision_accuracy": 1.0, "tool_call_accuracy": 1.0, "groundedness": 1.0, "escalation_accuracy": 1.0, "failures": []}
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/check_quality.py --degraded
+layer=negative regression rejection
+exit_code=1; expected=1
+{"fixture_only": true, "model_quality": "PENDING", "total": 10, "decision_accuracy": 0.0, "tool_call_accuracy": 1.0, "groundedness": 0.0, "escalation_accuracy": 1.0, "failures": ["control-0: decision, groundedness", "control-1: decision, groundedness", "control-2: decision, groundedness", "control-3: decision, groundedness", "control-4: decision, groundedness", "control-5: decision, groundedness", "control-6: decision, groundedness", "control-7: decision, groundedness", "control-8: decision, groundedness", "control-9: decision, groundedness"]}
+quality gate: FAIL evaluation regression exceeds 0.000: decision_accuracy: drop=1.000, groundedness: drop=1.000
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/check_services.py
+layer=service integration/E2E/crash recovery
+exit_code=0; expected=0
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml config --quiet
+Exit code: 0
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml build api
+Exit code: 0
+#1 [internal] load local bake definitions
+#1 reading from stdin 544B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 865B 0.0s done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/python:3.13.12-slim
+#3 DONE 0.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 129B 0.0s done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [build  1/10] FROM docker.io/library/python:3.13.12-slim@sha256:f1927c75e81efd1e091dbd64b6c0ecaa5630b38635a3d1c04034ac636e1f94c8
+#6 resolve docker.io/library/python:3.13.12-slim@sha256:f1927c75e81efd1e091dbd64b6c0ecaa5630b38635a3d1c04034ac636e1f94c8 0.1s done
+#6 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 156.56kB 0.1s done
+#5 DONE 0.1s
+
+#7 [build  2/10] WORKDIR /app
+#7 CACHED
+
+#8 [build  3/10] RUN pip install --no-cache-dir uv==0.12.7
+#8 CACHED
+
+#9 [build  4/10] COPY pyproject.toml uv.lock ./
+#9 CACHED
+
+#10 [build  5/10] COPY artifacts/packages ./artifacts/packages
+#10 CACHED
+
+#11 [build  6/10] COPY migrations ./migrations
+#11 CACHED
+
+#12 [build  7/10] COPY scripts ./scripts
+#12 DONE 0.1s
+
+#13 [build  8/10] COPY supportops_platform ./supportops_platform
+#13 DONE 0.4s
+
+#14 [build  9/10] COPY agent/prompts ./agent/prompts
+#14 DONE 0.1s
+
+#15 [build 10/10] RUN if [ "false" = "true" ]; then uv sync --locked --no-dev --extra live; else uv sync --locked --no-dev; fi
+#15 1.118 Using CPython 3.13.12 interpreter at: /usr/local/bin/python3
+#15 1.119 Creating virtual environment at: .venv
+#15 1.228 Resolved 95 packages in 93ms
+#15 1.284    Building supportops-platform @ file:///app
+#15 1.482 Downloading asyncpg (3.4MiB)
+#15 1.483 Downloading botocore (15.3MiB)
+#15 1.487 Downloading grpcio (6.8MiB)
+#15 1.494 Downloading pydantic-core (2.1MiB)
+#15 1.500 Downloading cryptography (4.5MiB)
+#15 1.506 Downloading psycopg-binary (4.2MiB)
+#15 1.511 Downloading zstandard (5.3MiB)
+#15 5.010  Downloaded pydantic-core
+#15 6.207  Downloaded asyncpg
+#15 7.208  Downloaded psycopg-binary
+#15 7.611  Downloaded cryptography
+#15 7.994       Built supportops-platform @ file:///app
+#15 8.010  Downloaded zstandard
+#15 8.444  Downloaded grpcio
+#15 9.910  Downloaded botocore
+#15 9.910 Prepared 81 packages in 8.67s
+#15 10.78 Installed 86 packages in 863ms
+#15 10.78  + aiosqlite==0.22.1
+#15 10.78  + annotated-doc==0.0.5
+#15 10.78  + annotated-types==0.8.0
+#15 10.78  + anyio==4.15.1
+#15 10.78  + asyncpg==0.30.0
+#15 10.78  + attrs==26.1.0
+#15 10.78  + boto3==1.43.114
+#15 10.78  + botocore==1.43.114
+#15 10.78  + certifi==2026.7.22
+#15 10.78  + cffi==2.1.1
+#15 10.78  + charset-normalizer==3.5.2
+#15 10.78  + click==8.5.0
+#15 10.78  + cryptography==50.0.2
+#15 10.78  + distro==1.9.0
+#15 10.78  + fastapi==0.142.4
+#15 10.78  + googleapis-common-protos==1.75.5
+#15 10.78  + grpcio==1.84.0
+#15 10.78  + h11==0.16.0
+#15 10.78  + httpcore==1.0.9
+#15 10.78  + httpcore2==2.13.1
+#15 10.78  + httpx==0.28.1
+#15 10.78  + httpx2==2.13.1
+#15 10.78  + idna==3.20
+#15 10.78  + jmespath==1.1.0
+#15 10.78  + jsonpatch==1.36
+#15 10.78  + jsonpointer==3.4
+#15 10.78  + jsonschema==4.26.0
+#15 10.78  + jsonschema-specifications==2025.9.1
+#15 10.78  + langchain-core==1.6.13
+#15 10.78  + langchain-protocol==0.0.20
+#15 10.78  + langgraph==1.1.10
+#15 10.78  + langgraph-checkpoint==4.3.0
+#15 10.78  + langgraph-checkpoint-sqlite==3.1.2
+#15 10.78  + langgraph-prebuilt==1.0.13
+#15 10.78  + langgraph-sdk==0.3.15
+#15 10.78  + langsmith==0.14.12
+#15 10.78  + mcp==2.3.0
+#15 10.78  + mcp-types==2.3.0
+#15 10.78  + opentelemetry-api==1.45.1
+#15 10.78  + opentelemetry-exporter-otlp-common==0.66b1
+#15 10.78  + opentelemetry-exporter-otlp-proto-common==1.45.1
+#15 10.78  + opentelemetry-exporter-otlp-proto-grpc==1.45.1
+#15 10.78  + opentelemetry-proto==1.45.1
+#15 10.78  + opentelemetry-sdk==1.45.1
+#15 10.78  + opentelemetry-semantic-conventions==0.66b1
+#15 10.78  + orjson==3.13.0
+#15 10.78  + ormsgpack==1.13.0
+#15 10.78  + packaging==26.3
+#15 10.78  + prometheus-client==0.26.0
+#15 10.78  + protobuf==7.36.2
+#15 10.78  + psycopg==3.2.10
+#15 10.78  + psycopg-binary==3.2.10
+#15 10.78  + pycparser==3.11
+#15 10.78  + pydantic==2.14.1
+#15 10.78  + pydantic-core==2.50.1
+#15 10.78  + pyjwt==2.15.1
+#15 10.78  + python-dateutil==2.9.0.post0
+#15 10.78  + python-multipart==0.0.32
+#15 10.78  + pyyaml==6.0.3
+#15 10.78  + redis==6.4.0
+#15 10.78  + referencing==0.37.0
+#15 10.78  + requests==2.34.2
+#15 10.78  + requests-toolbelt==1.0.0
+#15 10.78  + rpds-py==2026.9.1
+#15 10.78  + s3transfer==0.19.2
+#15 10.78  + six==1.17.0
+#15 10.78  + sniffio==1.3.1
+#15 10.78  + sqlite-vec==0.1.9
+#15 10.78  + sse-starlette==3.5.0
+#15 10.78  + starlette==1.8.0
+#15 10.78  + supportops-agents==0.1.1 (from file:///app/artifacts/packages/supportops_agents-0.1.1-py3-none-any.whl)
+#15 10.78  + supportops-ai-toolkit==0.2.0 (from file:///app/artifacts/packages/supportops_ai_toolkit-0.2.0-py3-none-any.whl)
+#15 10.78  + supportops-async==0.1.4 (from file:///app/artifacts/packages/supportops_async-0.1.4-py3-none-any.whl)
+#15 10.78  + supportops-foundation==1.0.1 (from file:///app/artifacts/packages/supportops_foundation-1.0.1-py3-none-any.whl)
+#15 10.78  + supportops-obs==0.3.1 (from file:///app/artifacts/packages/supportops_obs-0.3.1-py3-none-any.whl)
+#15 10.78  + supportops-platform==0.4.3 (from file:///app)
+#15 10.78  + tenacity==9.2.1
+#15 10.78  + truststore==0.10.5
+#15 10.78  + typing-extensions==4.16.0
+#15 10.78  + typing-inspection==0.4.4
+#15 10.78  + urllib3==2.8.0
+#15 10.78  + uuid-utils==0.18.0
+#15 10.78  + uvicorn==0.46.0
+#15 10.78  + websockets==17.3
+#15 10.78  + xxhash==4.0.2
+#15 10.78  + zstandard==0.25.0
+#15 DONE 11.4s
+
+#16 [stage-1 3/5] RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --home /app app
+#16 CACHED
+
+#17 [stage-1 4/5] COPY --from=build --chown=app:app /app /app
+#17 DONE 4.5s
+
+#18 [stage-1 5/5] RUN mkdir -p /app/artifacts && chown app:app /app/artifacts
+#18 DONE 0.7s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 10.0s done
+#19 exporting manifest sha256:0347fafabdf57992754766e52329fac4d14d99d3393aac16c5e70818dd2c28d3 0.0s done
+#19 exporting config sha256:b61cb08b9c73eb4e1bf24fee269a2192481f5293c46387e7bdea53d119016ad7 0.0s done
+#19 exporting attestation manifest sha256:ff61a4f771c0f2d735ded36f37cfc3f14a278b88258122b809a35422e9ca8b50
+#19 exporting attestation manifest sha256:ff61a4f771c0f2d735ded36f37cfc3f14a278b88258122b809a35422e9ca8b50 0.1s done
+#19 exporting manifest list sha256:6f494c963cea952439062210d56c799324a32b66aa064d44c43577b7ce376169 0.0s done
+#19 naming to docker.io/library/supportops-platform:0.4.3-local 0.0s done
+#19 unpacking to docker.io/library/supportops-platform:0.4.3-local
+#19 unpacking to docker.io/library/supportops-platform:0.4.3-local 4.8s done
+#19 DONE 15.2s
+
+#20 resolving provenance for metadata file
+#20 DONE 0.1s
+ Image supportops-platform:0.4.3-local Building
+ Image supportops-platform:0.4.3-local Built
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml up --no-build -d --wait
+Exit code: 0
+ Network p05-recovery-021_default Creating
+ Network p05-recovery-021_default Created
+ Volume p05-recovery-021_postgres-data Creating
+ Volume p05-recovery-021_postgres-data Created
+ Volume p05-recovery-021_redis-data Creating
+ Volume p05-recovery-021_redis-data Created
+ Volume p05-recovery-021_graph-data Creating
+ Volume p05-recovery-021_graph-data Created
+ Container p05-recovery-021-otel-1 Creating
+ Container p05-recovery-021-jaeger-1 Creating
+ Container p05-recovery-021-prometheus-1 Creating
+ Container p05-recovery-021-mcp-1 Creating
+ Container p05-recovery-021-grafana-1 Creating
+ Container p05-recovery-021-postgres-1 Creating
+ Container p05-recovery-021-redis-1 Creating
+ Container p05-recovery-021-prometheus-1 Created
+ Container p05-recovery-021-grafana-1 Created
+ Container p05-recovery-021-otel-1 Created
+ Container p05-recovery-021-postgres-1 Created
+ Container p05-recovery-021-jaeger-1 Created
+ Container p05-recovery-021-mcp-1 Created
+ Container p05-recovery-021-redis-1 Created
+ Container p05-recovery-021-api-1 Creating
+ Container p05-recovery-021-api-1 Created
+ Container p05-recovery-021-worker-1 Creating
+ Container p05-recovery-021-worker-1 Created
+ Container p05-recovery-021-grafana-1 Starting
+ Container p05-recovery-021-jaeger-1 Starting
+ Container p05-recovery-021-redis-1 Starting
+ Container p05-recovery-021-postgres-1 Starting
+ Container p05-recovery-021-mcp-1 Starting
+ Container p05-recovery-021-otel-1 Starting
+ Container p05-recovery-021-prometheus-1 Starting
+ Container p05-recovery-021-mcp-1 Started
+ Container p05-recovery-021-postgres-1 Started
+ Container p05-recovery-021-redis-1 Started
+ Container p05-recovery-021-postgres-1 Waiting
+ Container p05-recovery-021-redis-1 Waiting
+ Container p05-recovery-021-jaeger-1 Started
+ Container p05-recovery-021-otel-1 Started
+ Container p05-recovery-021-grafana-1 Started
+ Container p05-recovery-021-prometheus-1 Started
+ Container p05-recovery-021-redis-1 Healthy
+ Container p05-recovery-021-postgres-1 Healthy
+ Container p05-recovery-021-api-1 Starting
+ Container p05-recovery-021-api-1 Started
+ Container p05-recovery-021-api-1 Waiting
+ Container p05-recovery-021-api-1 Healthy
+ Container p05-recovery-021-worker-1 Starting
+ Container p05-recovery-021-worker-1 Started
+ Container p05-recovery-021-api-1 Waiting
+ Container p05-recovery-021-redis-1 Waiting
+ Container p05-recovery-021-grafana-1 Waiting
+ Container p05-recovery-021-jaeger-1 Waiting
+ Container p05-recovery-021-worker-1 Waiting
+ Container p05-recovery-021-otel-1 Waiting
+ Container p05-recovery-021-prometheus-1 Waiting
+ Container p05-recovery-021-mcp-1 Waiting
+ Container p05-recovery-021-postgres-1 Waiting
+ Container p05-recovery-021-worker-1 Healthy
+ Container p05-recovery-021-postgres-1 Healthy
+ Container p05-recovery-021-otel-1 Healthy
+ Container p05-recovery-021-grafana-1 Healthy
+ Container p05-recovery-021-prometheus-1 Healthy
+ Container p05-recovery-021-mcp-1 Healthy
+ Container p05-recovery-021-redis-1 Healthy
+ Container p05-recovery-021-jaeger-1 Healthy
+ Container p05-recovery-021-api-1 Healthy
+
+Command: docker run --rm --entrypoint promtool -v C:\estudo\Golpe\lab\projects\p05\infra:/rules:ro prom/prometheus:v3.14.0 check rules /rules/alerts.yml
+Exit code: 0
+Checking /rules/alerts.yml
+  SUCCESS: 2 rules found
+
+
+Command: docker run --rm --entrypoint promtool -v C:\estudo\Golpe\lab\projects\p05\infra:/rules:ro prom/prometheus:v3.14.0 test rules /rules/alert-tests.yml
+Exit code: 0
+  SUCCESS
+
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml exec -T api python scripts/check_network_mcp.py
+Exit code: 0
+network_mcp_auth=PASS; unauthenticated and cross-tenant access denied
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml stop worker
+Exit code: 0
+ Container p05-recovery-021-worker-1 Stopping
+ Container p05-recovery-021-worker-1 Stopped
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml restart api
+Exit code: 0
+ Container p05-recovery-021-api-1 Restarting
+ Container p05-recovery-021-api-1 Started
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml start worker
+Exit code: 0
+ Container p05-recovery-021-redis-1 Waiting
+ Container p05-recovery-021-postgres-1 Waiting
+ Container p05-recovery-021-redis-1 Healthy
+ Container p05-recovery-021-postgres-1 Healthy
+ Container p05-recovery-021-api-1 Waiting
+ Container p05-recovery-021-api-1 Healthy
+ Container p05-recovery-021-worker-1 Starting
+ Container p05-recovery-021-worker-1 Started
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml stop worker
+Exit code: 0
+ Container p05-recovery-021-worker-1 Stopping
+ Container p05-recovery-021-worker-1 Stopped
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml start worker
+Exit code: 0
+ Container p05-recovery-021-redis-1 Waiting
+ Container p05-recovery-021-postgres-1 Waiting
+ Container p05-recovery-021-redis-1 Healthy
+ Container p05-recovery-021-postgres-1 Healthy
+ Container p05-recovery-021-api-1 Waiting
+ Container p05-recovery-021-api-1 Healthy
+ Container p05-recovery-021-worker-1 Starting
+ Container p05-recovery-021-worker-1 Started
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml exec -T api id -u
+Exit code: 0
+10001
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml exec -T worker id -u
+Exit code: 0
+10001
+
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml exec -T worker python scripts/check_worker_crash.py
+Exit code: 0
+product-worker-crash: PASS killed_after_refund_commit=true job_recovered=true effect_rows=1 backend_attempts=1
+
+{
+  "native_asyncpg": "PASS",
+  "redis_atomic_multi_client": "PASS",
+  "mode": "fake",
+  "semantic_quality": "PENDING",
+  "signed_tcp_mcp_negative_authorization": "PASS",
+  "durable_outbox_and_api_restart": "PASS",
+  "agent_rag_mcp": "PASS",
+  "tenant_isolation": "PASS",
+  "indirect_injection": "PASS",
+  "trace_id": "009d2d631a5dc3054c91dcec22293027",
+  "hitl_pause_distinct_approval_resume": "PASS",
+  "durable_authorization_snapshot": "PASS",
+  "idempotency": "PASS",
+  "expired_hitl_resume_denied_without_effect": "PASS",
+  "expired_job_rejected_before_dispatch": "PASS",
+  "direct_api_adversarial_30": "PASS",
+  "correlated_service_trace": "PASS",
+  "dashboard_and_live_alert": "PASS",
+  "non_root": "PASS",
+  "kill_after_effect_recovery": "PASS"
+}
+Command: docker compose -p p05-recovery-021 -f docker-compose.services.yml down --volumes --remove-orphans
+Exit code: 0
+ Container p05-recovery-021-mcp-1 Stopping
+ Container p05-recovery-021-otel-1 Stopping
+ Container p05-recovery-021-prometheus-1 Stopping
+ Container p05-recovery-021-grafana-1 Stopping
+ Container p05-recovery-021-worker-1 Stopping
+ Container p05-recovery-021-jaeger-1 Stopping
+ Container p05-recovery-021-otel-1 Stopped
+ Container p05-recovery-021-otel-1 Removing
+ Container p05-recovery-021-otel-1 Removed
+ Container p05-recovery-021-prometheus-1 Stopped
+ Container p05-recovery-021-prometheus-1 Removing
+ Container p05-recovery-021-prometheus-1 Removed
+ Container p05-recovery-021-jaeger-1 Stopped
+ Container p05-recovery-021-jaeger-1 Removing
+ Container p05-recovery-021-jaeger-1 Removed
+ Container p05-recovery-021-grafana-1 Stopped
+ Container p05-recovery-021-grafana-1 Removing
+ Container p05-recovery-021-grafana-1 Removed
+ Container p05-recovery-021-worker-1 Stopped
+ Container p05-recovery-021-worker-1 Removing
+ Container p05-recovery-021-mcp-1 Stopped
+ Container p05-recovery-021-mcp-1 Removing
+ Container p05-recovery-021-worker-1 Removed
+ Container p05-recovery-021-api-1 Stopping
+ Container p05-recovery-021-mcp-1 Removed
+ Container p05-recovery-021-api-1 Stopped
+ Container p05-recovery-021-api-1 Removing
+ Container p05-recovery-021-api-1 Removed
+ Container p05-recovery-021-postgres-1 Stopping
+ Container p05-recovery-021-redis-1 Stopping
+ Container p05-recovery-021-redis-1 Stopped
+ Container p05-recovery-021-redis-1 Removing
+ Container p05-recovery-021-redis-1 Removed
+ Container p05-recovery-021-postgres-1 Stopped
+ Container p05-recovery-021-postgres-1 Removing
+ Container p05-recovery-021-postgres-1 Removed
+ Volume p05-recovery-021_graph-data Removing
+ Volume p05-recovery-021_postgres-data Removing
+ Volume p05-recovery-021_redis-data Removing
+ Network p05-recovery-021_default Removing
+ Volume p05-recovery-021_postgres-data Removed
+ Volume p05-recovery-021_graph-data Removed
+ Volume p05-recovery-021_redis-data Removed
+ Network p05-recovery-021_default Removed
+
+
+semantic/model cost/latency evaluation: PENDING; no traceable cassette or authorized model run
+check-full: PASS (authorized local fake-mode acceptance)
+
+Exit code: 0

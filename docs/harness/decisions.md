@@ -17,3 +17,7 @@ Use opt-in Groq live mode with numbered credentials and authenticated model pref
 ## 2026-10-26 — P05 broad live campaign preparation
 
 Prepared an offline-only P05 campaign dataset, grader checks and reservation dry-runs. The requested row counts and structural contracts are present, but independent semantic review remains pending; campaign generation stays disabled. The displayed call/token ceilings do not authorize spend. Cumulative account quota, budget, human review, runtime identity, and campaign approval remain pending. No Groq call or Docker/service mutation was made. Evidence: `artifacts/evidence/live-campaign-preparation/phase-017-preparation.md`.
+
+## 2026-10-26 — Recover P05 after Docker restart
+
+The user requested diagnosis and repair of restarting P05 services. Application containers used on-failure while PostgreSQL, Redis and telemetry had no restart policy; after daemon restart the application could not resolve its stopped PostgreSQL dependency. Set all service policies to unless-stopped, update only the 19 existing containers owned by p05-remediation-009 and p05-live-020, and start dependencies before application processes without recreating containers or volumes. Keep the live worker explicitly stopped to prevent provider dispatch. Validate actual health and configuration plus a separate isolated fake-mode full service gate. Broad campaign budget/review gates remain unchanged.

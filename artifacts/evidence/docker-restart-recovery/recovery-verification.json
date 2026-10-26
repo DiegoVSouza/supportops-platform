@@ -1,0 +1,221 @@
+{
+  "command": "selected docker inspect state/restart/mount fields; docker ps -a IDs",
+  "exit_code": 0,
+  "all_preexisting_container_ids_preserved": true,
+  "owned_volumes_preserved": true,
+  "owned_containers": [
+    {
+      "id": "9a8a8d4597c9",
+      "name": "p05-live-020-worker-1",
+      "project": "p05-live-020",
+      "service": "worker",
+      "status": "exited",
+      "restart": "unless-stopped",
+      "restarts": 65,
+      "volumes": [
+        "p05-live-020_graph-data"
+      ]
+    },
+    {
+      "id": "604b0ade2e35",
+      "name": "p05-live-020-api-1",
+      "project": "p05-live-020",
+      "service": "api",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": []
+    },
+    {
+      "id": "f9c0fce7b93d",
+      "name": "p05-live-020-redis-1",
+      "project": "p05-live-020",
+      "service": "redis",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "p05-live-020_redis-data"
+      ]
+    },
+    {
+      "id": "c0142aa616f8",
+      "name": "p05-live-020-postgres-1",
+      "project": "p05-live-020",
+      "service": "postgres",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "p05-live-020_postgres-data"
+      ]
+    },
+    {
+      "id": "41a831825583",
+      "name": "p05-live-020-mcp-1",
+      "project": "p05-live-020",
+      "service": "mcp",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": []
+    },
+    {
+      "id": "92eab6273ae2",
+      "name": "p05-live-020-prometheus-1",
+      "project": "p05-live-020",
+      "service": "prometheus",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "78992f44d726b7f8cc7dc539f5249a473b221b32245caed34f4dfec9b46d1eb2"
+      ]
+    },
+    {
+      "id": "14028846ef5e",
+      "name": "p05-live-020-jaeger-1",
+      "project": "p05-live-020",
+      "service": "jaeger",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "8d9efac14fa184525a14ecb097ef1b28ffdb3c10e1d87e821a71e01bb3a7c890"
+      ]
+    },
+    {
+      "id": "5cb909a3d6a3",
+      "name": "p05-live-020-grafana-1",
+      "project": "p05-live-020",
+      "service": "grafana",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": []
+    },
+    {
+      "id": "78da7355f3eb",
+      "name": "p05-live-020-otel-1",
+      "project": "p05-live-020",
+      "service": "otel",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": []
+    },
+    {
+      "id": "c1a428445608",
+      "name": "p05-remediation-009-worker-1",
+      "project": "p05-remediation-009",
+      "service": "worker",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "p05-remediation-009_graph-data"
+      ],
+      "stable_restart_count": true
+    },
+    {
+      "id": "710783e5026f",
+      "name": "p05-remediation-009-mcp-1",
+      "project": "p05-remediation-009",
+      "service": "mcp",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": []
+    },
+    {
+      "id": "3172aaec7e0d",
+      "name": "p05-remediation-009-api-1",
+      "project": "p05-remediation-009",
+      "service": "api",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": []
+    },
+    {
+      "id": "705051b27de7",
+      "name": "p05-remediation-009-postgres-1",
+      "project": "p05-remediation-009",
+      "service": "postgres",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "p05-remediation-009_postgres-data"
+      ]
+    },
+    {
+      "id": "fb451a60f1f0",
+      "name": "p05-remediation-009-prometheus-1",
+      "project": "p05-remediation-009",
+      "service": "prometheus",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "a3a80e919f43bf817a37450e2651cba5a42852882aca4efdbf8d77ae9ed889cd"
+      ]
+    },
+    {
+      "id": "f5072c4418b8",
+      "name": "p05-remediation-009-redis-1",
+      "project": "p05-remediation-009",
+      "service": "redis",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "p05-remediation-009_redis-data"
+      ]
+    },
+    {
+      "id": "51530c000492",
+      "name": "p05-remediation-009-localstack-1",
+      "project": "p05-remediation-009",
+      "service": "localstack",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "cfa78e9ab306359eca07b848a040c65ba4d90f5744e5361a2deb749c562d217d"
+      ]
+    },
+    {
+      "id": "2c3bad6f226a",
+      "name": "p05-remediation-009-jaeger-1",
+      "project": "p05-remediation-009",
+      "service": "jaeger",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": [
+        "97e4a2751377d545eb3546457cb0277366f70667a62d40c8f81dbb201522b2b1"
+      ]
+    },
+    {
+      "id": "f9c2258026b1",
+      "name": "p05-remediation-009-grafana-1",
+      "project": "p05-remediation-009",
+      "service": "grafana",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": []
+    },
+    {
+      "id": "837b6f121b82",
+      "name": "p05-remediation-009-otel-1",
+      "project": "p05-remediation-009",
+      "service": "otel",
+      "status": "running",
+      "restart": "unless-stopped",
+      "restarts": 0,
+      "volumes": []
+    }
+  ]
+}

@@ -119,3 +119,7 @@ A disposable Keycloak 26.8.1 container issued a test token; authenticated RFC 76
 ## 2026-10-26 — Live Docker acceptance
 
 The fake full service gate passed with 110 tests, Docker E2E, security, adversarial and recovery checks. The dedicated live image includes the locked optional Groq SDK and prompt files. One live API/Redis-worker/PostgreSQL-RAG task passed every assertion with four actual calls (1748 input / 468 output tokens), a shipping citation, tenant denial, idempotency and correlated content-free Jaeger spans. Live refunds remain explicitly blocked before generation. Evidence: artifacts/evidence/live-docker/.
+
+## 2026-10-26 - Docker restart recovery
+
+Corrected inconsistent service restart policies after Docker startup left PostgreSQL/Redis stopped and API/worker failing DNS resolution. All Compose services now use unless-stopped. Recovered the 19 existing P05-owned containers without recreation or volume deletion; both API health endpoints return 200, backing services are healthy and fake worker is stable. Live worker remains explicitly stopped to prevent provider dispatch. Fast and full isolated fake gates passed; the latter exercised service E2E/security/worker recovery and cleaned its own resources. Evidence: `artifacts/evidence/docker-restart-recovery/report.md`. No daemon restart was forced; independent clean-context review remains pending. Broad model evaluation and campaign gates are unchanged.

@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "label=com.docker.compose.project=p05-recovery-021",
+      "--format",
+      "{{.ID}}"
+    ],
+    "exit_code": 0,
+    "remaining_resources": []
+  },
+  {
+    "command": [
+      "docker",
+      "volume",
+      "ls",
+      "--filter",
+      "label=com.docker.compose.project=p05-recovery-021",
+      "--format",
+      "{{.Name}}"
+    ],
+    "exit_code": 0,
+    "remaining_resources": []
+  },
+  {
+    "command": [
+      "docker",
+      "network",
+      "ls",
+      "--filter",
+      "label=com.docker.compose.project=p05-recovery-021",
+      "--format",
+      "{{.Name}}"
+    ],
+    "exit_code": 0,
+    "remaining_resources": []
+  }
+]

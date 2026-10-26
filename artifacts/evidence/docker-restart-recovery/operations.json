@@ -1,0 +1,154 @@
+[
+  {
+    "command": "docker stop 9a8a8d4597c9",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 9a8a8d4597c9",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 604b0ade2e35",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped f9c0fce7b93d",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped c0142aa616f8",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 41a831825583",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 92eab6273ae2",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 14028846ef5e",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 5cb909a3d6a3",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 78da7355f3eb",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped c1a428445608",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 710783e5026f",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 3172aaec7e0d",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 705051b27de7",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped fb451a60f1f0",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped f5072c4418b8",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 51530c000492",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 2c3bad6f226a",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped f9c2258026b1",
+    "exit_code": 0
+  },
+  {
+    "command": "docker update --restart unless-stopped 837b6f121b82",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start 705051b27de7",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start fb451a60f1f0",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start f5072c4418b8",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start 51530c000492",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start 2c3bad6f226a",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start f9c2258026b1",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start 837b6f121b82",
+    "exit_code": 0
+  },
+  {
+    "command": "docker restart 710783e5026f",
+    "exit_code": 0
+  },
+  {
+    "command": "docker restart 3172aaec7e0d",
+    "exit_code": 0
+  },
+  {
+    "command": "docker restart c1a428445608",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start f9c0fce7b93d",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start c0142aa616f8",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start 92eab6273ae2",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start 14028846ef5e",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start 5cb909a3d6a3",
+    "exit_code": 0
+  },
+  {
+    "command": "docker start 78da7355f3eb",
+    "exit_code": 0
+  },
+  {
+    "command": "docker restart 41a831825583",
+    "exit_code": 0
+  },
+  {
+    "command": "docker restart 604b0ade2e35",
+    "exit_code": 0
+  }
+]

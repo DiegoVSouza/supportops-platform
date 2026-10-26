@@ -1,0 +1,12 @@
+{
+  "command": [
+    "uv",
+    "run",
+    "--locked",
+    "python",
+    "scripts/check_full.py"
+  ],
+  "exit_code": 0,
+  "mode": "fake",
+  "project": "p05-recovery-021"
+}
