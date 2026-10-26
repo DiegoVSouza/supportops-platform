@@ -1,29 +1,32 @@
 """HTTP API with explicit local fake credentials and tenant-bound persistence."""
 
-import os
 import asyncio
-from opentelemetry import propagate, trace
-from secrets import token_urlsafe
+import os
 from collections import deque
+from secrets import token_urlsafe
 from threading import Lock
 from time import monotonic
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import BaseModel, Field
 from jwt.exceptions import InvalidTokenError
+from opentelemetry import propagate, trace
+from pydantic import BaseModel, Field
 
 from supportops_platform import __version__
-from supportops_platform.agents.triage import run_fake_triage
-from supportops_platform.auth.jwt import decode_principal
-from supportops_platform.mcp.identity import IntrospectionTokenVerifier
-from supportops_platform.contracts import AuthorizationLeaseExpired, Principal, Ticket
+from supportops_platform.agents.triage import configured_llm_mode, run_configured_triage
 from supportops_platform.async_tasks.queue import LocalTaskQueue
+from supportops_platform.auth.jwt import decode_principal
+from supportops_platform.contracts import AuthorizationLeaseExpired, Principal, Ticket
+from supportops_platform.integrations.observability import (
+    configure_telemetry,
+    prometheus_metrics,
+)
+from supportops_platform.mcp.identity import IntrospectionTokenVerifier
 from supportops_platform.obs.metrics import MetricsRegistry
-from supportops_platform.integrations.observability import configure_telemetry, prometheus_metrics
-from supportops_platform.repositories import AuthorizationError, InMemoryStore
 from supportops_platform.rag.retrieval import LocalRetriever
+from supportops_platform.repositories import AuthorizationError, InMemoryStore
 
 
 class TicketCreate(BaseModel):
@@ -78,6 +81,7 @@ def create_app(
         raise ValueError("JWT_SECRET must contain at least 32 characters")
     if store is None and os.getenv("P05_RUNTIME") == "services":
         from supportops_platform.service_runtime import create_components
+
         store, retriever, task_queue, rate_limiter = create_components()
     app = FastAPI(title="SupportOps Platform", version=__version__)
     configure_telemetry()
@@ -115,10 +119,16 @@ def create_app(
         credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     ) -> Principal:
         if credentials is None:
-            raise HTTPException(status_code=401, detail="bearer token required", headers={"WWW-Authenticate": "Bearer"})
+            raise HTTPException(
+                status_code=401,
+                detail="bearer token required",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         try:
             if app.state.auth_mode == "oidc":
-                accepted = await app.state.token_verifier.verify_token(credentials.credentials)
+                accepted = await app.state.token_verifier.verify_token(
+                    credentials.credentials
+                )
                 if accepted is None:
                     raise InvalidTokenError("external token is inactive or invalid")
                 claims = accepted.claims
@@ -130,12 +140,20 @@ def create_app(
                 )
             return decode_principal(credentials.credentials, app.state.token_secret)
         except InvalidTokenError as exc:
-            raise HTTPException(status_code=401, detail="invalid token", headers={"WWW-Authenticate": "Bearer"}) from exc
+            raise HTTPException(
+                status_code=401,
+                detail="invalid token",
+                headers={"WWW-Authenticate": "Bearer"},
+            ) from exc
 
     @app.get("/healthz")
     @app.get("/health", include_in_schema=False)
     def health() -> dict[str, str]:
-        return {"status": "ok", "version": __version__, "llm_mode": os.getenv("LLM_MODE", "fake")}
+        return {
+            "status": "ok",
+            "version": __version__,
+            "llm_mode": os.getenv("LLM_MODE", "fake"),
+        }
 
     @app.get("/metrics", include_in_schema=False)
     def metrics() -> Response:
@@ -158,7 +176,9 @@ def create_app(
     ) -> Ticket:
         if "ticket:write" not in actor.scopes:
             raise HTTPException(status_code=403, detail="ticket:write scope required")
-        return app.state.store.add_ticket(actor, Ticket(tenant_id=actor.tenant_id, **payload.model_dump()))
+        return app.state.store.add_ticket(
+            actor, Ticket(tenant_id=actor.tenant_id, **payload.model_dump())
+        )
 
     @app.get("/v1/tickets/{ticket_id}")
     def get_ticket(ticket_id: str, actor: Principal = Depends(principal)) -> Ticket:
@@ -170,12 +190,14 @@ def create_app(
             raise HTTPException(status_code=404, detail="ticket not found") from exc
 
     @app.post("/v1/tickets/{ticket_id}/triage")
-    def triage_ticket(ticket_id: str, actor: Principal = Depends(principal)) -> dict[str, object]:
+    def triage_ticket(
+        ticket_id: str, actor: Principal = Depends(principal)
+    ) -> dict[str, object]:
         if "triage:run" not in actor.scopes:
             raise HTTPException(status_code=403, detail="triage:run scope required")
         try:
             ticket = app.state.store.get_ticket(actor, ticket_id)
-            execution = run_fake_triage(ticket, app.state.retriever)
+            execution = run_configured_triage(ticket, app.state.retriever)
         except AuthorizationError as exc:
             raise HTTPException(status_code=404, detail="ticket not found") from exc
         except ValueError as exc:
@@ -190,7 +212,12 @@ def create_app(
                 "reason": execution.result.decision.reason,
             },
             "trace": [
-                {"step": step.step, "agent": step.agent, "action": step.action, "detail": step.detail}
+                {
+                    "step": step.step,
+                    "agent": step.agent,
+                    "action": step.action,
+                    "detail": step.detail,
+                }
                 for step in execution.result.trace
             ],
             "citations": [
@@ -204,7 +231,12 @@ def create_app(
                 for citation in execution.citations
             ],
             "stop_reason": execution.result.stop_reason,
-            "llm_mode": "fake",
+            "llm_mode": configured_llm_mode(),
+            **(
+                {"llm_usage": execution.live_metrics}
+                if execution.live_metrics is not None
+                else {}
+            ),
         }
 
     @app.post("/v1/tickets/{ticket_id}/feedback", status_code=201)
@@ -280,7 +312,9 @@ def create_app(
         actor: Principal = Depends(principal),
     ) -> dict[str, str]:
         try:
-            approval = app.state.store.decide_approval(actor, approval_id, payload.decision)
+            approval = app.state.store.decide_approval(
+                actor, approval_id, payload.decision
+            )
         except AuthorizationError as exc:
             raise HTTPException(status_code=403, detail=str(exc)) from exc
         except ValueError as exc:
@@ -312,7 +346,9 @@ def create_app(
         return {"id": task.id, "status": task.status.value, "attempts": task.attempts}
 
     @app.get("/v1/tasks/{task_id}")
-    def get_task(task_id: str, actor: Principal = Depends(principal)) -> dict[str, object]:
+    def get_task(
+        task_id: str, actor: Principal = Depends(principal)
+    ) -> dict[str, object]:
         if "task:read" not in actor.scopes:
             raise HTTPException(status_code=403, detail="task:read scope required")
         try:
@@ -331,48 +367,68 @@ def create_app(
             try:
                 length = int(content_length)
             except ValueError:
-                return JSONResponse(status_code=400, content={"detail": "invalid content length"})
+                return JSONResponse(
+                    status_code=400, content={"detail": "invalid content length"}
+                )
             if length < 0:
-                return JSONResponse(status_code=400, content={"detail": "invalid content length"})
+                return JSONResponse(
+                    status_code=400, content={"detail": "invalid content length"}
+                )
             if length > 1_000_000:
-                return JSONResponse(status_code=413, content={"detail": "request too large"})
+                return JSONResponse(
+                    status_code=413, content={"detail": "request too large"}
+                )
         now = monotonic()
         bucket = request.client.host if request.client else "unknown"
         if app.state.rate_limiter is not None:
-            authorization=request.headers.get("authorization", "")
+            authorization = request.headers.get("authorization", "")
             if authorization.startswith("Bearer "):
                 try:
-                    actor=decode_principal(authorization[7:],app.state.token_secret)
-                    bucket=actor.tenant_id+":"+actor.subject
+                    actor = decode_principal(authorization[7:], app.state.token_secret)
+                    bucket = actor.tenant_id + ":" + actor.subject
                 except InvalidTokenError:
                     pass
             try:
-                allowed=await asyncio.to_thread(app.state.rate_limiter.allow,bucket,app.state.rate_limit)
+                allowed = await asyncio.to_thread(
+                    app.state.rate_limiter.allow, bucket, app.state.rate_limit
+                )
             except Exception:
-                return JSONResponse(status_code=503,content={"detail":"rate-limit service unavailable"})
+                return JSONResponse(
+                    status_code=503,
+                    content={"detail": "rate-limit service unavailable"},
+                )
             if not allowed:
-                return JSONResponse(status_code=429,content={"detail":"rate limit exceeded"})
+                return JSONResponse(
+                    status_code=429, content={"detail": "rate limit exceeded"}
+                )
         else:
-            limited=False
+            limited = False
             with app.state.request_times_lock:
                 events = app.state.request_times.setdefault(bucket, deque())
                 while events and events[0] <= now - 60:
                     events.popleft()
-                limited=len(events) >= app.state.rate_limit
-                if not limited: events.append(now)
+                limited = len(events) >= app.state.rate_limit
+                if not limited:
+                    events.append(now)
             if limited:
-                return JSONResponse(status_code=429,content={"detail":"rate limit exceeded"})
+                return JSONResponse(
+                    status_code=429, content={"detail": "rate limit exceeded"}
+                )
         response = await call_next(request)
         app.state.metrics.record_request(request.method, response.status_code)
         return response
 
     @app.middleware("http")
     async def trace_request(request: Request, call_next):
-        with trace.get_tracer("p05.api").start_as_current_span("api.request",context=propagate.extract(dict(request.headers))) as span:
-            span.set_attribute("http.request.method",request.method)
-            span.set_attribute("llm.mode","fake")
-            response=await call_next(request)
-            response.headers["X-Trace-ID"]=format(span.get_span_context().trace_id,"032x")
+        with trace.get_tracer("p05.api").start_as_current_span(
+            "api.request", context=propagate.extract(dict(request.headers))
+        ) as span:
+            span.set_attribute("http.request.method", request.method)
+            span.set_attribute("llm.mode", "fake")
+            response = await call_next(request)
+            response.headers["X-Trace-ID"] = format(
+                span.get_span_context().trace_id, "032x"
+            )
             return response
 
     return app

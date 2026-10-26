@@ -9,3 +9,7 @@
 - Budget: configured ceiling is $2/task; phase 018 uses only the explicitly permitted free-plan allowance with an estimated per-run ceiling of $0.01. Fake metrics remain control-flow only, not model quality.
 - API: `openapi.yaml` v1; freeze after phase 003. Changes require ADR, version bump, and consumer update.
 - Phase 018 decision (2026-10-26): run one opt-in Groq RAG-agent evaluation with synthetic tenant-A content and local retrieval only. Keep MCP/refund tools out of the run, cap estimated exposure at USD 0.01 within the existing USD 2/task budget, and preserve fake CI behavior.
+
+## 2026-10-26 — Live Docker acceptance
+
+Use opt-in Groq live mode with numbered credentials and authenticated model preflight. Preserve deterministic fake defaults and fail closed on provider/contract failures. Only local synthetic acceptance and the designated free allowance are authorized; billed cost remains PENDING. Evidence: artifacts/evidence/live-docker/.

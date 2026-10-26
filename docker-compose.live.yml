@@ -1,0 +1,22 @@
+x-live-environment: &live-environment
+  LLM_MODE: live
+  GROQ_API_KEY_1: ${GROQ_API_KEY_1:?set numbered Groq credentials}
+  GROQ_API_KEY_2: ${GROQ_API_KEY_2:?set numbered Groq credentials}
+  GROQ_API_KEY_3: ${GROQ_API_KEY_3:?set numbered Groq credentials}
+  GROQ_API_KEY_4: ${GROQ_API_KEY_4:?set numbered Groq credentials}
+
+services:
+  api:
+    image: supportops-platform:groq-live
+    build:
+      args: {INSTALL_LIVE: "true"}
+    environment:
+      <<: *live-environment
+  worker:
+    image: supportops-platform:groq-live
+    build:
+      args: {INSTALL_LIVE: "true"}
+    environment:
+      <<: *live-environment
+  mcp:
+    image: supportops-platform:groq-live

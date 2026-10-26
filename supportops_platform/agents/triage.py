@@ -1,5 +1,6 @@
 """P01 orchestration adapter that injects tenant-scoped P05 RAG citations."""
 
+import os
 from dataclasses import dataclass
 from threading import Lock
 from typing import Any, Mapping
@@ -20,7 +21,7 @@ from supportops_platform.rag.retrieval import LocalRetriever
 class AgentTriageRun:
     result: TriageResult
     citations: tuple[Citation, ...]
-    live_metrics: dict[str, int | float] | None = None
+    live_metrics: dict[str, int | float | str] | None = None
 
 
 class _RetrievalAwareFakeClient:
@@ -133,5 +134,37 @@ def run_live_triage(
         "input_tokens": client.input_tokens,
         "output_tokens": client.output_tokens,
         "estimated_cost_usd": client.estimated_cost_usd,
+        "model": client.actual_model,
     }
     return AgentTriageRun(result=result, citations=citations, live_metrics=metrics)
+
+
+def configured_llm_mode() -> str:
+    mode = os.getenv("LLM_MODE", "fake").strip().lower()
+    if mode not in {"fake", "live"}:
+        raise ValueError("LLM_MODE must be fake or live for the service runtime")
+    return mode
+
+
+def configured_live_keys() -> list[str]:
+    keys = list(
+        dict.fromkeys(
+            value
+            for index in range(1, 5)
+            if (value := os.getenv(f"GROQ_API_KEY_{index}", "").strip())
+        )
+    )
+    if not keys:
+        raise ValueError("live mode requires numbered Groq credentials")
+    return keys
+
+
+def run_configured_triage(ticket: Ticket, retriever, **fake_options) -> AgentTriageRun:
+    if configured_llm_mode() == "fake":
+        return run_fake_triage(ticket, retriever, **fake_options)
+    if (
+        "refund" in (ticket.subject + " " + ticket.body).lower()
+        or fake_options.get("approved") is not None
+    ):
+        raise ValueError("live refund/approval workflow is not enabled")
+    return run_live_triage(ticket, retriever, configured_live_keys())

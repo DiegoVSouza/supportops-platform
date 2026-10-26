@@ -1,0 +1,15 @@
+{
+  "command": "Review latest recorded full gate, actual service Groq assertions and authenticated catalog evidence",
+  "exit_code": 0,
+  "assertions": {
+    "live_pass": true,
+    "domain_assertions": true,
+    "model": true,
+    "catalog": true,
+    "full_gate_exit_zero": true
+  },
+  "live_artifact": "artifacts/evidence/live-docker/groq-services-20261026T113754711933Z.json",
+  "gate_artifact": "artifacts/evidence/live-docker/offline-full-20261026T114031Z.txt",
+  "billed_cost_usd": "PENDING",
+  "scope": "One synthetic acceptance case; no general quality claim."
+}

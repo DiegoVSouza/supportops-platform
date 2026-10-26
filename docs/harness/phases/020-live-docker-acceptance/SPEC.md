@@ -1,6 +1,6 @@
 # Live Groq and Docker acceptance
 
-Status: planned.
+Status: verified for the bounded acceptance case.
 
 Enable fail-closed live dispatch in the HTTP and durable worker paths, then verify a synthetic tenant task through PostgreSQL retrieval, Redis delivery, Groq and OTLP.
 

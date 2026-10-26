@@ -8,6 +8,8 @@ import time
 from pathlib import Path
 from typing import Any, Mapping
 
+from supportops_obs import LLMResponse, record_llm_call
+
 from supportops_platform.contracts import Citation
 
 MODEL = "openai/gpt-oss-20b"
@@ -62,6 +64,7 @@ class GroqRAGClient:
         self.output_tokens = 0
         self.estimated_cost_usd = 0.0
         self.calls = 0
+        self.actual_model = MODEL
 
     def complete(self, agent: str, payload: Mapping[str, Any]) -> Mapping[str, Any]:
         if agent not in FIELDS:
@@ -100,6 +103,7 @@ class GroqRAGClient:
             raise RuntimeError("live request blocked by project budget")
         for attempt, key in enumerate(self.keys):
             try:
+                started = time.perf_counter()
                 response = _new_groq(
                     api_key=key, max_retries=0, timeout=20
                 ).chat.completions.create(
@@ -121,6 +125,24 @@ class GroqRAGClient:
                 if self.estimated_cost_usd > CAP_USD:
                     raise RuntimeError("observed usage exceeded project budget")
                 self.calls += 1
+                self.actual_model = getattr(response, "model", MODEL)
+                if self.actual_model != MODEL:
+                    raise RuntimeError("provider returned an unexpected RAG model")
+                record_llm_call(
+                    LLMResponse(
+                        "groq",
+                        self.actual_model,
+                        response.usage.prompt_tokens,
+                        response.usage.completion_tokens,
+                        (
+                            response.usage.prompt_tokens * INPUT_RATE
+                            + response.usage.completion_tokens * OUTPUT_RATE
+                        )
+                        / 1_000_000,
+                        time.perf_counter() - started,
+                        content=None,
+                    )
+                )
                 return data
             except Exception as exc:
                 if isinstance(exc, (ValueError, RuntimeError)):

@@ -115,3 +115,7 @@ A disposable Keycloak 26.8.1 container issued a test token; authenticated RFC 76
 - Separate fixture construction, model catalog lookup, result assertions and artifact writing; format the client/triage code and exercise citations in the KB test.
 - Full offline gate: INCOMPLETE (106 tests pass; Docker service E2E unavailable).
 - Offline helper and static checks passed; no live calls were needed. Evidence: artifacts/evidence/code-cleanup/.
+
+## 2026-10-26 — Live Docker acceptance
+
+The fake full service gate passed with 110 tests, Docker E2E, security, adversarial and recovery checks. The dedicated live image includes the locked optional Groq SDK and prompt files. One live API/Redis-worker/PostgreSQL-RAG task passed every assertion with four actual calls (1748 input / 468 output tokens), a shipping citation, tenant denial, idempotency and correlated content-free Jaeger spans. Live refunds remain explicitly blocked before generation. Evidence: artifacts/evidence/live-docker/.

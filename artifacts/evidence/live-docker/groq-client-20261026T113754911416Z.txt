@@ -1,0 +1,267 @@
+Command: LLM_MODE=live C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/check_live_services.py
+Exit code: 0
+Command: docker compose -p p05-live-020 -f docker-compose.services.yml -f docker-compose.live.yml config --quiet
+Exit code: 0
+
+Command: docker compose -p p05-live-020 -f docker-compose.services.yml -f docker-compose.live.yml build api
+Exit code: 0
+#1 [internal] load local bake definitions
+#1 reading from stdin 594B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 865B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.13.12-slim
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 129B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [build  1/10] FROM docker.io/library/python:3.13.12-slim@sha256:f1927c75e81efd1e091dbd64b6c0ecaa5630b38635a3d1c04034ac636e1f94c8
+#6 resolve docker.io/library/python:3.13.12-slim@sha256:f1927c75e81efd1e091dbd64b6c0ecaa5630b38635a3d1c04034ac636e1f94c8 0.0s done
+#6 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 78.16kB 0.0s done
+#5 DONE 0.0s
+
+#7 [build  3/10] RUN pip install --no-cache-dir uv==0.12.7
+#7 CACHED
+
+#8 [build  4/10] COPY pyproject.toml uv.lock ./
+#8 CACHED
+
+#9 [build  5/10] COPY artifacts/packages ./artifacts/packages
+#9 CACHED
+
+#10 [build  2/10] WORKDIR /app
+#10 CACHED
+
+#11 [build  6/10] COPY migrations ./migrations
+#11 CACHED
+
+#12 [build  7/10] COPY scripts ./scripts
+#12 DONE 0.0s
+
+#13 [build  8/10] COPY supportops_platform ./supportops_platform
+#13 DONE 0.1s
+
+#14 [build  9/10] COPY agent/prompts ./agent/prompts
+#14 DONE 0.1s
+
+#15 [build 10/10] RUN if [ "true" = "true" ]; then uv sync --locked --no-dev --extra live; else uv sync --locked --no-dev; fi
+#15 0.410 Using CPython 3.13.12 interpreter at: /usr/local/bin/python3
+#15 0.410 Creating virtual environment at: .venv
+#15 0.469 Resolved 95 packages in 51ms
+#15 0.500    Building supportops-platform @ file:///app
+#15 0.637 Downloading botocore (15.3MiB)
+#15 0.640 Downloading grpcio (6.8MiB)
+#15 0.641 Downloading psycopg-binary (4.2MiB)
+#15 0.646 Downloading zstandard (5.3MiB)
+#15 0.652 Downloading cryptography (4.5MiB)
+#15 0.653 Downloading asyncpg (3.4MiB)
+#15 0.653 Downloading pydantic-core (2.1MiB)
+#15 2.730  Downloaded pydantic-core
+#15 3.496  Downloaded asyncpg
+#15 3.763  Downloaded psycopg-binary
+#15 3.921  Downloaded cryptography
+#15 4.032  Downloaded zstandard
+#15 4.302  Downloaded grpcio
+#15 4.470       Built supportops-platform @ file:///app
+#15 5.105  Downloaded botocore
+#15 5.105 Prepared 82 packages in 4.63s
+#15 5.653 Installed 87 packages in 547ms
+#15 5.653  + aiosqlite==0.22.1
+#15 5.653  + annotated-doc==0.0.5
+#15 5.653  + annotated-types==0.8.0
+#15 5.653  + anyio==4.15.1
+#15 5.653  + asyncpg==0.30.0
+#15 5.653  + attrs==26.1.0
+#15 5.653  + boto3==1.43.114
+#15 5.653  + botocore==1.43.114
+#15 5.653  + certifi==2026.7.22
+#15 5.653  + cffi==2.1.1
+#15 5.653  + charset-normalizer==3.5.2
+#15 5.653  + click==8.5.0
+#15 5.653  + cryptography==50.0.2
+#15 5.654  + distro==1.9.0
+#15 5.654  + fastapi==0.142.4
+#15 5.654  + googleapis-common-protos==1.75.5
+#15 5.654  + groq==1.7.0
+#15 5.654  + grpcio==1.84.0
+#15 5.654  + h11==0.16.0
+#15 5.654  + httpcore==1.0.9
+#15 5.654  + httpcore2==2.13.1
+#15 5.654  + httpx==0.28.1
+#15 5.654  + httpx2==2.13.1
+#15 5.654  + idna==3.20
+#15 5.654  + jmespath==1.1.0
+#15 5.654  + jsonpatch==1.36
+#15 5.654  + jsonpointer==3.4
+#15 5.654  + jsonschema==4.26.0
+#15 5.654  + jsonschema-specifications==2025.9.1
+#15 5.654  + langchain-core==1.6.13
+#15 5.654  + langchain-protocol==0.0.20
+#15 5.654  + langgraph==1.1.10
+#15 5.654  + langgraph-checkpoint==4.3.0
+#15 5.654  + langgraph-checkpoint-sqlite==3.1.2
+#15 5.654  + langgraph-prebuilt==1.0.13
+#15 5.654  + langgraph-sdk==0.3.15
+#15 5.654  + langsmith==0.14.12
+#15 5.654  + mcp==2.3.0
+#15 5.654  + mcp-types==2.3.0
+#15 5.654  + opentelemetry-api==1.45.1
+#15 5.654  + opentelemetry-exporter-otlp-common==0.66b1
+#15 5.654  + opentelemetry-exporter-otlp-proto-common==1.45.1
+#15 5.654  + opentelemetry-exporter-otlp-proto-grpc==1.45.1
+#15 5.654  + opentelemetry-proto==1.45.1
+#15 5.654  + opentelemetry-sdk==1.45.1
+#15 5.654  + opentelemetry-semantic-conventions==0.66b1
+#15 5.654  + orjson==3.13.0
+#15 5.654  + ormsgpack==1.13.0
+#15 5.654  + packaging==26.3
+#15 5.655  + prometheus-client==0.26.0
+#15 5.655  + protobuf==7.36.2
+#15 5.655  + psycopg==3.2.10
+#15 5.655  + psycopg-binary==3.2.10
+#15 5.655  + pycparser==3.11
+#15 5.655  + pydantic==2.14.1
+#15 5.655  + pydantic-core==2.50.1
+#15 5.655  + pyjwt==2.15.1
+#15 5.655  + python-dateutil==2.9.0.post0
+#15 5.655  + python-multipart==0.0.32
+#15 5.655  + pyyaml==6.0.3
+#15 5.655  + redis==6.4.0
+#15 5.655  + referencing==0.37.0
+#15 5.655  + requests==2.34.2
+#15 5.655  + requests-toolbelt==1.0.0
+#15 5.655  + rpds-py==2026.9.1
+#15 5.655  + s3transfer==0.19.2
+#15 5.655  + six==1.17.0
+#15 5.655  + sniffio==1.3.1
+#15 5.655  + sqlite-vec==0.1.9
+#15 5.655  + sse-starlette==3.5.0
+#15 5.655  + starlette==1.8.0
+#15 5.655  + supportops-agents==0.1.1 (from file:///app/artifacts/packages/supportops_agents-0.1.1-py3-none-any.whl)
+#15 5.655  + supportops-ai-toolkit==0.2.0 (from file:///app/artifacts/packages/supportops_ai_toolkit-0.2.0-py3-none-any.whl)
+#15 5.655  + supportops-async==0.1.4 (from file:///app/artifacts/packages/supportops_async-0.1.4-py3-none-any.whl)
+#15 5.655  + supportops-foundation==1.0.1 (from file:///app/artifacts/packages/supportops_foundation-1.0.1-py3-none-any.whl)
+#15 5.655  + supportops-obs==0.3.1 (from file:///app/artifacts/packages/supportops_obs-0.3.1-py3-none-any.whl)
+#15 5.656  + supportops-platform==0.4.3 (from file:///app)
+#15 5.656  + tenacity==9.2.1
+#15 5.656  + truststore==0.10.5
+#15 5.656  + typing-extensions==4.16.0
+#15 5.656  + typing-inspection==0.4.4
+#15 5.656  + urllib3==2.8.0
+#15 5.656  + uuid-utils==0.18.0
+#15 5.656  + uvicorn==0.46.0
+#15 5.656  + websockets==17.3
+#15 5.656  + xxhash==4.0.2
+#15 5.656  + zstandard==0.25.0
+#15 DONE 6.1s
+
+#16 [stage-1 3/5] RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --home /app app
+#16 CACHED
+
+#17 [stage-1 4/5] COPY --from=build --chown=app:app /app /app
+#17 DONE 2.4s
+
+#18 [stage-1 5/5] RUN mkdir -p /app/artifacts && chown app:app /app/artifacts
+#18 DONE 0.4s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 5.7s done
+#19 exporting manifest sha256:beb7b96929a2bb4a1d2f233ebaba7a2f2d590667bebae8c73c122ea33ec2567d 0.0s done
+#19 exporting config sha256:09cc7af0825822ef6330344fb79e2e87dd67eebc6acaf97e484bfc481895b873 0.0s done
+#19 exporting attestation manifest sha256:bba3ef93ee30013de24bbb30f4b3ed8458d1dc1430503422182915eb5772403f 0.0s done
+#19 exporting manifest list sha256:0af6c40c175c5fa2f5278c01dac843b3978635ab36b9ee947071c75649203f30 0.0s done
+#19 naming to docker.io/library/supportops-platform:groq-live
+#19 naming to docker.io/library/supportops-platform:groq-live done
+#19 unpacking to docker.io/library/supportops-platform:groq-live
+#19 unpacking to docker.io/library/supportops-platform:groq-live 2.8s done
+#19 DONE 8.7s
+
+#20 resolving provenance for metadata file
+#20 DONE 0.0s
+ Image supportops-platform:groq-live Building
+ Image supportops-platform:groq-live Built
+
+Command: docker compose -p p05-live-020 -f docker-compose.services.yml -f docker-compose.live.yml up --no-build -d --wait
+Exit code: 0
+ Network p05-live-020_default Creating
+ Network p05-live-020_default Created
+ Volume p05-live-020_postgres-data Creating
+ Volume p05-live-020_postgres-data Created
+ Volume p05-live-020_redis-data Creating
+ Volume p05-live-020_redis-data Created
+ Volume p05-live-020_graph-data Creating
+ Volume p05-live-020_graph-data Created
+ Container p05-live-020-grafana-1 Creating
+ Container p05-live-020-otel-1 Creating
+ Container p05-live-020-mcp-1 Creating
+ Container p05-live-020-prometheus-1 Creating
+ Container p05-live-020-jaeger-1 Creating
+ Container p05-live-020-postgres-1 Creating
+ Container p05-live-020-redis-1 Creating
+ Container p05-live-020-mcp-1 Created
+ Container p05-live-020-otel-1 Created
+ Container p05-live-020-jaeger-1 Created
+ Container p05-live-020-grafana-1 Created
+ Container p05-live-020-postgres-1 Created
+ Container p05-live-020-prometheus-1 Created
+ Container p05-live-020-redis-1 Created
+ Container p05-live-020-api-1 Creating
+ Container p05-live-020-api-1 Created
+ Container p05-live-020-worker-1 Creating
+ Container p05-live-020-worker-1 Created
+ Container p05-live-020-mcp-1 Starting
+ Container p05-live-020-postgres-1 Starting
+ Container p05-live-020-redis-1 Starting
+ Container p05-live-020-grafana-1 Starting
+ Container p05-live-020-jaeger-1 Starting
+ Container p05-live-020-otel-1 Starting
+ Container p05-live-020-prometheus-1 Starting
+ Container p05-live-020-jaeger-1 Started
+ Container p05-live-020-redis-1 Started
+ Container p05-live-020-grafana-1 Started
+ Container p05-live-020-postgres-1 Started
+ Container p05-live-020-redis-1 Waiting
+ Container p05-live-020-postgres-1 Waiting
+ Container p05-live-020-mcp-1 Started
+ Container p05-live-020-prometheus-1 Started
+ Container p05-live-020-otel-1 Started
+ Container p05-live-020-redis-1 Healthy
+ Container p05-live-020-postgres-1 Healthy
+ Container p05-live-020-api-1 Starting
+ Container p05-live-020-api-1 Started
+ Container p05-live-020-api-1 Waiting
+ Container p05-live-020-api-1 Healthy
+ Container p05-live-020-worker-1 Starting
+ Container p05-live-020-worker-1 Started
+ Container p05-live-020-worker-1 Waiting
+ Container p05-live-020-mcp-1 Waiting
+ Container p05-live-020-prometheus-1 Waiting
+ Container p05-live-020-redis-1 Waiting
+ Container p05-live-020-grafana-1 Waiting
+ Container p05-live-020-jaeger-1 Waiting
+ Container p05-live-020-otel-1 Waiting
+ Container p05-live-020-api-1 Waiting
+ Container p05-live-020-postgres-1 Waiting
+ Container p05-live-020-worker-1 Healthy
+ Container p05-live-020-otel-1 Healthy
+ Container p05-live-020-api-1 Healthy
+ Container p05-live-020-grafana-1 Healthy
+ Container p05-live-020-redis-1 Healthy
+ Container p05-live-020-mcp-1 Healthy
+ Container p05-live-020-jaeger-1 Healthy
+ Container p05-live-020-postgres-1 Healthy
+ Container p05-live-020-prometheus-1 Healthy
+
+{"api_calls": 4, "assertions": {"actual_model": true, "api_live": true, "cited_answer": true, "correlated_trace": true, "foreign_task_denied": true, "four_calls": true, "idempotent_submission": true, "no_refund": true, "real_usage": true, "shipping_retrieved": true, "tenant_scope": true, "trace_content_absent": true, "trace_provider": true, "within_budget": true, "worker_live": true}, "compose_project": "p05-live-020", "cost_usd": "PENDING", "estimated_cost_usd": 0.0002715, "exit_code": 0, "finished_at_utc": "2026-10-26T11:37:54.709972+00:00", "input_tokens": 1748, "model": "openai/gpt-oss-20b", "model_available_key_count": 4, "output_tokens": 468, "provider": "groq", "started_at_utc": "2026-10-26T11:37:07.004225+00:00", "status": "PASS", "trace_id": "dfbfb42e3b8cdd3416b635ed3e178ed8", "trace_span_names": ["MCP send initialize", "MCP send tools/call lookup_customer", "MCP send tools/call lookup_invoice", "MCP send tools/list", "agent.triage", "api.request", "database.knowledge.hybrid_search", "database.ticket.get", "fastapi.dependencies", "fastapi.endpoint", "fastapi.serialization", "llm.inference", "mcp.client.lookup_customer", "mcp.client.lookup_invoice", "queue.enqueue", "queue.publish", "worker.run"]}

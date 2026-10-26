@@ -1,0 +1,79 @@
+Command: C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m pytest tests/test_live_service_mode.py -q --basetemp artifacts\evidence\live-docker\red-tmp
+Exit code: 1
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+______ test_live_mode_never_uses_fake_and_requires_numbered_credentials _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000151A97335C0>
+
+    def test_live_mode_never_uses_fake_and_requires_numbered_credentials(monkeypatch):
+        monkeypatch.setenv("LLM_MODE", "live")
+        for index in range(1, 5):
+            monkeypatch.delenv(f"GROQ_API_KEY_{index}", raising=False)
+        fake = Mock(side_effect=AssertionError("fake fallback"))
+        monkeypatch.setattr(triage, "run_fake_triage", fake)
+        ticket = Ticket("tenant-a", "synthetic", "Tracking", "Where is the link?")
+        with pytest.raises(ValueError, match="numbered Groq"):
+>           triage.run_configured_triage(ticket, LocalRetriever([]))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'supportops_platform.agents.triage' has no attribute 'run_configured_triage'
+
+tests\test_live_service_mode.py:21: AttributeError
+_____________ test_unknown_mode_fails_before_provider_or_database _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000151A97336F0>
+
+    def test_unknown_mode_fails_before_provider_or_database(monkeypatch):
+        monkeypatch.setenv("LLM_MODE", "invalid")
+        with pytest.raises(ValueError, match="LLM_MODE"):
+>           triage.run_configured_triage(Ticket("tenant-a", "c", "s", "b"), LocalRetriever([]))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'supportops_platform.agents.triage' has no attribute 'run_configured_triage'
+
+tests\test_live_service_mode.py:33: AttributeError
+__________________ test_live_refund_workflow_is_not_enabled ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000151A980A690>
+
+    def test_live_refund_workflow_is_not_enabled(monkeypatch):
+        monkeypatch.setenv("LLM_MODE", "live")
+        monkeypatch.setenv("GROQ_API_KEY_1", "test-credential")
+        live = Mock(side_effect=AssertionError("refund must not reach provider"))
+        monkeypatch.setattr(triage, "run_live_triage", live)
+        with pytest.raises(ValueError, match="refund"):
+>           triage.run_configured_triage(Ticket("tenant-a", "c", "Refund", "Issue a refund"), LocalRetriever([]))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'supportops_platform.agents.triage' has no attribute 'run_configured_triage'
+
+tests\test_live_service_mode.py:42: AttributeError
+_______________ test_http_live_route_dispatches_to_live_client ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000151A98257B0>
+
+    def test_http_live_route_dispatches_to_live_client(monkeypatch):
+        from supportops_agents.contracts import TriageDecision, TriageResult
+
+        secret = "test-local-signing-secret-at-least-32-characters"
+        monkeypatch.setenv("LLM_MODE", "live")
+        monkeypatch.setenv("GROQ_API_KEY_1", "test-credential")
+        result = triage.AgentTriageRun(TriageResult(TriageDecision("respond", "shipping", "Use the link.", True), []), ())
+        live = Mock(return_value=result)
+        monkeypatch.setattr(triage, "run_live_triage", live)
+        api = TestClient(create_app(token_secret=secret))
+        token = issue_demo_token("synthetic", "tenant-a", ["agent"], ["ticket:write", "triage:run"], secret=secret)
+        headers = {"Authorization": "Bearer " + token}
+        created = api.post("/v1/tickets", headers=headers, json={"customer_id":"synthetic", "subject":"Tracking", "body":"Where is the link?"})
+        response = api.post(f"/v1/tickets/{created.json()['id']}/triage", headers=headers)
+        assert response.status_code == 200
+>       assert response.json()["llm_mode"] == "live"
+E       AssertionError: assert 'fake' == 'live'
+E
+E         - live
+E         + fake
+
+tests\test_live_service_mode.py:61: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_live_service_mode.py::test_live_mode_never_uses_fake_and_requires_numbered_credentials
+FAILED tests/test_live_service_mode.py::test_unknown_mode_fails_before_provider_or_database
+FAILED tests/test_live_service_mode.py::test_live_refund_workflow_is_not_enabled
+FAILED tests/test_live_service_mode.py::test_http_live_route_dispatches_to_live_client

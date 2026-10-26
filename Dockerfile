@@ -6,7 +6,9 @@ COPY artifacts/packages ./artifacts/packages
 COPY migrations ./migrations
 COPY scripts ./scripts
 COPY supportops_platform ./supportops_platform
-RUN uv sync --locked --no-dev
+COPY agent/prompts ./agent/prompts
+ARG INSTALL_LIVE=false
+RUN if [ "$INSTALL_LIVE" = "true" ]; then uv sync --locked --no-dev --extra live; else uv sync --locked --no-dev; fi
 
 FROM python:3.13.12-slim
 WORKDIR /app
