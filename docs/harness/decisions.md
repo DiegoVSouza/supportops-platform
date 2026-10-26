@@ -6,5 +6,6 @@
 - Runtime: custom loop for predictable, testable orchestration; provider calls remain disabled in CI (`LLM_MODE=fake`). Live mode requires separate budget and authorization.
 - Risk: full governance; each tool checks tenant, principal, role, task state, and approval state. Refund is irreversible and requires HITL. The Rule of Two is satisfied by `external_comms: false`: outputs may be generated but no outbound communication tool exists.
 - Dependencies: local development begins with contract doubles. Real integration is gated on approved, versioned P01–P04 packages installed from local artifacts; record source repo, commit, package version, and SHA-256. Never import sibling source paths or publish externally.
-- Budget: configured ceiling is $2/task, but this task uses no paid LLM calls. Metrics from fake runs are control-flow metrics only, not model quality.
+- Budget: configured ceiling is $2/task; phase 018 uses only the explicitly permitted free-plan allowance with an estimated per-run ceiling of $0.01. Fake metrics remain control-flow only, not model quality.
 - API: `openapi.yaml` v1; freeze after phase 003. Changes require ADR, version bump, and consumer update.
+- Phase 018 decision (2026-10-26): run one opt-in Groq RAG-agent evaluation with synthetic tenant-A content and local retrieval only. Keep MCP/refund tools out of the run, cap estimated exposure at USD 0.01 within the existing USD 2/task budget, and preserve fake CI behavior.

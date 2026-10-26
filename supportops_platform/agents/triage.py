@@ -19,6 +19,7 @@ from threading import Lock
 class AgentTriageRun:
     result: TriageResult
     citations: tuple[Citation, ...]
+    live_metrics: dict[str, int | float] | None = None
 
 
 class _RetrievalAwareFakeClient:
@@ -67,3 +68,15 @@ def run_fake_triage(
         result=runner.run(agent_ticket,llm=client,max_steps=max_steps,resume_key=resume_key)
     else: result=runner.run(agent_ticket,llm=client,max_steps=max_steps)
     return AgentTriageRun(result=result, citations=citations)
+
+
+def run_live_triage(ticket: Ticket, retriever: LocalRetriever, api_keys: list[str]) -> AgentTriageRun:
+    """Run the opt-in real model against only the ticket tenant's approved citations."""
+    from supportops_platform.agents.live_groq import GroqRAGClient
+    citations=tuple(c for c in retriever.search(ticket.tenant_id,f"{ticket.subject}\n{ticket.body}",top_k=3)
+                    if guard(c.text,role="support").action!="block")
+    agent_ticket=AgentTicket(id=ticket.id,subject=ticket.subject,description=ticket.body,customer_id=ticket.customer_id)
+    client=GroqRAGClient(api_keys,citations)
+    result=get_runner("core").run(agent_ticket,llm=client,max_steps=4)
+    metrics={"calls":client.calls,"input_tokens":client.input_tokens,"output_tokens":client.output_tokens,"estimated_cost_usd":client.estimated_cost_usd}
+    return AgentTriageRun(result=result,citations=citations,live_metrics=metrics)

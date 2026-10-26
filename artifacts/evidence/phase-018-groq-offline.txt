@@ -1,0 +1,3 @@
+Command: uv run --group dev python scripts/check_full.py
+Exit code: 2 (INCOMPLETE)
+Output: 106 unit/contract tests passed; retrieval fixture and quality gates passed. Docker-dependent service E2E was unavailable. Deterministic fixture metrics are labelled fixture-only and are not model-quality evidence.

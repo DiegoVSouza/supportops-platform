@@ -1,0 +1,29 @@
+{
+  "api_calls": 4,
+  "assertions": {
+    "approved": true,
+    "citation_in_answer": true,
+    "four_agent_steps": true,
+    "responded": true,
+    "shipping_evidence": true,
+    "tenant_scope": true
+  },
+  "budget_cap_usd": 0.01,
+  "citation_ids": [
+    "shipping#shipping:0"
+  ],
+  "cost_usd": "PENDING",
+  "credential_count": 5,
+  "estimated_cost_usd": 0.00027787499999999996,
+  "exit_code": 0,
+  "failure_category": null,
+  "finished_at_utc": "2026-10-26T10:29:56.184139+00:00",
+  "input_tokens": 1569,
+  "model": "openai/gpt-oss-20b",
+  "model_available_key_count": 5,
+  "output_tokens": 534,
+  "provider": "groq",
+  "started_at_utc": "2026-10-26T10:29:50.234130+00:00",
+  "status": "PASS",
+  "step_count": 4
+}

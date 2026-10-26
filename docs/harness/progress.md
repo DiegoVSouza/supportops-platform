@@ -103,3 +103,9 @@ A disposable Keycloak 26.8.1 container issued a test token; authenticated RFC 76
 - Updated the immutable P04 wheel provenance and P05 dependency lock. Unit and contract suite passed (104 tests); OpenAPI, package provenance and Docker Compose configuration checks passed.
 - The isolated full fake-mode service gate passed with PostgreSQL/pgvector and Redis. It covered API restart recovery, tenant isolation, MCP auth, 15-minute authorization expiry, HITL, worker crash after a committed effect, and one ledger effect. Evidence: `artifacts/evidence/phase-017-full-gate.txt`, `phase-017-service-summary.json`, `phase-017-product-trace.json`, and `phase-017-service-down-alert.json`. Gate-created containers, network, and volumes were removed; existing stacks were preserved.
 - Model quality, replay, provider cost/latency, and external IdP acceptance remain PENDING/INCOMPLETE. The deterministic fixtures are not model-quality evidence.
+
+## 2026-10-26 — Phase 018 live RAG agent evaluation
+
+- Added optional Groq-backed Core client with local tenant-scoped retrieval, citation-only evidence, no tools, and a USD 0.01 estimated cap. Fake RAG client remains unchanged.
+- The first synthetic case had a missing dispatch message and correctly escalated. The final case asked where the link appears in a received message and passed tenant scope, citation, approval, and four-step assertions: 4 calls, 1575 input / 371 output tokens, estimated cost USD 0.000229425; billed cost `PENDING`.
+- Two offline live-client tests and the 106-test full unit/contract gate passed. Docker-dependent service E2E remains incomplete.
