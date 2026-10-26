@@ -1,0 +1,3 @@
+command=Compare-Object sorted containers-before.txt containers-after.txt; differences=0; exit_code=0
+command=docker ps/volume ls/network ls --filter label=com.docker.compose.project=p05-locked-acceptance-021; remaining=0; exit_code=0
+existing container identities/states preserved; live worker remains stopped

@@ -132,3 +132,9 @@ Corrected inconsistent service restart policies after Docker startup left Postgr
 ## 2026-10-26 — Phase 020 complete token reservations
 
 - Exposed the frozen primary, confirmation, and additive input/output token maxima in the content-free offline campaign dry-run; no config caps or authorization changed. Focused preparation tests (11) and fast checks passed. Full gate remains `INCOMPLETE` (exit 2): package consumers are not installed, service checks were explicitly omitted, and semantic/model evaluation remains `PENDING`. No Groq, credentials, network, or Docker access occurred. Evidence: `artifacts/evidence/live-token-reservations/`.
+
+## 2026-10-26 — Phase 021 locked local acceptance
+
+- Corrected the phase 020 diagnosis: its full-gate invocation used global Python outside the locked environment. The locked offline rerun passed 127 tests and every package/RAG/OpenAPI/control check; the historical failed invocation remains preserved.
+- Full fake acceptance passed with exit 0 in the isolated `p05-locked-acceptance-021` Docker project, including service authorization, tenant separation, adversarial requests, correlated traces and kill-after-effect worker recovery. Temporary containers/volumes/network were removed; all pre-existing container identities and states were preserved, including the stopped live worker.
+- Broad batch dispatch, shared account enforcement, quota/caps/reviews, real campaign quality and promotion canary/rollback remain INCOMPLETE. No Groq calls occurred. Evidence: `artifacts/evidence/locked-acceptance/`.
