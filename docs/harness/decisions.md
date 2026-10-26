@@ -13,3 +13,7 @@
 ## 2026-10-26 — Live Docker acceptance
 
 Use opt-in Groq live mode with numbered credentials and authenticated model preflight. Preserve deterministic fake defaults and fail closed on provider/contract failures. Only local synthetic acceptance and the designated free allowance are authorized; billed cost remains PENDING. Evidence: artifacts/evidence/live-docker/.
+
+## 2026-10-26 — P05 broad live campaign preparation
+
+Prepared an offline-only P05 campaign dataset, grader checks and reservation dry-runs. The requested row counts and structural contracts are present, but independent semantic review remains pending; campaign generation stays disabled. The displayed call/token ceilings do not authorize spend. Cumulative account quota, budget, human review, runtime identity, and campaign approval remain pending. No Groq call or Docker/service mutation was made. Evidence: `artifacts/evidence/live-campaign-preparation/phase-017-preparation.md`.

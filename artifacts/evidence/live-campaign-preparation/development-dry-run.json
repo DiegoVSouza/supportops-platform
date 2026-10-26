@@ -1,0 +1,64 @@
+{
+  "authorized_paid_spend_usd": 0,
+  "blockers": [
+    "budget.campaign_spend_usd_pending",
+    "budget.authorized_paid_spend_usd_zero",
+    "approval.expanded_campaign_approval",
+    "approval.independent_dataset_and_rubric_review",
+    "approval.human_review_capacity",
+    "approval.clean_context_phase_verification",
+    "approval.runtime_candidate_and_service_identity",
+    "cumulative_caps.requests",
+    "cumulative_caps.input_tokens",
+    "cumulative_caps.output_tokens",
+    "cumulative_caps.provider_account_quota",
+    "cumulative_caps.confirmation_funding",
+    "execution.min_seconds_between_calls",
+    "execution.max_wall_clock_minutes",
+    "execution.persistent_cumulative_ledger",
+    "execution.serialized_campaign_lease",
+    "provider.authenticated_model_catalog_preflight"
+  ],
+  "campaign_spend_reservation_usd": "PENDING",
+  "cases": 36,
+  "credentials_read": false,
+  "dataset_sha256": "84bf4a8aab99bd1f62e0508630753fbe088f3323254cfa8d6921682a124cc551",
+  "docker_mutated": false,
+  "generation_authorized": false,
+  "gross_provider_call_reservation_ceiling": 432,
+  "logical_cases_trials_ceiling": 108,
+  "max_input_tokens_gross_reservation": 1769472,
+  "max_output_tokens_gross_reservation": 221184,
+  "max_usd_per_task": 2.0,
+  "network_accessed": false,
+  "planned_all_stages_calls_if_additive": 1704,
+  "planned_confirmation_calls": 240,
+  "planned_primary_calls": 1440,
+  "provider_accessed": false,
+  "provider_call_ceiling_after_zero_call_denials": 288,
+  "stage": "development",
+  "status": "DRY_RUN",
+  "strata": {
+    "family": {
+      "authorization_expiry": 4,
+      "citation_correctness": 4,
+      "cross_tenant_tools": 4,
+      "duplicate_delivery": 4,
+      "prompt_injection": 4,
+      "refund_denial": 4,
+      "retrieval_relevance": 4,
+      "tenant_separation": 4,
+      "unanswerable": 4
+    },
+    "language": {
+      "en": 18,
+      "pt-BR": 18
+    },
+    "split": {
+      "development": 36,
+      "holdout": 0
+    }
+  },
+  "zero_call_denial_cases": 12,
+  "zero_call_denials_count_as_live_trials": false
+}

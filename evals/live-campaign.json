@@ -1,0 +1,72 @@
+{
+  "campaign": "p05-live-v1",
+  "dataset_manifest": "evals/datasets/live-v1/manifest.json",
+  "cases_path": "evals/datasets/live-v1/cases.jsonl",
+  "runner_scope": "integrated local API/PostgreSQL retrieval/Redis worker/installed agent and MCP/Groq",
+  "provider": "Groq",
+  "preferred_model": "openai/gpt-oss-20b",
+  "model_catalog_preflight": "required before any separately authorized run; not performed in preparation",
+  "trials_per_case": 3,
+  "pilot_trials_per_case": 1,
+  "per_case_caps": {"provider_calls_per_trial": 4, "input_tokens_per_trial": 16384, "output_tokens_per_trial": 2048, "provider_calls_per_call": 1, "input_tokens_per_call": 4096, "output_tokens_per_call": 512, "task_timeout_seconds": 180, "provider_call_timeout_seconds": 30, "max_usd_per_task": 2.0},
+  "planned_reservations": {
+    "pilot_cases": 6,
+    "pilot_max_calls": 24,
+    "development_max_calls": 432,
+    "holdout_max_calls": 1008,
+    "primary_campaign_max_calls": 1440,
+    "primary_campaign_max_input_tokens": 5898240,
+    "primary_campaign_max_output_tokens": 737280,
+    "fresh_confirmation_cases": 20,
+    "confirmation_max_calls": 240,
+    "confirmation_max_input_tokens": 983040,
+    "confirmation_max_output_tokens": 122880,
+    "all_stages_max_calls_if_additive": 1704,
+    "all_stages_max_input_tokens_if_additive": 6979584,
+    "all_stages_max_output_tokens_if_additive": 872448,
+    "provider_calls_after_zero_call_denials_max": 972
+  },
+  "zero_call_denials": {
+    "scenario_count": 39,
+    "provider_calls": 0,
+    "counts_as_live_trial": false,
+    "included_in_quality_denominator": false,
+    "reported_separately": true
+  },
+  "cumulative_caps": {
+    "authorized_paid_spend_usd": 0,
+    "max_usd_per_task": 2.0,
+    "requests": "PENDING",
+    "input_tokens": "PENDING",
+    "output_tokens": "PENDING",
+    "campaign_spend_usd": "PENDING",
+    "provider_account_quota": "PENDING",
+    "confirmation_funding": "PENDING"
+  },
+  "approval": {
+    "expanded_campaign_approval": "PENDING",
+    "budget_source": "harness.yaml USD 2/task; prior USD 0.01 one-task exception only",
+    "independent_dataset_and_rubric_review": "PENDING",
+    "human_review_capacity": "PENDING",
+    "clean_context_phase_verification": "PENDING",
+    "runtime_candidate_and_service_identity": "PENDING"
+  },
+  "execution": {
+    "timeout_seconds_per_call": 30,
+    "task_timeout_seconds": 180,
+    "provider_max_retries": 0,
+    "semantic_failure_retry": false,
+    "chunk_cases": 5,
+    "min_seconds_between_calls": "PENDING",
+    "max_wall_clock_minutes": "PENDING",
+    "persistent_cumulative_ledger": "NOT_IMPLEMENTED",
+    "serialized_campaign_lease": "NOT_IMPLEMENTED",
+    "real_refund_adapter": "forbidden",
+    "external_messages": "forbidden",
+    "raw_provider_content_persisted": false
+  },
+  "generation_enabled": false,
+  "fake_or_replay_counts_as_live": false,
+  "holdout_fixes_require_fresh_confirmation": true,
+  "fresh_confirmation_min_cases": 20
+}

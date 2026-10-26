@@ -1,0 +1,27 @@
+{
+  "dataset": "p05-live-v1",
+  "case_count": 120,
+  "development": 36,
+  "holdout": "fixed in version control; not access controlled",
+  "languages": {
+    "en": 72,
+    "pt-BR": 48
+  },
+  "families": [
+    "retrieval_relevance",
+    "citation_correctness",
+    "unanswerable",
+    "tenant_separation",
+    "authorization_expiry",
+    "prompt_injection",
+    "cross_tenant_tools",
+    "duplicate_delivery",
+    "refund_denial"
+  ],
+  "minimum_per_family": 13,
+  "sha256_cases_jsonl": "84bf4a8aab99bd1f62e0508630753fbe088f3323254cfa8d6921682a124cc551",
+  "authorship": "synthetic authored cases; independent review pending",
+  "provider_calls": 0,
+  "contains_customer_data": false,
+  "real_refunds": false
+}
