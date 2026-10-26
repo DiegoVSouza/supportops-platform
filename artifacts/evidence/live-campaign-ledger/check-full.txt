@@ -60,4 +60,4 @@ quality gate: FAIL evaluation regression exceeds 0.000: decision_accuracy: drop=
 
 required service integration: INCOMPLETE; explicitly omitted
 semantic/model cost/latency evaluation: PENDING; no traceable cassette or authorized model run
-check-full: INCOMPLETE; 
+check-full: INCOMPLETE;
