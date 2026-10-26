@@ -123,3 +123,8 @@ The fake full service gate passed with 110 tests, Docker E2E, security, adversar
 ## 2026-10-26 - Docker restart recovery
 
 Corrected inconsistent service restart policies after Docker startup left PostgreSQL/Redis stopped and API/worker failing DNS resolution. All Compose services now use unless-stopped. Recovered the 19 existing P05-owned containers without recreation or volume deletion; both API health endpoints return 200, backing services are healthy and fake worker is stable. Live worker remains explicitly stopped to prevent provider dispatch. Fast and full isolated fake gates passed; the latter exercised service E2E/security/worker recovery and cleaned its own resources. Evidence: `artifacts/evidence/docker-restart-recovery/report.md`. No daemon restart was forced; independent clean-context review remains pending. Broad model evaluation and campaign gates are unchanged.
+## 2026-10-26 — Phase 019 privacy-safe campaign ledger
+
+- Added P05-local append-only reservations, atomic cumulative caps, process lease, and content-free read-only resume. Unknown usage remains reserved; uncertain/completed trials cannot be replayed.
+- Focused tests passed: 6 ledger tests and 11 campaign preparation tests. Full fake gate passed 127 tests with 2 warnings and returned `INCOMPLETE` because services were explicitly skipped; prior Docker recovery evidence remains unchanged.
+- Groq dispatcher, human review, finite approved quota/caps, model preflight, runtime candidate identity, confirmation capacity, broad campaign, canary, and rollback remain pending. No provider call or Docker mutation occurred. Evidence: `artifacts/evidence/live-campaign-ledger/`.

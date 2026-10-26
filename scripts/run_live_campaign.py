@@ -4,9 +4,15 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
+
+try:
+    from .campaign_ledger import CampaignLedger
+except ImportError:
+    from campaign_ledger import CampaignLedger
 
 ROOT = Path(__file__).resolve().parents[1]
 FAMILIES = {
@@ -350,10 +356,40 @@ def summarize(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=ROOT / "evals/live-campaign.json")
-    parser.add_argument("--stage", choices=("pilot", "development", "holdout"), required=True)
+    command = parser.add_mutually_exclusive_group(required=True)
+    command.add_argument("--stage", choices=("pilot", "development", "holdout"))
+    command.add_argument("--resume", metavar="CAMPAIGN_ID")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
     try:
+        if args.resume is not None:
+            if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}", args.resume):
+                raise CampaignError("invalid campaign ID")
+            ledger_path = ROOT / "artifacts/evals/live/ledger.sqlite"
+            if not ledger_path.is_file():
+                raise CampaignError("campaign ledger does not exist")
+            ledger = CampaignLedger(
+                ledger_path, campaign_id=args.resume, read_only=True
+            )
+            attempts = ledger.reserved_trials()
+            if not attempts:
+                raise CampaignError("campaign has no recorded attempts")
+            report = {
+                "project": "p05",
+                "campaign_id": args.resume,
+                "mode": "read-only-resume-inspection",
+                "attempts": attempts,
+                "cumulative_usage": {
+                    key: str(value) for key, value in ledger.totals().items()
+                },
+                "provider_accessed": False,
+                "content_persisted": False,
+            }
+            if args.dry_run:
+                print(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2))
+                return 0
+            print(json.dumps({**report, "status": "INCOMPLETE"}, sort_keys=True))
+            return 2
         config_path = args.config if args.config.is_absolute() else ROOT / args.config
         config = read_json(config_path)
         manifest = read_json(ROOT / config["dataset_manifest"])

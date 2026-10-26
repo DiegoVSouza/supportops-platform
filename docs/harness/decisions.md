@@ -21,3 +21,6 @@ Prepared an offline-only P05 campaign dataset, grader checks and reservation dry
 ## 2026-10-26 — Recover P05 after Docker restart
 
 The user requested diagnosis and repair of restarting P05 services. Application containers used on-failure while PostgreSQL, Redis and telemetry had no restart policy; after daemon restart the application could not resolve its stopped PostgreSQL dependency. Set all service policies to unless-stopped, update only the 19 existing containers owned by p05-remediation-009 and p05-live-020, and start dependencies before application processes without recreating containers or volumes. Keep the live worker explicitly stopped to prevent provider dispatch. Validate actual health and configuration plus a separate isolated fake-mode full service gate. Broad campaign budget/review gates remain unchanged.
+## 2026-10-26 — Privacy-safe campaign ledger
+
+Phase 019 adds P05-local reservation accounting, a process lease, and content-free read-only resume inspection. It does not authorize campaign calls, change the prior USD 0.01 single-task exception, or modify any Docker stack. Campaign spend remains USD 0; quota, finite cumulative caps, human review, candidate identity, confirmation funding, and model preflight remain `PENDING`. Ledger records must not contain tenant content.
