@@ -1,0 +1,17 @@
+Read-only Docker readiness check for P05 service gate.
+Command: docker ps -a --filter name=p05-remediation-009- --format "{{.Names}} {{.Status}}"
+Exit code: 0
+Observed P05-owned containers:
+  p05-remediation-009-worker-1 Restarting (1) 50 seconds ago
+  p05-remediation-009-mcp-1 Up 23 minutes
+  p05-remediation-009-api-1 Up 6 seconds (health: starting)
+  p05-remediation-009-postgres-1 Exited (255) 3 days ago
+  p05-remediation-009-prometheus-1 Exited (255) 3 days ago
+  p05-remediation-009-redis-1 Exited (255) 3 days ago
+  p05-remediation-009-localstack-1 Exited (255) 3 days ago
+  p05-remediation-009-jaeger-1 Exited (255) 3 days ago
+  p05-remediation-009-grafana-1 Exited (255) 3 days ago
+  p05-remediation-009-otel-1 Exited (255) 3 days ago
+No containers were started, stopped, restarted, inspected for environment values, or modified.
+scripts/check_services.py was not run: it stops/restarts API and worker, mutates PostgreSQL/Redis state, writes artifacts, and tears down the Compose project by default.
+Service gate remains INCOMPLETE. Docker availability does not imply readiness; API and worker containers were observed restarting.
