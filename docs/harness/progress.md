@@ -128,3 +128,7 @@ Corrected inconsistent service restart policies after Docker startup left Postgr
 - Added P05-local append-only reservations, atomic cumulative caps, process lease, and content-free read-only resume. Unknown usage remains reserved; uncertain/completed trials cannot be replayed.
 - Focused tests passed: 6 ledger tests and 11 campaign preparation tests. Full fake gate passed 127 tests with 2 warnings and returned `INCOMPLETE` because services were explicitly skipped; prior Docker recovery evidence remains unchanged.
 - Groq dispatcher, human review, finite approved quota/caps, model preflight, runtime candidate identity, confirmation capacity, broad campaign, canary, and rollback remain pending. No provider call or Docker mutation occurred. Evidence: `artifacts/evidence/live-campaign-ledger/`.
+
+## 2026-10-26 — Phase 020 complete token reservations
+
+- Exposed the frozen primary, confirmation, and additive input/output token maxima in the content-free offline campaign dry-run; no config caps or authorization changed. Focused preparation tests (11) and fast checks passed. Full gate remains `INCOMPLETE` (exit 2): package consumers are not installed, service checks were explicitly omitted, and semantic/model evaluation remains `PENDING`. No Groq, credentials, network, or Docker access occurred. Evidence: `artifacts/evidence/live-token-reservations/`.

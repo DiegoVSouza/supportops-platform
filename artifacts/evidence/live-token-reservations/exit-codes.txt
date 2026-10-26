@@ -1,0 +1,4 @@
+dry-run exit_code=0
+fast exit_code=0
+full-skip-services exit_code=2
+focused-tests exit_code=0
