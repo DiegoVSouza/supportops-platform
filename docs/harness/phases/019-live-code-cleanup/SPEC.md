@@ -1,6 +1,6 @@
 # Live evaluation code cleanup
 
-Status: planned.
+Status: implementation and offline checks complete; see VERIFY.md for external gate limits.
 
 Improve readability of the recent Groq integration: expand compressed statements, use ordinary imports and descriptive names, simplify test doubles, and give credential loading, retries, evaluation, and artifact writing distinct functions where useful.
 

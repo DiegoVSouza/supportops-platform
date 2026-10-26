@@ -1,0 +1,38 @@
+Command: C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -c "
+import importlib.util
+import sys
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
+
+root = Path.cwd()
+sys.path.insert(0, str(root))
+sys.path.insert(0, str(root / \"src\"))
+sys.modules[\"groq\"] = SimpleNamespace(Groq=Mock(side_effect=AssertionError(\"network must not run\")))
+
+def load_script():
+    spec = importlib.util.spec_from_file_location(\"cleanup_eval\", root / \"scripts/run_live_groq_eval.py\")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+module = load_script()
+ticket, retriever = module.evaluation_case()
+citations = retriever.search(ticket.tenant_id, ticket.body)
+assert citations and all(c.document_id != \"private-b\" for c in citations)
+decision = SimpleNamespace(response=\"Use the link [shipping#shipping:0]\", approved=True, action=\"respond\")
+run = SimpleNamespace(citations=citations, result=SimpleNamespace(decision=decision, trace=[None]*4), live_metrics={})
+summary = module.evaluate_run(run)
+assert summary[\"status\"] == \"PASS\" and all(summary[\"assertions\"].values())
+from supportops_platform.agents import live_groq
+assert live_groq.retry_delay(0, 429, {\"retry-after\": \"1\"}) == 1
+try:
+    live_groq.retry_delay(0, 429, {\"retry-after\": \"30\"})
+except RuntimeError:
+    pass
+else:
+    raise AssertionError(\"overlong retry was accepted\")
+print(\"Offline retry, retrieval and evaluation helper checks: PASS\")
+"
+Exit code: 0
+Offline retry, retrieval and evaluation helper checks: PASS

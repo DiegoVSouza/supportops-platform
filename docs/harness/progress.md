@@ -109,3 +109,9 @@ A disposable Keycloak 26.8.1 container issued a test token; authenticated RFC 76
 - Added optional Groq-backed Core client with local tenant-scoped retrieval, citation-only evidence, no tools, and a USD 0.01 estimated cap. Fake RAG client remains unchanged.
 - The first synthetic case had a missing dispatch message and correctly escalated. The final case asked where the link appears in a received message and passed tenant scope, citation, approval, and four-step assertions: 4 calls, 1575 input / 371 output tokens, estimated cost USD 0.000229425; billed cost `PENDING`.
 - Two offline live-client tests and the 106-test full unit/contract gate passed. Docker-dependent service E2E remains incomplete.
+
+## 2026-10-26 — Live evaluation readability cleanup
+
+- Separate fixture construction, model catalog lookup, result assertions and artifact writing; format the client/triage code and exercise citations in the KB test.
+- Full offline gate: INCOMPLETE (106 tests pass; Docker service E2E unavailable).
+- Offline helper and static checks passed; no live calls were needed. Evidence: artifacts/evidence/code-cleanup/.

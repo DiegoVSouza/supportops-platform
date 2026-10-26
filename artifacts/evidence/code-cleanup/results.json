@@ -1,0 +1,30 @@
+{
+  "llm_mode": "fake",
+  "live_calls": 0,
+  "checks": [
+    {
+      "check": "helpers",
+      "exit_code": 0
+    },
+    {
+      "check": "fast",
+      "exit_code": 0
+    },
+    {
+      "check": "full",
+      "exit_code": 2
+    },
+    {
+      "check": "format",
+      "exit_code": 0
+    },
+    {
+      "check": "imports",
+      "exit_code": 0
+    },
+    {
+      "check": "requests",
+      "exit_code": 0
+    }
+  ]
+}

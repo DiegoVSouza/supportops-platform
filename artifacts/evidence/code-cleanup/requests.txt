@@ -1,0 +1,23 @@
+Command: C:\estudo\Golpe\lab\projects\p00\.venv\Scripts\python.exe -c "
+import ast
+import subprocess
+from collections import Counter
+from pathlib import Path
+files=[\"scripts/run_live_groq_eval.py\", \"supportops_platform/agents/live_groq.py\", \"supportops_platform/agents/triage.py\", \"tests/test_live_groq.py\"]
+def requests(tree):
+    return Counter(ast.dump(node) for node in ast.walk(tree) if isinstance(node,ast.Call) and isinstance(node.func,ast.Attribute) and node.func.attr==\"create\" and isinstance(node.func.value,ast.Attribute) and node.func.value.attr==\"completions\")
+def strings(tree):
+    return Counter(node.value for node in ast.walk(tree) if isinstance(node,ast.Constant) and isinstance(node.value,str))
+for name in files:
+    if name.startswith(\"tests/\"):
+        continue
+    old=ast.parse(subprocess.check_output([\"git\",\"show\",f\"HEAD:{name}\"],text=True,encoding=\"utf-8\"))
+    new=ast.parse(Path(name).read_text(encoding=\"utf-8\"))
+    assert requests(old)==requests(new), f\"{name}: provider request changed\"
+    assert set(strings(old)-strings(new))<={\"pathlib\",\"client\",\"steps\"}, f\"{name}: unexpected literal removed\"
+    print(f\"{name}: provider requests and original prompt literals preserved\")
+"
+Exit code: 0
+scripts/run_live_groq_eval.py: provider requests and original prompt literals preserved
+supportops_platform/agents/live_groq.py: provider requests and original prompt literals preserved
+supportops_platform/agents/triage.py: provider requests and original prompt literals preserved
