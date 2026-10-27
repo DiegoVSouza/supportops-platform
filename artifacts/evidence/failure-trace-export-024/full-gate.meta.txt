@@ -1,0 +1,2 @@
+COMMAND: P05_COMPOSE_PROJECT=p05-phase024-failure-trace P05_COMPOSE_OVERRIDE=.planning/phases/024-failure-trace-export/compose.override.yml P05_EVIDENCE_DIRECTORY=failure-trace-export-024 P05_SKIP_BUILD=1 P05_TEST_DSN=postgresql://supportops:local-test-only@127.0.0.1:36520/supportops PYTHONPATH=. uv run --locked python scripts/check_full.py
+EXIT_CODE: 2

@@ -1,0 +1,2 @@
+COMMAND: docker compose -p p05-phase024-failure-trace -f docker-compose.services.yml -f .planning/phases/024-failure-trace-export/compose.override.yml config --quiet
+EXIT_CODE: 0

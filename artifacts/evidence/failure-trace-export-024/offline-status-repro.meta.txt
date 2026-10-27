@@ -1,0 +1,1 @@
+COMMAND: uv run --locked python - (offline in-memory OTel reproduction) | Tee-Object offline-status-repro.txt`nEXIT_CODE: 0

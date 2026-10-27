@@ -1,0 +1,3 @@
+event_count=0
+status_code=StatusCode.ERROR
+status_description_contains_sentinel=true
