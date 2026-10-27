@@ -422,7 +422,10 @@ def create_app(
     @app.middleware("http")
     async def trace_request(request: Request, call_next):
         with trace.get_tracer("p05.api").start_as_current_span(
-            "api.request", context=propagate.extract(dict(request.headers)), record_exception=False
+            "api.request",
+            context=propagate.extract(dict(request.headers)),
+            record_exception=False,
+            set_status_on_exception=False,
         ) as span:
             span.set_attribute("http.request.method", request.method)
             span.set_attribute("llm.mode", "fake")

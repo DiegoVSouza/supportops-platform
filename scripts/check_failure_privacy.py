@@ -86,7 +86,11 @@ def main() -> None:
         Ticket("tenant-a", "customer-a", "Privacy probe", "Synthetic service test."),
     )
     tracer = trace.get_tracer("p05.failure-privacy-probe")
-    with tracer.start_as_current_span("failure-privacy-probe") as parent:
+    with tracer.start_as_current_span(
+        "failure-privacy-probe",
+        record_exception=False,
+        set_status_on_exception=False,
+    ) as parent:
         task = queue.enqueue(actor, "triage", {"ticket_id": ticket.id}, uuid4().hex)
         assert queue.dispatch_pending() == 1
         durable_job = queue.job(task.id)

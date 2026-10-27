@@ -94,9 +94,8 @@ def test_worker_span_does_not_export_exception_payload(monkeypatch):
         authorization_active=lambda *_: True,
         effect_exists=lambda *_: False,
     )
-    runtime.store=SimpleNamespace(get_ticket=lambda *_: (_ for _ in ()).throw(
-        RuntimeError('PRIVATE DATABASE OR TICKET CONTENT')
-    ))
+    sentinel = 'OFFLINE_WORKER_EXCEPTION_SENTINEL'
+    runtime.store=SimpleNamespace(get_ticket=lambda *_: (_ for _ in ()).throw(RuntimeError(sentinel)))
     runtime.queue.actor=lambda _: object()
 
     with pytest.raises(PermanentFailure, match='worker_failure'):
@@ -104,25 +103,90 @@ def test_worker_span_does_not_export_exception_payload(monkeypatch):
     spans=exporter.get_finished_spans()
     assert len(spans)==1
     assert spans[0].events==()
-    assert 'PRIVATE DATABASE OR TICKET CONTENT' not in repr(spans[0])
+    assert spans[0].status.description is None
+    assert sentinel not in repr(spans[0])
+    assert all(sentinel not in str(value) for value in spans[0].attributes.values())
     provider.shutdown()
 
 
-def test_all_p05_spans_disable_automatic_exception_recording():
+def test_agent_triage_span_does_not_export_exception_status(monkeypatch):
+    from types import SimpleNamespace
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+    import supportops_platform.service_runtime as service_runtime
+    from supportops_async.worker.runner import PermanentFailure
+
+    exporter=InMemorySpanExporter()
+    provider=TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    monkeypatch.setattr(service_runtime.trace, 'get_tracer', lambda name: provider.get_tracer(name))
+    sentinel='OFFLINE_TRIAGE_EXCEPTION_SENTINEL'
+    ticket=SimpleNamespace(subject='safe',body='safe',customer_id='customer-a',id='ticket-1')
+    runtime=ServiceWorker.__new__(ServiceWorker)
+    runtime.queue=SimpleNamespace(
+        job=lambda _: {'id':'job-2','generation':0,'status':'queued','trace_context':{},'ticket_id':'ticket-1','approval_id':None},
+        authorization_active=lambda *_: True,
+        effect_exists=lambda *_: False,
+        actor=lambda _: object(),
+    )
+    runtime.store=SimpleNamespace(get_ticket=lambda *_: ticket)
+    runtime.retriever=object()
+    monkeypatch.setattr(service_runtime,'guard',lambda *_args,**_kwargs: SimpleNamespace(action='allow'))
+    monkeypatch.setattr(service_runtime,'run_configured_triage',lambda *_args,**_kwargs: (_ for _ in ()).throw(ValueError(sentinel)))
+
+    with pytest.raises(PermanentFailure, match='invalid_input'):
+        runtime.run_job({'job_id':'job-2','generation':0},'triage')
+    spans=exporter.get_finished_spans()
+    assert {span.name for span in spans}=={'worker.run','agent.triage'}
+    for span in spans:
+        assert span.events==()
+        assert span.status.description is None
+        assert sentinel not in repr(span)
+        assert all(sentinel not in str(value) for value in span.attributes.values())
+    provider.shutdown()
+
+
+def test_locked_sdk_default_automatic_status_contains_exception_message():
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+
+    exporter=InMemorySpanExporter()
+    provider=TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    sentinel='OFFLINE_DEFAULT_STATUS_CONTROL'
+    with pytest.raises(ValueError):
+        with provider.get_tracer('default-status-control').start_as_current_span(
+            'default-status', record_exception=False
+        ):
+            raise ValueError(sentinel)
+    span=exporter.get_finished_spans()[0]
+    assert span.events==()
+    assert sentinel in str(span.status.description)
+    provider.shutdown()
+
+
+def test_all_p05_owned_spans_disable_exception_events_and_status():
     import ast
     from pathlib import Path
 
-    package = Path(__file__).resolve().parents[1] / 'supportops_platform'
+    root = Path(__file__).resolve().parents[1]
     violations=[]
-    for source in package.rglob('*.py'):
+    for source in [* (root / 'supportops_platform').rglob('*.py'), * (root / 'scripts').rglob('*.py')]:
         tree=ast.parse(source.read_text(encoding='utf-8'),filename=str(source))
         for node in ast.walk(tree):
             if not isinstance(node,ast.Call) or not isinstance(node.func,ast.Attribute):
                 continue
             if node.func.attr != 'start_as_current_span':
                 continue
-            if not any(keyword.arg=='record_exception' and isinstance(keyword.value,ast.Constant) and keyword.value.value is False for keyword in node.keywords):
-                violations.append(f'{source.relative_to(package)}:{node.lineno}')
+            safe_options={
+                keyword.arg
+                for keyword in node.keywords
+                if isinstance(keyword.value,ast.Constant) and keyword.value.value is False
+            }
+            if not {'record_exception','set_status_on_exception'}.issubset(safe_options):
+                violations.append(f'{source.relative_to(root)}:{node.lineno}')
     assert violations == []
 
 

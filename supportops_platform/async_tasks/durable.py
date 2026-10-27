@@ -42,7 +42,9 @@ class DurableQueue:
             raise AuthorizationError("triage:run scope required for durable triage")
         if task_type != "triage" or not idempotency_key or len(idempotency_key)>128:
             raise ValueError("valid triage task and idempotency key required")
-        with TRACER.start_as_current_span("queue.enqueue", record_exception=False):
+        with TRACER.start_as_current_span(
+            "queue.enqueue", record_exception=False, set_status_on_exception=False
+        ):
             carrier = {}
             propagate.inject(carrier)
             identity = {"subject":actor.subject,"tenant_id":actor.tenant_id,
@@ -86,7 +88,12 @@ class DurableQueue:
                               "AND authorization_expires_at>clock_timestamp() ORDER BY created_at "
                               "FOR UPDATE SKIP LOCKED LIMIT 20").fetchall()
             for row in rows:
-                with TRACER.start_as_current_span("queue.publish",context=propagate.extract(row["trace_context"]),record_exception=False):
+                with TRACER.start_as_current_span(
+                    "queue.publish",
+                    context=propagate.extract(row["trace_context"]),
+                    record_exception=False,
+                    set_status_on_exception=False,
+                ):
                     carrier={}
                     propagate.inject(carrier)
                     task,_=self.backend.create({"job_id":row["id"],"generation":row["generation"],"steps":["triage"]},

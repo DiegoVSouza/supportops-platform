@@ -119,7 +119,10 @@ class ServiceWorker:
             self.queue.expire(job["id"], job["generation"])
             return {"authorization_expired": True}
         with trace.get_tracer("p05.worker").start_as_current_span(
-            "worker.run", context=propagate.extract(job["trace_context"]), record_exception=False
+            "worker.run",
+            context=propagate.extract(job["trace_context"]),
+            record_exception=False,
+            set_status_on_exception=False,
         ):
             actor = self.queue.actor(job)
             ticket = self.store.get_ticket(actor, job["ticket_id"])
@@ -146,7 +149,11 @@ class ServiceWorker:
                 if prior_approval and prior_approval.state != "pending"
                 else None
             )
-            with trace.get_tracer("p05.worker").start_as_current_span("agent.triage", record_exception=False):
+            with trace.get_tracer("p05.worker").start_as_current_span(
+                "agent.triage",
+                record_exception=False,
+                set_status_on_exception=False,
+            ):
                 execution = run_configured_triage(
                     ticket,
                     self.retriever,
