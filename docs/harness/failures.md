@@ -26,3 +26,7 @@ Observed: P05 API/worker restarted repeatedly with psycopg OperationalError (Nam
 
 - The bounded Jaeger probe found the expected spans, but its content-free privacy assertion failed: an exception sentinel was present in the trace. The trace body and sentinel were not retained, and identifiers were not emitted. Do not query or replay that task.
 - Offline reproduction with the locked OpenTelemetry SDK confirms `record_exception=False` suppresses exception events but leaves automatic exception status enabled by default; the ERROR status description contains the exception message. P05 spans need both `record_exception=False` and `set_status_on_exception=False`, with regressions covering status description and events. Evidence and the blocked service result are preserved under `artifacts/evidence/failure-trace-export-024/`.
+
+## 2026-10-27 — Phase 025 status-description correction
+
+- Added `set_status_on_exception=False` to every P05-owned span alongside `record_exception=False`. Offline regressions now check the worker and `agent.triage` spans' events, status descriptions, attributes and serialized representation; an AST invariant covers source and scripts. The isolated fake service probe observed both failure spans and confirmed sentinel absence. Full service/crash-recovery gate passed; the Jaeger artifact was reduced to names and counts. Phase 024 remains immutable FAIL; its task was not queried or replayed. Model evaluation and reviews remain pending.

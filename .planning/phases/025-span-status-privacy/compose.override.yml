@@ -1,0 +1,16 @@
+services:
+  api:
+    image: supportops-platform:groq-live
+    volumes:
+      - ./supportops_platform:/app/supportops_platform:ro
+      - ./scripts:/app/scripts:ro
+  worker:
+    image: supportops-platform:groq-live
+    volumes:
+      - ./supportops_platform:/app/supportops_platform:ro
+      - ./scripts:/app/scripts:ro
+  mcp:
+    image: supportops-platform:groq-live
+    volumes:
+      - ./supportops_platform:/app/supportops_platform:ro
+      - ./scripts:/app/scripts:ro

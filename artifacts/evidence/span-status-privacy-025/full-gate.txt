@@ -1,0 +1,277 @@
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m compileall -q supportops_platform tests
+layer=compile
+exit_code=0; expected=0
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe -m pytest
+layer=unit/contract/package consumer
+exit_code=0; expected=0
+........................................................................ [ 52%]
+..................................................................       [100%]
+============================== warnings summary ===============================
+tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
+  C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\websockets\legacy\__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
+    warnings.warn(  # deprecated in 14.0 - 2024-11-09
+
+tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
+  C:\estudo\Golpe\lab\projects\p05\.venv\Lib\site-packages\uvicorn\protocols\websockets\websockets_impl.py:17: DeprecationWarning: websockets.server.WebSocketServerProtocol is deprecated
+    from websockets.server import WebSocketServerProtocol
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+138 passed, 2 warnings in 14.75s
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/eval_retrieval.py
+layer=retrieval fixture
+exit_code=0; expected=0
+evaluation=deterministic-local-retrieval
+cases=4
+hit_at_3=4/4 (1.000)
+interpretation=fixture coverage only; not LLM quality
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/export_openapi.py --check
+layer=OpenAPI
+exit_code=0; expected=0
+OpenAPI contract: PASS (v1 compatibility paths, HTTP bearer, package schema 0.4.3)
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/verify_packages.py
+layer=package provenance
+exit_code=0; expected=0
+  version=1.0.1 sha256=DF4292756676D02490A908B609B8F9474F35F3C5F56131809F3E4A83659B4795 source_commit=607b7603bd40728ffa58745badac0ffd10c70090
+P00 foundation: READY
+  version=0.1.1 sha256=DD77E9B91F2D9BA7AC84178BBB557E0EA50BDE954554A528B4632DEC18DDB51F source_commit=4c70b1ea3e23606dfe60ffae77567417de53a3f7
+P01 orchestration: READY
+  version=0.2.0 sha256=7126517F9C64202B034B8A067DEDF29E1313BB3139F15A984E93660654EB4D10 source_commit=b4966c54fa3feda3ff1eae36ee872e5c407a4102
+P02 toolkit: READY
+  version=0.3.1 sha256=82B3A79AACD0AC4FAA1082087C0237487264B2A6497D9B77B79C1D6BB86F66A8 source_commit=e191f17d4649f40d6dea7057d3b52729dbbb1389
+P03 observability: READY
+  version=0.1.4 sha256=FEFB871993591CABE7F9BABA132E9F430DDBD65DD730C6789E22DC86D4D87C3F source_commit=f4b5df828b397e7ecbb9fa87c0ef77485d829dca
+P04 async: READY
+Package integration gate: PASS
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/check_quality.py
+layer=fake control evaluation
+exit_code=0; expected=0
+{"fixture_only": true, "model_quality": "PENDING", "total": 10, "decision_accuracy": 1.0, "tool_call_accuracy": 1.0, "groundedness": 1.0, "escalation_accuracy": 1.0, "failures": []}
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/check_quality.py --degraded
+layer=negative regression rejection
+exit_code=1; expected=1
+{"fixture_only": true, "model_quality": "PENDING", "total": 10, "decision_accuracy": 0.0, "tool_call_accuracy": 1.0, "groundedness": 0.0, "escalation_accuracy": 1.0, "failures": ["control-0: decision, groundedness", "control-1: decision, groundedness", "control-2: decision, groundedness", "control-3: decision, groundedness", "control-4: decision, groundedness", "control-5: decision, groundedness", "control-6: decision, groundedness", "control-7: decision, groundedness", "control-8: decision, groundedness", "control-9: decision, groundedness"]}
+quality gate: FAIL evaluation regression exceeds 0.000: decision_accuracy: drop=1.000, groundedness: drop=1.000
+
+$ C:\estudo\Golpe\lab\projects\p05\.venv\Scripts\python.exe scripts/check_services.py
+layer=service integration/E2E/crash recovery
+exit_code=0; expected=0
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml config --quiet
+Exit code: 0
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml up --no-build -d --wait
+Exit code: 0
+ Network p05-span-status-privacy-025_default Creating
+ Network p05-span-status-privacy-025_default Created
+ Volume p05-span-status-privacy-025_postgres-data Creating
+ Volume p05-span-status-privacy-025_postgres-data Created
+ Volume p05-span-status-privacy-025_redis-data Creating
+ Volume p05-span-status-privacy-025_redis-data Created
+ Volume p05-span-status-privacy-025_graph-data Creating
+ Volume p05-span-status-privacy-025_graph-data Created
+ Container p05-span-status-privacy-025-mcp-1 Creating
+ Container p05-span-status-privacy-025-prometheus-1 Creating
+ Container p05-span-status-privacy-025-otel-1 Creating
+ Container p05-span-status-privacy-025-redis-1 Creating
+ Container p05-span-status-privacy-025-jaeger-1 Creating
+ Container p05-span-status-privacy-025-postgres-1 Creating
+ Container p05-span-status-privacy-025-grafana-1 Creating
+ Container p05-span-status-privacy-025-jaeger-1 Created
+ Container p05-span-status-privacy-025-prometheus-1 Created
+ Container p05-span-status-privacy-025-otel-1 Created
+ Container p05-span-status-privacy-025-mcp-1 Created
+ Container p05-span-status-privacy-025-grafana-1 Created
+ Container p05-span-status-privacy-025-postgres-1 Created
+ Container p05-span-status-privacy-025-redis-1 Created
+ Container p05-span-status-privacy-025-api-1 Creating
+ Container p05-span-status-privacy-025-api-1 Created
+ Container p05-span-status-privacy-025-worker-1 Creating
+ Container p05-span-status-privacy-025-worker-1 Created
+ Container p05-span-status-privacy-025-jaeger-1 Starting
+ Container p05-span-status-privacy-025-redis-1 Starting
+ Container p05-span-status-privacy-025-mcp-1 Starting
+ Container p05-span-status-privacy-025-grafana-1 Starting
+ Container p05-span-status-privacy-025-postgres-1 Starting
+ Container p05-span-status-privacy-025-otel-1 Starting
+ Container p05-span-status-privacy-025-prometheus-1 Starting
+ Container p05-span-status-privacy-025-grafana-1 Started
+ Container p05-span-status-privacy-025-otel-1 Started
+ Container p05-span-status-privacy-025-prometheus-1 Started
+ Container p05-span-status-privacy-025-redis-1 Started
+ Container p05-span-status-privacy-025-jaeger-1 Started
+ Container p05-span-status-privacy-025-postgres-1 Started
+ Container p05-span-status-privacy-025-postgres-1 Waiting
+ Container p05-span-status-privacy-025-redis-1 Waiting
+ Container p05-span-status-privacy-025-mcp-1 Started
+ Container p05-span-status-privacy-025-redis-1 Healthy
+ Container p05-span-status-privacy-025-postgres-1 Healthy
+ Container p05-span-status-privacy-025-api-1 Starting
+ Container p05-span-status-privacy-025-api-1 Started
+ Container p05-span-status-privacy-025-api-1 Waiting
+ Container p05-span-status-privacy-025-api-1 Healthy
+ Container p05-span-status-privacy-025-worker-1 Starting
+ Container p05-span-status-privacy-025-worker-1 Started
+ Container p05-span-status-privacy-025-postgres-1 Waiting
+ Container p05-span-status-privacy-025-jaeger-1 Waiting
+ Container p05-span-status-privacy-025-redis-1 Waiting
+ Container p05-span-status-privacy-025-mcp-1 Waiting
+ Container p05-span-status-privacy-025-otel-1 Waiting
+ Container p05-span-status-privacy-025-worker-1 Waiting
+ Container p05-span-status-privacy-025-api-1 Waiting
+ Container p05-span-status-privacy-025-prometheus-1 Waiting
+ Container p05-span-status-privacy-025-grafana-1 Waiting
+ Container p05-span-status-privacy-025-redis-1 Healthy
+ Container p05-span-status-privacy-025-worker-1 Healthy
+ Container p05-span-status-privacy-025-prometheus-1 Healthy
+ Container p05-span-status-privacy-025-grafana-1 Healthy
+ Container p05-span-status-privacy-025-mcp-1 Healthy
+ Container p05-span-status-privacy-025-otel-1 Healthy
+ Container p05-span-status-privacy-025-postgres-1 Healthy
+ Container p05-span-status-privacy-025-api-1 Healthy
+ Container p05-span-status-privacy-025-jaeger-1 Healthy
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml exec -T api python scripts/check_failure_privacy.py
+Exit code: 0
+failure-privacy-service: PASS persisted_code=invalid_input legacy_api_code=worker_failure trace_spans=7 trace_export_observed=true exporter_flush=true sentinel_absent=true
+
+Command: docker run --rm --entrypoint promtool -v C:\estudo\Golpe\lab\projects\p05\infra:/rules:ro prom/prometheus:v3.14.0 check rules /rules/alerts.yml
+Exit code: 0
+Checking /rules/alerts.yml
+  SUCCESS: 2 rules found
+
+
+Command: docker run --rm --entrypoint promtool -v C:\estudo\Golpe\lab\projects\p05\infra:/rules:ro prom/prometheus:v3.14.0 test rules /rules/alert-tests.yml
+Exit code: 0
+  SUCCESS
+
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml exec -T api python scripts/check_network_mcp.py
+Exit code: 0
+network_mcp_auth=PASS; unauthenticated and cross-tenant access denied
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml stop worker
+Exit code: 0
+ Container p05-span-status-privacy-025-worker-1 Stopping
+ Container p05-span-status-privacy-025-worker-1 Stopped
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml restart api
+Exit code: 0
+ Container p05-span-status-privacy-025-api-1 Restarting
+ Container p05-span-status-privacy-025-api-1 Started
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml start worker
+Exit code: 0
+ Container p05-span-status-privacy-025-postgres-1 Waiting
+ Container p05-span-status-privacy-025-redis-1 Waiting
+ Container p05-span-status-privacy-025-redis-1 Healthy
+ Container p05-span-status-privacy-025-postgres-1 Healthy
+ Container p05-span-status-privacy-025-api-1 Waiting
+ Container p05-span-status-privacy-025-api-1 Healthy
+ Container p05-span-status-privacy-025-worker-1 Starting
+ Container p05-span-status-privacy-025-worker-1 Started
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml stop worker
+Exit code: 0
+ Container p05-span-status-privacy-025-worker-1 Stopping
+ Container p05-span-status-privacy-025-worker-1 Stopped
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml start worker
+Exit code: 0
+ Container p05-span-status-privacy-025-redis-1 Waiting
+ Container p05-span-status-privacy-025-postgres-1 Waiting
+ Container p05-span-status-privacy-025-postgres-1 Healthy
+ Container p05-span-status-privacy-025-redis-1 Healthy
+ Container p05-span-status-privacy-025-api-1 Waiting
+ Container p05-span-status-privacy-025-api-1 Healthy
+ Container p05-span-status-privacy-025-worker-1 Starting
+ Container p05-span-status-privacy-025-worker-1 Started
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml exec -T api id -u
+Exit code: 0
+10001
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml exec -T worker id -u
+Exit code: 0
+10001
+
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml exec -T worker python scripts/check_worker_crash.py
+Exit code: 0
+product-worker-crash: PASS killed_after_refund_commit=true job_recovered=true effect_rows=1 backend_attempts=1
+
+{
+  "native_asyncpg": "PASS",
+  "redis_atomic_multi_client": "PASS",
+  "mode": "fake",
+  "semantic_quality": "PENDING",
+  "signed_tcp_mcp_negative_authorization": "PASS",
+  "durable_outbox_and_api_restart": "PASS",
+  "agent_rag_mcp": "PASS",
+  "tenant_isolation": "PASS",
+  "indirect_injection": "PASS",
+  "trace_id": "c98b60d7bac85aa5e34e9aaee72f1597",
+  "hitl_pause_distinct_approval_resume": "PASS",
+  "durable_authorization_snapshot": "PASS",
+  "idempotency": "PASS",
+  "expired_hitl_resume_denied_without_effect": "PASS",
+  "expired_job_rejected_before_dispatch": "PASS",
+  "direct_api_adversarial_30": "PASS",
+  "correlated_service_trace": "PASS",
+  "dashboard_and_live_alert": "PASS",
+  "non_root": "PASS",
+  "kill_after_effect_recovery": "PASS"
+}
+Command: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml down --volumes --remove-orphans
+Exit code: 0
+ Container p05-span-status-privacy-025-mcp-1 Stopping
+ Container p05-span-status-privacy-025-jaeger-1 Stopping
+ Container p05-span-status-privacy-025-grafana-1 Stopping
+ Container p05-span-status-privacy-025-prometheus-1 Stopping
+ Container p05-span-status-privacy-025-worker-1 Stopping
+ Container p05-span-status-privacy-025-otel-1 Stopping
+ Container p05-span-status-privacy-025-jaeger-1 Stopped
+ Container p05-span-status-privacy-025-jaeger-1 Removing
+ Container p05-span-status-privacy-025-jaeger-1 Removed
+ Container p05-span-status-privacy-025-prometheus-1 Stopped
+ Container p05-span-status-privacy-025-prometheus-1 Removing
+ Container p05-span-status-privacy-025-prometheus-1 Removed
+ Container p05-span-status-privacy-025-otel-1 Stopped
+ Container p05-span-status-privacy-025-otel-1 Removing
+ Container p05-span-status-privacy-025-otel-1 Removed
+ Container p05-span-status-privacy-025-grafana-1 Stopped
+ Container p05-span-status-privacy-025-grafana-1 Removing
+ Container p05-span-status-privacy-025-grafana-1 Removed
+ Container p05-span-status-privacy-025-mcp-1 Stopped
+ Container p05-span-status-privacy-025-mcp-1 Removing
+ Container p05-span-status-privacy-025-worker-1 Stopped
+ Container p05-span-status-privacy-025-worker-1 Removing
+ Container p05-span-status-privacy-025-mcp-1 Removed
+ Container p05-span-status-privacy-025-worker-1 Removed
+ Container p05-span-status-privacy-025-api-1 Stopping
+ Container p05-span-status-privacy-025-api-1 Stopped
+ Container p05-span-status-privacy-025-api-1 Removing
+ Container p05-span-status-privacy-025-api-1 Removed
+ Container p05-span-status-privacy-025-postgres-1 Stopping
+ Container p05-span-status-privacy-025-redis-1 Stopping
+ Container p05-span-status-privacy-025-redis-1 Stopped
+ Container p05-span-status-privacy-025-redis-1 Removing
+ Container p05-span-status-privacy-025-redis-1 Removed
+ Container p05-span-status-privacy-025-postgres-1 Stopped
+ Container p05-span-status-privacy-025-postgres-1 Removing
+ Container p05-span-status-privacy-025-postgres-1 Removed
+ Network p05-span-status-privacy-025_default Removing
+ Volume p05-span-status-privacy-025_graph-data Removing
+ Volume p05-span-status-privacy-025_postgres-data Removing
+ Volume p05-span-status-privacy-025_graph-data Removed
+ Volume p05-span-status-privacy-025_redis-data Removing
+ Volume p05-span-status-privacy-025_postgres-data Removed
+ Volume p05-span-status-privacy-025_redis-data Removed
+ Network p05-span-status-privacy-025_default Removed
+
+
+semantic/model cost/latency evaluation: PENDING; no traceable cassette or authorized model run
+check-full: PASS (authorized local fake-mode acceptance)

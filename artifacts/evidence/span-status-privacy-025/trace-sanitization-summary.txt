@@ -1,0 +1,5 @@
+span_count=47
+service_count=3
+attribute_key_count=19
+phase_sentinel_absent=true
+raw_trace_values_retained=false

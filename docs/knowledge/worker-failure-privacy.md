@@ -2,6 +2,8 @@
 
 ## Resultado
 
+Atualização da fase 025: spans P05 agora desativam tanto eventos automáticos de exceção quanto descrições automáticas de status. Testes com exporter em memória verificam os limites `worker.run` e `agent.triage`; a prova fake isolada observou sete spans correlacionados sem o sentinel. O trace persistido como evidência contém somente nomes de operações/serviços, nomes de atributos e contagens. A fase 024 permanece registrada como falha histórica e não foi consultada ou repetida.
+
 A fase 022 converte texto arbitrário de exceção em categorias fixas antes da persistência local, da fila durável e da resposta autenticada da API. A fase 023 verificou esse contrato com PostgreSQL/Redis e serviços isolados em modo fake: o worker persistiu `invalid_input`; uma linha legada com texto sentinel foi retornada pela API apenas como `worker_failure`; chamadas sem token receberam 401. O sentinel não apareceu no banco, no outbox ou na resposta da API.
 
 A aceitação fake completa passou com 133 testes, integração de serviço, isolamento de tenant, rastreamento correlacionado e recuperação após interrupção depois de um efeito sintético. O probe de falha específico não encontrou seu trace no Jaeger. A regressão com exporter em memória comprova a ausência de evento de exceção; o gate de serviço verifica rastreamento correlacionado na execução normal. Não inferimos entrega de trace para o probe específico.

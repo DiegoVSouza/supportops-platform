@@ -1,0 +1,9 @@
+full_gate_exit_code=0
+container_count_before=102
+container_count_after=102
+network_count_before=21
+network_count_after=21
+volume_count_before=89
+volume_count_after=89
+phase_project_containers_after=0
+cached_image_id_after=sha256:0af6c40c175c5fa2f5278c01dac843b3978635ab36b9ee947071c75649203f30

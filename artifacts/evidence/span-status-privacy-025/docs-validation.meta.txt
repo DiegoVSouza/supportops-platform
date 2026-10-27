@@ -1,0 +1,4 @@
+COMMAND: python -m json.tool docs/harness/feature_list.json
+EXIT_CODE: 0
+COMMAND: uv run --locked python scripts/check_fast.py
+EXIT_CODE: 0

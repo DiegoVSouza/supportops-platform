@@ -99,8 +99,8 @@
     {
       "id": "worker-failure-privacy",
       "description": "Local and durable task failure errors are limited to fixed codes before persistence or authenticated task-status responses",
-      "status": "PASS_LOCKED_OFFLINE_UNIT; INCOMPLETE_SERVICE_REVERIFICATION",
-      "evidence": "artifacts/evidence/worker-failure-privacy/focused-tests.txt; artifacts/evidence/worker-failure-privacy/full-gate.txt"
+      "status": "PASS_PHASE_025_OFFLINE_AND_FAKE_SERVICE_PRIVACY; MODEL_QUALITY_AND_HUMAN_REVIEW_PENDING",
+      "evidence": "artifacts/evidence/span-status-privacy-025/focused-tests.txt; artifacts/evidence/span-status-privacy-025/offline-tests.txt; artifacts/evidence/span-status-privacy-025/full-gate.txt; artifacts/evidence/span-status-privacy-025/phase-025-product-trace.json"
     }
   ]
 }

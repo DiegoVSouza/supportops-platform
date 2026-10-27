@@ -1,0 +1,3 @@
+normalized_state_or_image_changes=0
+new_container_names=0
+missing_container_names=0

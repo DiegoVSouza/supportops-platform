@@ -1,0 +1,3 @@
+COMMAND: uv run --locked python scripts/check_full.py
+ENV: isolated phase project; LLM_MODE=fake; P05_SKIP_BUILD=1
+EXIT_CODE: 0; no provider credentials loaded

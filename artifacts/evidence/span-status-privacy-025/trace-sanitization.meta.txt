@@ -1,0 +1,3 @@
+COMMAND: locked Python parser converts the product trace artifact to operation/service/attribute-key metadata only
+EXIT_CODE: 0
+RAW_TRACE_VALUES: discarded before commit; no response bodies retained

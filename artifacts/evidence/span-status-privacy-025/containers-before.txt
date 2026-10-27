@@ -1,0 +1,102 @@
+9a8a8d4597c99d1fffae8d7915299c3518796a77d27890747c0546c652341029 p05-live-020-worker-1 Exited (1) 30 hours ago supportops-platform:groq-live
+604b0ade2e35b71f7c5d519a8e40235c2135185fb36ec235109feb03818ebe15 p05-live-020-api-1 Up 8 hours (healthy) supportops-platform:groq-live
+f9c0fce7b93d806c5020682b6899f58de3a3e5bd076c713a0d1597d7c1923a7b p05-live-020-redis-1 Up 8 hours (healthy) redis@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576
+c0142aa616f8007b5c8a824123b4f7f2d0412bfef210a950fdccf803a3cd234c p05-live-020-postgres-1 Up 8 hours (healthy) pgvector/pgvector:0.8.7-pg16
+41a831825583c09d27c45c4eff9469c97bad94f16e34286c8b035b51abb85cea p05-live-020-mcp-1 Up 8 hours supportops-platform:groq-live
+92eab6273ae247b4fd84283ee849f4133c16b84d2dda364ec612430a2221774d p05-live-020-prometheus-1 Up 8 hours prom/prometheus:v3.14.0
+14028846ef5eedd875bf3191ac55e463836933bed0b4d0bee9d51445d0173785 p05-live-020-jaeger-1 Up 8 hours jaegertracing/jaeger:2.18.0
+5cb909a3d6a3a535e1417f85eba6b1828bdfdc9a78fb6666dff15a13b382e08f p05-live-020-grafana-1 Up 8 hours grafana/grafana:12.4.11
+78da7355f3ebfc7939270d734d44dcf0f5ae54511fe206b70c76ed9f44aef238 p05-live-020-otel-1 Up 8 hours otel/opentelemetry-collector-contrib:0.161.0
+dda501dedb939277af4266f91908999887594e47efd0df6a9289e020a7688a45 p04-live-015-localstack-1 Exited (255) 31 hours ago localstack/localstack:4.14.0
+8832ec678155ad7b79b80b69ac2badac41663962148803f497591ddd79239f45 p04-live-015-postgres-1 Exited (255) 31 hours ago postgres:17.11-alpine3.24
+83b58403d59add7c3d838f735db0ff9c15356ebf53db1ad2d4ffdacc5a69110b p04-live-015-redis-1 Exited (255) 31 hours ago redis@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576
+5b43fb7598e6112be645bee3e716e1d5cc10867a8c4fb48735c2403c71c4b632 p03-live-012-otel-collector-1 Exited (255) 31 hours ago otel/opentelemetry-collector-contrib:0.161.0
+5190d14b6486709b31f064d400b5f4d6ec42d322327a9ca2b68ae4cdc204215f p03-live-012-localstack-1 Exited (255) 31 hours ago localstack/localstack:4.14.0
+01c8f9a37450cbdb0603a6bf4aacfa391906851eb77b52893bc5ce5537f9ff2a p03-live-012-synthetic-metrics-1 Exited (255) 31 hours ago python:3.13.12-slim
+f59ac4742beffb406f6e96cf4231e7cab4441ff2e8b50ef555e449a2d5b3e37e p03-live-012-postgres-1 Exited (255) 31 hours ago postgres:17.11-alpine3.24
+c51abecfedf8f3ca992d6f6d05d1957d51688a997bc940a6d343cfcfc5d9e595 p03-live-012-prometheus-1 Exited (255) 31 hours ago prom/prometheus:v3.14.0
+08d16349a94ff8a218726898d1767d00ac956f98b5d4e125b55791b5d90c6317 p03-live-012-jaeger-1 Exited (255) 31 hours ago jaegertracing/jaeger:2.18.0
+22deea1a82a6a9b76c8ad9d7fe9edf49a1fe8514971b62fda9d981bfb6926f64 p03-live-012-grafana-1 Exited (255) 31 hours ago grafana/grafana:12.4.11
+af901a274027cd3f604002bf447dcac8332d27a436318c3dea8aef0a828f2643 supportops-lab-worker-1 Up 8 hours (healthy) supportops-lab-platform:local
+8a0f2a8c1848a2615d60087cb3c705cf3df22c29c9d3947d3b629d2a2a07c94a supportops-lab-p04-worker-1 Up 8 hours supportops-lab-async:local
+29aa81650c2005558502206bb34607571e7cbc34ad6c014e442343d438c0fb43 supportops-lab-p04-api-1 Up 8 hours (healthy) supportops-lab-async:local
+adbbc99e915bc3696205cdd807f1a3c69142798939a7e56f45bd57ad47a9c69c supportops-lab-broker-init-1 Exited (0) 4 days ago supportops-lab-async:local
+963d6468e998a401b209cc11a0855b278092b61d6677f9854c699aa828c5d50f supportops-lab-api-1 Up 8 hours (healthy) supportops-lab-platform:local
+2401e8c300bf890b07f9a675c04d7abd7251fc9d7e4b7c669de8380b10c56788 supportops-lab-mcp-1 Up 8 hours (healthy) supportops-lab-platform:local
+83bd1dd0ac1b32d7e72250806402a5d33be226ff209279ea6d8c1059108fe645 supportops-lab-secrets-init-1 Exited (0) 4 days ago supportops-lab-init:local
+724f1f375564304445d5823852f4d441ad09fa5c4c3564f5713fb013884d2eb3 supportops-lab-packages-1 Exited (0) 4 days ago supportops-lab-platform:local
+2e2cd76f06deea2b99f180e6ead6830fd981a9922a67f67fa927008d496491f4 supportops-lab-localstack-1 Up 8 hours (healthy) localstack/localstack:4.14.0
+0d72f497de5aefc6677ea2a5393364f5a80c4f6cfc1b65ce9990fb91e009eb64 supportops-lab-redis-1 Up 8 hours (healthy) redis@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576
+f17bfb910ac70b023f0d432d61ae3673e9b1b0fdb656bd3fa31a70aba29bbcac p04-phase012-worker-1 Exited (255) 4 days ago p04-phase012-worker
+8920c8b149f9aec44b6e46fc9a92686823c702eebf7777e612dc350edd758555 p04-phase012-api-1 Exited (255) 4 days ago p04-phase012-api
+ddce1f3021db21fff9a6e8f94b02e6255457802bca06b26d47957b14152231f2 p04-phase012-localstack-1 Exited (255) 4 days ago localstack/localstack:4.14.0
+f1cca2e55a55b3eeab88bc09ba12f0783492def4124231a3ae823f5f24e966be p04-phase012-postgres-1 Exited (255) 4 days ago postgres:17.11-alpine3.24
+311d519f4308db891669583be76258fe8c8bb261120e6d69008ab738f1cf3d29 p04-phase012-redis-1 Exited (255) 4 days ago redis@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576
+f892ee28e3d52cb0a84e05a18627026b8e20559f3db762a2db644dac57e78ec4 supportops-lab-keycloak-1 Up 8 hours (healthy) quay.io/keycloak/keycloak:26.8.1
+da391e47d5c133690047ddb41280082c53176d11ae03dc8b0b2a5e26c2961198 supportops-lab-grafana-1 Up 8 hours grafana/grafana:12.4.11
+14fb46ab3bd3039f788919b91d1e352716fd33e325ca92d78834a69075a8c38a supportops-lab-postgres-1 Up 8 hours (healthy) pgvector/pgvector:0.8.7-pg16
+2c149e495b506708581d52c21c9aa05526a9b4c1ba3300b2fc4b12e405b1ed5a supportops-lab-prometheus-1 Up 8 hours prom/prometheus:v3.14.0
+6d69c1bd39d3f7ef64eebc3b40f12553bb45a592a1819811da8452eef083cb6b supportops-lab-jaeger-1 Up 8 hours jaegertracing/jaeger:2.18.0
+cbcf8a9b3a05b649dde036baf81be2589ebb475b31911199c1e039aa35c13294 supportops-lab-otel-1 Up 8 hours otel/opentelemetry-collector-contrib:0.161.0
+c1a428445608eb8f048686c2c3d63773e9565a7a2b9a82f3c4ff398d4e74b082 p05-remediation-009-worker-1 Up 8 hours sha256:76b3ac725d9aa61531be9cfc0121d562bf1ca6bc929b68b9155b202d22676c5a
+710783e5026ff27751667bcb4ebaf23160b16587f9b7cb959fe3664be2476d06 p05-remediation-009-mcp-1 Up 8 hours sha256:76b3ac725d9aa61531be9cfc0121d562bf1ca6bc929b68b9155b202d22676c5a
+3172aaec7e0de6346b3727614b2ecc610f8aaa37aaa8e0b922aac0c197d64837 p05-remediation-009-api-1 Up 8 hours (healthy) sha256:76b3ac725d9aa61531be9cfc0121d562bf1ca6bc929b68b9155b202d22676c5a
+705051b27de7ce38bc52a44660adc91908bcf51c2ba991a54d6c9d752648b4cb p05-remediation-009-postgres-1 Up 8 hours (healthy) pgvector/pgvector:0.8.7-pg16
+fb451a60f1f08c880e11113971339f3f05efe780dab2f130e379ce293bbb6547 p05-remediation-009-prometheus-1 Up 8 hours prom/prometheus:v3.14.0
+f5072c4418b8d4e8b47199ad86237dea470ded0be1163077a6a7398832d82f68 p05-remediation-009-redis-1 Up 8 hours (healthy) redis@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576
+51530c00049274f538a3c73bacac335b32d98ac7c6d008e65e06dc2c2c74f7e5 p05-remediation-009-localstack-1 Up 8 hours (healthy) localstack/localstack:4.14.0
+2c3bad6f226ab97fdf42fc750394391cb11b1640d1ce7eaf61abbb7c2c4bfbc0 p05-remediation-009-jaeger-1 Up 8 hours jaegertracing/jaeger:2.18.0
+f9c2258026b1aff4cb16fe7f27638e673923122968b6ea9df5fc6e5aeaae2b7b p05-remediation-009-grafana-1 Up 8 hours grafana/grafana:12.4.11
+837b6f121b82bc855498d2be5eb8c5e6eaa848b677b5bab45c1ed9c5d0a2c988 p05-remediation-009-otel-1 Up 8 hours otel/opentelemetry-collector-contrib:0.161.0
+44cafadc1e86b4162cdd94583b052956ffdacdbcc5f511d0055d16ed59116f9d p03-remediation-postgres-1 Exited (255) 4 days ago postgres:17.11-alpine3.24
+3ee26c4c45b0a88aa30324f9f10671c05bff6130344160862dc387b244ebb5ae p03-remediation-localstack-1 Exited (255) 4 days ago localstack/localstack:4.14.0
+e1c132d8209982b3e228903e7cfc18b2c37d1fc75ccae25b6eca73f2df5e5950 p03-remediation-prometheus-1 Exited (255) 4 days ago prom/prometheus:v3.14.0
+8e59a8e44ef9608c18d3d2014c39b7b05b1ec883660c2192d9f7f494672cca53 p03-remediation-synthetic-metrics-1 Exited (255) 4 days ago python:3.13.12-slim
+2a438f8dfcfe765f6005c19aa761d2f2f5ad92b8f4c07c4e2b4797afb3e4e6ac p05-pgvector-008 Exited (255) 5 days ago pgvector/pgvector:0.8.7-pg16
+db9545db3847a8cf57aa1367dc94aa762ee3bb7a8ce469dc302431ab5ee2bbef p04-remediation-api-1 Exited (255) 4 days ago p04-remediation-api
+b9c685fa6ecd3218dcf9e8a3872d7b31ec94134e02fb44d29b33d3337dd27e8e p04-remediation-worker-1 Exited (255) 4 days ago p04-remediation-worker
+bfcf69a48db68760f60f0fe10ddf863542ba400c76cbdcf5e7bbdf78637cce3d p03-remediation-otel-collector-1 Exited (255) 4 days ago otel/opentelemetry-collector-contrib:0.161.0
+c20b67dbfa4af134987ecfd569784806388396e4097caf58254b5652fc38be07 p03-remediation-grafana-1 Exited (255) 4 days ago grafana/grafana:12.4.11
+c373bb20ec8011af61e22676c9256495b3f69a4dc326438ebc902e56537a9b5d p03-remediation-jaeger-1 Exited (255) 4 days ago jaegertracing/jaeger:2.18.0
+5a32b787dab93481e7cd1153d37b3bce41a7664b973084c098a2ddb9cab43a88 enferpro-codex-restore-20261020 Up 7 hours postgres:18
+16305a3a9cbe4b64e27c86133c84f32cf5a88097a3d9e5f6fd8444980721b1d7 enferpro-test-pg18 Exited (0) 7 days ago postgres:18
+4f72aa709543889d6bf9276ebe8698b53c00701d0c43752b2f169a35273f44a8 enferpro-test-db Exited (255) 8 days ago postgres:16-alpine
+ca7d53a387954fb0a2487132ea468ffc6fbfdc324cfed9a57fab2c5bbe13fd5f p04-remediation-postgres-1 Exited (255) 4 days ago postgres:17.11-alpine3.24
+0f0567afc89355bb600c3ecafeaf8ae715fd124ba995bc4ef16abbf5c9c55b3c p04-remediation-localstack-1 Exited (255) 4 days ago localstack/localstack:4.14.0
+be0783ffb358df1c950448f83aa9db32952e80dcf9054042fdd9b3b64543a714 enferpro-db-prepare-pg18 Exited (255) 2 weeks ago postgres:18
+c39f65ed8d393f62cacae1c274d7d43c7abf8b3038be05d5e897a5af0f9a4574 gossett_frontend Up 8 hours gosset-frontend
+5792cef9e440d1d72c4e7f0c64d9167a60b1220a1ec7db7f26b11c0ace15b860 gossett_legal_demo_seed Exited (0) 4 weeks ago gosset-legal-demo-seed
+2b6551ac517bef5063b0fd9cb9c2c1811009c5d526f89dd06e18257a21d603f5 gossett_backend Restarting (1) 35 seconds ago gosset-backend
+d48bcee1f8c55825d540965de28a396a7b29b69a64953586a85d5e5ddba03ba8 gossett_legal_brain_adapter Up 8 hours (healthy) gosset-legal-brain-adapter
+10a670df969948c2f1c2e87a5b7fb07c9f14ae5de5c569c44890a0fd55c5be43 gossett_cognee Up 8 hours (healthy) gosset-cognee
+910fb419edc8548b8dd466ba17b0613fc8792c2fcd532f3709e9b1d1ec46417e gossett_postgres Up 8 hours (healthy) postgres:15-alpine
+6f8812381363a9f6d3aaeb5283b1f13127effbdf53af2f8b97aafb55ac86455a gossett_redis Up 8 hours (healthy) redis:7-alpine
+a0e3fc2d16d01f43c4ef7bbca342ee33210bb7e785b7c6bcee5129f07d446662 gossett_legal_test_db Exited (255) 5 weeks ago postgres:15-alpine
+7f857206028665e7767b8832dd75640524c60e4870fe725616e4002b03f30a79 big_step_01-frontend-1 Exited (255) 5 weeks ago big_step_01-frontend
+469d5e3b1ab691979e17a5f21ef3896c1d5d70950b9dfef63a0110a16fc33447 big_step_01-agent-1 Exited (255) 5 weeks ago big_step_01-agent
+f1cd8fef9a9cf6c589e7bb81c4391c5bb950534c59d893975974da14d14b4371 big_step_01-ticket-system-1 Exited (255) 5 weeks ago big_step_01-ticket-system
+747d79d17f55c8efe54316892a127884dbab1207d82742d93140ceb098f7c40a big_step_01-postgres-1 Exited (255) 5 weeks ago postgres:16-alpine
+79110949610abf59dcb021c814cc3527a6338a7c320e752f3a66f4a478278d84 enferpro-legado-db Up 8 hours (healthy) mariadb:10.11
+f174f1675b6b141ce6b72d345bbcb60134b3e49bdc1229a9389ad1f541fc52d5 mvp-frontend-1 Exited (255) 6 weeks ago mvp-frontend
+d6e349d3f1fa6030a10591b71287404fa36880bd9c48cce76b072295976eaac2 mvp-backend-api-1 Exited (255) 6 weeks ago mvp-backend-api
+61c3280ec9b3631b01326d53e958dedca099b70931c419ca2b1c8a96376db2f0 mvp-backend-worker-1 Exited (255) 6 weeks ago mvp-backend-worker
+3583117603ea2c3d74552c131257a9ee21bd20a61d45a129aa84544d0359040c mvp-redis-1 Exited (255) 6 weeks ago redis:8-alpine
+ed26250a7775b4f82ad3dfeaac5934e86b53cf537fb394e0a8839b12b573b94a mvp-postgres-1 Exited (255) 6 weeks ago postgres:17-alpine
+bcf02e82547ddfe115d76c748afaa28a982bd8c2d42b83389034e4baa19843df mvp-kafka-1 Exited (255) 6 weeks ago apache/kafka:4.0.0
+b31be080a8db9e3ca42a6cd43b62c4dcac8e94926284042642d1f96c370b2595 drizzle-ref-prod Exited (255) 2 months ago postgres:18-alpine
+12dc14020e7a21990aae193ffdc739b92696be0bf734c5470aa36301d388338d jarvis_fit_api Up 8 hours (healthy) jarvis-fit-api-api
+2d1dd98c4f3b5b87f51a9ce04eeeb7a3e1c37a3221ec35edfff48bfb90c3a838 jarvis_fit_db Up 8 hours (healthy) postgres:16-alpine
+f21037a104b01f3f9ae711276be64f59e44f09243ad22123fc771a91c8e9d62c jarvis_fit_localstack Up 8 hours (healthy) localstack/localstack:3.8.0
+89fd03a0855df815f30dd5e9057cacad602709031daf1aa2ec3bee92cc59cfaa enferpro-backend Up 8 hours pro-back-backend
+760c87d0eead85f8b37a304c430ca230059bab54c39eddee9b4435d8c85faaed enferpro-db Up 8 hours (healthy) postgres:16-alpine
+9d6a4b0d87e7eefa48152cd049b056fc261d69e93fbc3a6bb76892f509d7e090 gosset_test_pg Exited (255) 2 months ago postgres:15-alpine
+721347dd1413740db005a8f1f13677152c6adba26b0ad243b55940d3b7a97704 desafio-frontend-1 Exited (0) 3 months ago desafio-frontend
+3b2b82f0b81079ad51fbb2bde4d7f17462e19f249dbb31f0bb42d36fcb7fea7c desafio-backend-1 Exited (0) 3 months ago desafio-backend
+6fdee5428fe1fd363cded029ebb5c8b42966fcd86c4246b4c7012741f184dbb4 desafio-postgres-1 Exited (0) 3 months ago pgvector/pgvector:pg16
+004038d3d16265c5ff1d5ae8d310e47c2c6b56dbcf96e4969ae70e2a5b627b4d ineves_postgres Exited (0) 3 months ago postgres:15-alpine
+03233aa9084abc308b13e03336d44a40b365c50134b24336ca4102825f0f2295 ineves_redis Exited (0) 3 months ago redis:7-alpine
+ed2426d4d4a7bf54ba1ba59490e98cd9991f5b31b10306c2a2464d895c8a8025 sonarqube Exited (255) 4 months ago sonarqube:community
+a5d342ba8dfd0797cc7391016a5c15f744e7617c9484a366ad037797a19e48ea nebula-redis-ui Exited (0) 4 months ago redis/redisinsight:latest
+4e8143d61e0fc8dbaa83edce9c3a7910304014fb0a7f075beafbcfd3b5119957 nebula-mongo-ui Exited (143) 4 months ago mongo-express:1
+df1098a3eb31b907cdbabb89c9f793528624a5807e9cec8809b3fea6e014cd99 nebula-redis Exited (0) 4 months ago redis:7-alpine
+2135e2ac77229509fe633b6710c3d19aec26016883be8df7f9c6019cb4fdadbe nebula-mongo Exited (0) 4 months ago mongo:7

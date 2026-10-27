@@ -1,0 +1,4 @@
+COMMAND: docker compose -p p05-span-status-privacy-025 -f docker-compose.services.yml -f .planning/phases/025-span-status-privacy/compose.override.yml config --quiet
+EXIT_CODE: 0
+CHECK: api/worker/mcp use pre-existing pinned image tag; P05 source/scripts mounts read-only; all published ports loopback-only
+JWT/MCP signing values: generated ephemeral in process, not read or persisted

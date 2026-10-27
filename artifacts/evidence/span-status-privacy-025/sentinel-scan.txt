@@ -1,0 +1,1 @@
+COMMAND: Get-ChildItem phase evidence files | Select-String for synthetic sentinel patterns`nRESULT: 0 matches`nEXIT_CODE: 0

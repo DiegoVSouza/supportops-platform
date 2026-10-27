@@ -1,0 +1,1 @@
+The first focused-test failure output was sanitized to remove only the in-memory synthetic sentinel value. It recorded a test expectation mismatch (failure_code maps ValueError to invalid_input), not service or provider data.

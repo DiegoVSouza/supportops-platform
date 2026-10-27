@@ -1,0 +1,2 @@
+COMMAND: uv run --locked pytest -q tests
+EXIT_CODE: 0
