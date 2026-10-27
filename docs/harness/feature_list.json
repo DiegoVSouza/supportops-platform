@@ -95,6 +95,12 @@
       "description": "Optional RFC 7662 verifier checks direct MCP token activity on every request and denies the same token after revocation; local worker delegation remains compatible",
       "status": "PASS_LOCAL_MCP_TCP_AND_KEYCLOAK_26_8_1; INCOMPLETE_EXTERNAL_IDP_AND_QUEUED_JOB_REVOCATION",
       "evidence": "artifacts/evidence/phase-011-introspection-green.txt; artifacts/evidence/phase-011-keycloak-oidc.txt"
+    },
+    {
+      "id": "worker-failure-privacy",
+      "description": "Local and durable task failure errors are limited to fixed codes before persistence or authenticated task-status responses",
+      "status": "PASS_LOCKED_OFFLINE_UNIT; INCOMPLETE_SERVICE_REVERIFICATION",
+      "evidence": "artifacts/evidence/worker-failure-privacy/focused-tests.txt; artifacts/evidence/worker-failure-privacy/full-gate.txt"
     }
   ]
 }

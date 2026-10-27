@@ -1,0 +1,5 @@
+COMMAND: uv run --locked pytest -o addopts= --basetemp artifacts/evidence/worker-failure-privacy/pytest-tmp tests/test_async_tasks.py tests/test_api_security.py tests/test_service_retry_policy.py -q
+EXIT_CODE: 0
+OUTPUT:
+......................................                                   [100%]
+38 passed in 4.18s

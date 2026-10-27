@@ -55,6 +55,77 @@ def test_real_mcp_connection_refusal_is_retried_by_p04_worker(monkeypatch):
     assert store.get(task.task_id).attempts==2
 
 
+def test_permanent_service_error_is_sanitized_before_installed_p04_worker():
+    from supportops_async.worker.runner import PermanentFailure
+
+    runtime=ServiceWorker.__new__(ServiceWorker)
+    runtime._run_job=lambda payload,step: (_ for _ in ()).throw(RuntimeError('PRIVATE TENANT TICKET BODY'))
+    with pytest.raises(PermanentFailure) as raised:
+        runtime.run_job({},'triage')
+    assert str(raised.value)=='worker_failure'
+    assert 'PRIVATE TENANT TICKET BODY' not in str(raised.value)
+
+    store=SQLiteTaskStore();broker=InMemoryBroker()
+    task,_=store.create({'steps':['triage']},'sanitized-worker-failure')
+    broker.publish(BrokerMessage(task.task_id))
+    assert Worker(store,broker,runner=runtime.run_job,max_attempts=1).run_once()
+    failed=store.get(task.task_id)
+    assert failed.status.value=='failed'
+    assert failed.error=='worker_failure'
+    assert 'PRIVATE TENANT TICKET BODY' not in repr(failed)
+
+
+def test_worker_span_does_not_export_exception_payload(monkeypatch):
+    from types import SimpleNamespace
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+    import supportops_platform.service_runtime as service_runtime
+    from supportops_async.worker.runner import PermanentFailure
+
+    exporter=InMemorySpanExporter()
+    provider=TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    monkeypatch.setattr(service_runtime.trace, 'get_tracer', lambda name: provider.get_tracer(name))
+
+    runtime=ServiceWorker.__new__(ServiceWorker)
+    runtime.queue=SimpleNamespace(
+        job=lambda _: {'id':'job-1','generation':0,'status':'queued','trace_context':{}},
+        authorization_active=lambda *_: True,
+        effect_exists=lambda *_: False,
+    )
+    runtime.store=SimpleNamespace(get_ticket=lambda *_: (_ for _ in ()).throw(
+        RuntimeError('PRIVATE DATABASE OR TICKET CONTENT')
+    ))
+    runtime.queue.actor=lambda _: object()
+
+    with pytest.raises(PermanentFailure, match='worker_failure'):
+        runtime.run_job({'job_id':'job-1','generation':0},'triage')
+    spans=exporter.get_finished_spans()
+    assert len(spans)==1
+    assert spans[0].events==()
+    assert 'PRIVATE DATABASE OR TICKET CONTENT' not in repr(spans[0])
+    provider.shutdown()
+
+
+def test_all_p05_spans_disable_automatic_exception_recording():
+    import ast
+    from pathlib import Path
+
+    package = Path(__file__).resolve().parents[1] / 'supportops_platform'
+    violations=[]
+    for source in package.rglob('*.py'):
+        tree=ast.parse(source.read_text(encoding='utf-8'),filename=str(source))
+        for node in ast.walk(tree):
+            if not isinstance(node,ast.Call) or not isinstance(node.func,ast.Attribute):
+                continue
+            if node.func.attr != 'start_as_current_span':
+                continue
+            if not any(keyword.arg=='record_exception' and isinstance(keyword.value,ast.Constant) and keyword.value.value is False for keyword in node.keywords):
+                violations.append(f'{source.relative_to(package)}:{node.lineno}')
+    assert violations == []
+
+
 def test_auth_failure_inside_exception_group_is_not_transient():
     from supportops_platform.service_runtime import _is_transient_transport_error
 

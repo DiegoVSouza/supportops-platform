@@ -185,19 +185,19 @@ def create_network_mcp_server(
     @server.tool()
     def lookup_invoice(invoice_id: str) -> dict[str, object]:
         """Look up an invoice inside the authenticated transport tenant."""
-        with trace.get_tracer("p05.tools").start_as_current_span("tool.lookup_invoice"):
+        with trace.get_tracer("p05.tools").start_as_current_span("tool.lookup_invoice",record_exception=False):
             return gateway.lookup_invoice(transport_principal(), invoice_id)
 
     @server.tool()
     def lookup_customer(customer_id: str) -> dict[str, str]:
         """Look up a customer inside the authenticated transport tenant."""
-        with trace.get_tracer("p05.tools").start_as_current_span("tool.lookup_customer"):
+        with trace.get_tracer("p05.tools").start_as_current_span("tool.lookup_customer",record_exception=False):
             return gateway.lookup_customer(transport_principal(), customer_id)
 
     @server.tool()
     def propose_refund(ticket_id: str, amount_cents: int) -> dict[str, object]:
         """Create a refund proposal for the authenticated principal; never issue a refund."""
-        with trace.get_tracer("p05.tools").start_as_current_span("tool.propose_refund"):
+        with trace.get_tracer("p05.tools").start_as_current_span("tool.propose_refund",record_exception=False):
             return gateway.propose_refund(transport_principal(), ticket_id, amount_cents)
 
     return server

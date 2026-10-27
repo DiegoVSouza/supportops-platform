@@ -20,7 +20,7 @@ class TracedMCP:
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http": return await self.app(scope,receive,send)
         headers={k.decode():v.decode() for k,v in scope["headers"]}
-        with trace.get_tracer("p05.mcp").start_as_current_span("mcp.request",context=propagate.extract(headers)):
+        with trace.get_tracer("p05.mcp").start_as_current_span("mcp.request",context=propagate.extract(headers),record_exception=False):
             return await self.app(scope,receive,send)
 
 
@@ -86,5 +86,5 @@ def call_tool(actor, name, arguments):
                     result=await session.call_tool(name,arguments)
                     if result.is_error: raise PermissionError("MCP tool denied or failed")
                     return json.loads(result.content[0].text)
-    with trace.get_tracer("p05.mcp").start_as_current_span("mcp.client."+name):
+    with trace.get_tracer("p05.mcp").start_as_current_span("mcp.client."+name,record_exception=False):
         return asyncio.run(asyncio.wait_for(invoke(),timeout=15))

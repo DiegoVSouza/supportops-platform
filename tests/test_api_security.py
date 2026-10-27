@@ -264,6 +264,28 @@ def test_async_triage_task_is_tenant_scoped_and_idempotent() -> None:
     ).status_code == 404
 
 
+def test_authenticated_task_status_masks_legacy_worker_exception_text() -> None:
+    from types import SimpleNamespace
+
+    from supportops_platform.contracts import TaskStatus
+
+    class LegacyQueue:
+        def get(self, actor, task_id):
+            return SimpleNamespace(
+                id=task_id,
+                status=TaskStatus.FAILED,
+                attempts=2,
+                result=None,
+                last_error="ValueError: PRIVATE TENANT TICKET BODY",
+            )
+
+    api = TestClient(create_app(token_secret=TEST_SECRET, task_queue=LegacyQueue()))
+    response = api.get("/v1/tasks/job-legacy", headers=auth_headers("tenant-a-agent"))
+    assert response.status_code == 200
+    assert response.json()["error"] == "worker_failure"
+    assert "PRIVATE TENANT TICKET BODY" not in response.text
+
+
 def test_feedback_is_tenant_scoped_bounded_and_absent_from_metrics() -> None:
     api = client()
     ticket_id = create_ticket(api)

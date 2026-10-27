@@ -15,7 +15,7 @@ from botocore.exceptions import (
 )
 from opentelemetry import propagate, trace
 from supportops_async.worker import Worker
-from supportops_async.worker.runner import TransientFailure
+from supportops_async.worker.runner import PermanentFailure, TransientFailure
 from supportops_obs import flush_telemetry, metrics_registry, record_agent_execution
 from supportops_toolkit.guardrails import guard
 
@@ -25,6 +25,7 @@ from .agents.triage import (
     run_configured_triage,
 )
 from .async_tasks.durable import DurableQueue
+from .async_tasks.failures import failure_code
 from .auth.rate_limit import RedisRateLimiter
 from .contracts import AuthorizationLeaseExpired
 from .mcp.runtime import call_tool
@@ -105,9 +106,9 @@ class ServiceWorker:
             self.queue.expire(payload["job_id"], payload.get("generation", 0))
             return {"authorization_expired": True}
         except Exception as exc:
-            if not _is_transient_transport_error(exc):
-                raise
-            raise TransientFailure("temporary service dependency failure") from exc
+            if _is_transient_transport_error(exc):
+                raise TransientFailure("transient_failure") from exc
+            raise PermanentFailure(failure_code(exc) or "worker_failure") from exc
 
     def _run_job(self, payload, step):
         job = self.queue.job(payload["job_id"])
@@ -118,7 +119,7 @@ class ServiceWorker:
             self.queue.expire(job["id"], job["generation"])
             return {"authorization_expired": True}
         with trace.get_tracer("p05.worker").start_as_current_span(
-            "worker.run", context=propagate.extract(job["trace_context"])
+            "worker.run", context=propagate.extract(job["trace_context"]), record_exception=False
         ):
             actor = self.queue.actor(job)
             ticket = self.store.get_ticket(actor, job["ticket_id"])
@@ -145,7 +146,7 @@ class ServiceWorker:
                 if prior_approval and prior_approval.state != "pending"
                 else None
             )
-            with trace.get_tracer("p05.worker").start_as_current_span("agent.triage"):
+            with trace.get_tracer("p05.worker").start_as_current_span("agent.triage", record_exception=False):
                 execution = run_configured_triage(
                     ticket,
                     self.retriever,

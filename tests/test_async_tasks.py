@@ -72,9 +72,44 @@ def test_fake_worker_completes_once_and_retries_handler_failure() -> None:
     failed = worker.run_once(lambda task: (_ for _ in ()).throw(RuntimeError("temporary")))
     assert failed.id == first.id
     assert failed.status == TaskStatus.QUEUED
+    assert failed.last_error == "worker_failure"
     succeeded = worker.run_once()
     assert succeeded.status == TaskStatus.SUCCEEDED
     assert len(ledger.effects) == 1
+
+
+def test_fake_worker_never_persists_exception_content() -> None:
+    queue = LocalTaskQueue(max_attempts=1)
+    task = queue.enqueue(principal(), "triage", {"ticket_id": "t1"}, "private-error")
+    failed = FakeWorker(queue, "worker-a", EffectLedger()).run_once(
+        lambda _: (_ for _ in ()).throw(RuntimeError("PRIVATE TICKET CONTENT"))
+    )
+    assert failed.id == task.id
+    assert failed.status == TaskStatus.FAILED
+    assert failed.last_error == "worker_failure"
+    assert "PRIVATE TICKET CONTENT" not in repr(failed)
+
+
+def test_durable_task_reader_masks_unrecognized_stored_error() -> None:
+    from types import SimpleNamespace
+
+    from supportops_async.store.models import TaskStatus as P04TaskStatus
+    from supportops_platform.async_tasks.durable import DurableQueue
+
+    queue = DurableQueue.__new__(DurableQueue)
+    queue.job = lambda _: {
+        "id": "job-1", "tenant_id": "tenant-a", "backend_task_id": "backend-1",
+        "status": "queued", "error": "legacy raw database failure with ticket content",
+        "result": None,
+    }
+    queue.backend = SimpleNamespace(get=lambda _: SimpleNamespace(
+        status=P04TaskStatus.FAILED, attempts=2,
+        error="PRIVATE DATABASE OR TICKET CONTENT",
+    ))
+    result = queue.get(principal("tenant-a"), "job-1")
+    assert result.status == TaskStatus.FAILED
+    assert result.last_error == "worker_failure"
+    assert "PRIVATE" not in repr(result)
 
 
 def test_task_input_limits_and_required_lease_configuration() -> None:

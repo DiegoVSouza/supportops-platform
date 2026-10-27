@@ -9,6 +9,7 @@ from uuid import uuid4
 
 from supportops_platform.contracts import Principal, TaskStatus
 from supportops_platform.repositories import AuthorizationError
+from supportops_platform.async_tasks.failures import failure_code
 
 
 @dataclass(slots=True)
@@ -78,7 +79,7 @@ class LocalTaskQueue:
                     continue
                 if task.attempts >= self.max_attempts:
                     task.status = TaskStatus.FAILED
-                    task.last_error = task.last_error or "maximum attempts exceeded"
+                    task.last_error = task.last_error or "maximum_attempts_exceeded"
                     continue
                 task.status = TaskStatus.RUNNING
                 task.attempts += 1
@@ -106,7 +107,7 @@ class LocalTaskQueue:
             return task
 
     def fail(
-        self, worker_id: str, task_id: str, reason: str, now: datetime | None = None
+        self, worker_id: str, task_id: str, reason: BaseException | str, now: datetime | None = None
     ) -> TaskRecord:
         now = now or datetime.now(timezone.utc)
         with self._lock:
@@ -119,7 +120,7 @@ class LocalTaskQueue:
                 or task.lease_until <= now
             ):
                 raise ValueError("task is not leased by this worker")
-            task.last_error = reason[:500]
+            task.last_error = failure_code(reason)
             task.lease_until = None
             task.worker_id = None
             task.status = TaskStatus.FAILED if task.attempts >= self.max_attempts else TaskStatus.QUEUED
@@ -160,5 +161,5 @@ class FakeWorker:
                 handler(task)
             self.effects.apply_once(f"task:{task.id}", f"processed {task.task_type}")
         except Exception as exc:
-            return self.queue.fail(self.worker_id, task.id, str(exc))
+            return self.queue.fail(self.worker_id, task.id, exc)
         return self.queue.complete(self.worker_id, task.id)

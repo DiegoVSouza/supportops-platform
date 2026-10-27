@@ -47,7 +47,7 @@ class _RetrievalAwareFakeClient:
             self._limits.consume(
                 steps=1, tokens=sum(len(str(v).split()) for v in payload.values())
             )
-        with trace.get_tracer("p05.agent").start_as_current_span("llm.fake"):
+        with trace.get_tracer("p05.agent").start_as_current_span("llm.fake", record_exception=False):
             response = self._fake.complete(agent, payload)
             with self._lock:
                 self._limits.consume(steps=0, tokens=len(str(response).split()))

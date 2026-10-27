@@ -1,0 +1,72 @@
+COMMAND: uv run --locked pytest -o addopts= --basetemp artifacts/evidence/worker-failure-privacy/pytest-tmp tests/test_service_retry_policy.py::test_worker_span_does_not_export_exception_payload tests/test_service_retry_policy.py::test_all_p05_spans_disable_automatic_exception_recording -q
+EXIT_CODE: 1
+EXPECTED RED REGRESSION OUTPUT (synthetic sentinel redacted):
+FF                                                                       [100%]
+================================== FAILURES ===================================
+_____________ test_worker_span_does_not_export_exception_payload ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002067E7D7950>
+
+    def test_worker_span_does_not_export_exception_payload(monkeypatch):
+        from types import SimpleNamespace
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+        from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+        import supportops_platform.service_runtime as service_runtime
+        from supportops_async.worker.runner import PermanentFailure
+
+        exporter=InMemorySpanExporter()
+        provider=TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        monkeypatch.setattr(service_runtime.trace, 'get_tracer', lambda name: provider.get_tracer(name))
+
+        runtime=ServiceWorker.__new__(ServiceWorker)
+        runtime.queue=SimpleNamespace(
+            job=lambda _: {'id':'job-1','generation':0,'status':'queued','trace_context':{}},
+            authorization_active=lambda *_: True,
+            effect_exists=lambda *_: False,
+        )
+        runtime.store=SimpleNamespace(get_ticket=lambda *_: (_ for _ in ()).throw(
+            RuntimeError('[synthetic test sentinel redacted]')
+        ))
+        runtime.queue.actor=lambda _: object()
+
+        with pytest.raises(PermanentFailure, match='worker_failure'):
+            runtime.run_job({'job_id':'job-1','generation':0},'triage')
+        spans=exporter.get_finished_spans()
+        assert len(spans)==1
+>       assert spans[0].events==()
+E       assert (<opentelemet...2067E944830>,) == ()
+E
+E         Left contains one more item: <opentelemetry.sdk.trace.Event object at 0x000002067E944830>
+E         Use -v to get more diff
+
+tests\test_service_retry_policy.py:106: AssertionError
+__________ test_all_p05_spans_disable_automatic_exception_recording ___________
+
+    def test_all_p05_spans_disable_automatic_exception_recording():
+        import ast
+        from pathlib import Path
+
+        package = Path(__file__).resolve().parents[1] / 'supportops_platform'
+        violations=[]
+        for source in package.rglob('*.py'):
+            tree=ast.parse(source.read_text(encoding='utf-8'),filename=str(source))
+            for node in ast.walk(tree):
+                if not isinstance(node,ast.Call) or not isinstance(node.func,ast.Attribute):
+                    continue
+                if node.func.attr != 'start_as_current_span':
+                    continue
+                if not any(keyword.arg=='record_exception' and isinstance(keyword.value,ast.Constant) and keyword.value.value is False for keyword in node.keywords):
+                    violations.append(f'{source.relative_to(package)}:{node.lineno}')
+>       assert violations == []
+E       AssertionError: assert ['service_run...e.py:89', ...] == []
+E
+E         Left contains 11 more items, first extra item: 'service_runtime.py:121'
+E         Use -v to get more diff
+
+tests\test_service_retry_policy.py:126: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_service_retry_policy.py::test_worker_span_does_not_export_exception_payload
+FAILED tests/test_service_retry_policy.py::test_all_p05_spans_disable_automatic_exception_recording
+2 failed in 1.92s

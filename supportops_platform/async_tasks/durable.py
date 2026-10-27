@@ -14,6 +14,7 @@ from supportops_async.store.postgres import PostgresTaskStore
 
 from supportops_platform.contracts import AuthorizationLeaseExpired, Principal, TaskStatus
 from supportops_platform.repositories import AuthorizationError
+from supportops_platform.async_tasks.failures import failure_code
 
 TRACER = trace.get_tracer("p05.durable")
 
@@ -41,7 +42,7 @@ class DurableQueue:
             raise AuthorizationError("triage:run scope required for durable triage")
         if task_type != "triage" or not idempotency_key or len(idempotency_key)>128:
             raise ValueError("valid triage task and idempotency key required")
-        with TRACER.start_as_current_span("queue.enqueue"):
+        with TRACER.start_as_current_span("queue.enqueue", record_exception=False):
             carrier = {}
             propagate.inject(carrier)
             identity = {"subject":actor.subject,"tenant_id":actor.tenant_id,
@@ -70,10 +71,10 @@ class DurableQueue:
         task=self.backend.get(row["backend_task_id"]) if row["backend_task_id"] else None
         status=row["status"]
         if task and task.status.value=="running" and status=="queued": status="running"
-        error=row["error"]
+        error=failure_code(row["error"])
         if task and task.status.value == "failed" and status not in {"succeeded","needs_approval"}:
             status="failed"
-            error=task.error
+            error=failure_code(task.error)
         return DurableTask(row["id"],TaskStatus(status),task.attempts if task else 0,row["result"],error)
 
     def dispatch_pending(self):
@@ -85,7 +86,7 @@ class DurableQueue:
                               "AND authorization_expires_at>clock_timestamp() ORDER BY created_at "
                               "FOR UPDATE SKIP LOCKED LIMIT 20").fetchall()
             for row in rows:
-                with TRACER.start_as_current_span("queue.publish",context=propagate.extract(row["trace_context"])):
+                with TRACER.start_as_current_span("queue.publish",context=propagate.extract(row["trace_context"]),record_exception=False):
                     carrier={}
                     propagate.inject(carrier)
                     task,_=self.backend.create({"job_id":row["id"],"generation":row["generation"],"steps":["triage"]},

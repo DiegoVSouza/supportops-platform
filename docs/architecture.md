@@ -41,3 +41,18 @@ provider and deployment acceptance remain INCOMPLETE.
 - A refund requires an explicit scoped human approver and remains pending in fake mode.
 - Knowledge retrieval returns cited data only; it cannot invoke tools or grant permissions.
 - The demo makes no provider calls and reports no model quality metrics.
+
+## Worker failure privacy
+
+P05 workers map exception types to a fixed error-code allowlist before handing a
+failure to the installed P04 worker. Local fake-worker failures use the same codes.
+Durable reads and the authenticated task-status route normalize stored legacy values
+again, so historical exception strings are not returned to callers. The P04 worker
+wheel remains version 0.1.4; this P05 boundary does not change its package or claim
+that existing database rows were rewritten. Service-backed failure persistence and
+response behavior still require a later isolated service gate.
+
+P05-owned OpenTelemetry spans disable automatic exception-event recording. They may
+still set error status, but do not attach exception message, traceback, or arbitrary
+exception attributes. The phase verifies the worker span with an in-memory exporter
+and checks the invariant across every P05-owned span call.

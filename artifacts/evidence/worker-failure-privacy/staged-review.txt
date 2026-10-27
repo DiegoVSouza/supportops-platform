@@ -1,0 +1,6 @@
+Staged paths reviewed: 29
+Allowed phase paths only: PASS
+git diff --cached --check: PASS
+Credential pattern scan: no matches
+Protected-state comparison: 218 files, zero differences
+Full gate: 133 passed; services explicitly skipped

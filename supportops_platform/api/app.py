@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 from supportops_platform import __version__
 from supportops_platform.agents.triage import configured_llm_mode, run_configured_triage
 from supportops_platform.async_tasks.queue import LocalTaskQueue
+from supportops_platform.async_tasks.failures import failure_code
 from supportops_platform.auth.jwt import decode_principal
 from supportops_platform.contracts import AuthorizationLeaseExpired, Principal, Ticket
 from supportops_platform.integrations.observability import (
@@ -357,7 +358,7 @@ def create_app(
             raise HTTPException(status_code=404, detail="task not found") from exc
         result = {"id": task.id, "status": task.status.value, "attempts": task.attempts}
         if hasattr(task, "result"):
-            result.update(result=task.result, error=task.last_error)
+            result.update(result=task.result, error=failure_code(task.last_error))
         return result
 
     @app.middleware("http")
@@ -421,7 +422,7 @@ def create_app(
     @app.middleware("http")
     async def trace_request(request: Request, call_next):
         with trace.get_tracer("p05.api").start_as_current_span(
-            "api.request", context=propagate.extract(dict(request.headers))
+            "api.request", context=propagate.extract(dict(request.headers)), record_exception=False
         ) as span:
             span.set_attribute("http.request.method", request.method)
             span.set_attribute("llm.mode", "fake")

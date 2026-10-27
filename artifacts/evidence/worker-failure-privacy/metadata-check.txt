@@ -1,0 +1,3 @@
+COMMAND: uv run --locked python -m json.tool docs/harness/feature_list.json
+EXIT_CODE: 0
+OUTPUT: valid JSON

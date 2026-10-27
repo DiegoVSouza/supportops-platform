@@ -1,0 +1,3 @@
+COMMAND: uv run --locked python - (SHA-256 compare protected paths from phase-base HEAD with current worktree)
+EXIT_CODE: 0
+protected tracked files: 218; changed after checks: 0
