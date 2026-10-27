@@ -1,0 +1,2 @@
+COMMAND: docker run --rm --network none --entrypoint python supportops-platform:groq-live -c "from importlib.metadata import version; print(version('supportops-platform')); print(version('supportops-async')); print(version('supportops-obs'))"
+EXIT_CODE: 0

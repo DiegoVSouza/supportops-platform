@@ -1,0 +1,3 @@
+COMMAND: docker build --network=none --tag p05-phase023-failure-privacy:local .
+EXIT_CODE: 1
+RESULT: Failed at pip install uv==0.12.7 because the tool is not vendored. Docker build network was disabled; no image was created or pulled. Full output: .planning/phases/023-service-failure-privacy/evidence/image-build.txt

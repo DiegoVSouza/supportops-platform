@@ -1,0 +1,2 @@
+candidate_base=7bb496d16ad3ba0b175037a6a658f45a88eba61d
+product_source_diff_from_candidate=0

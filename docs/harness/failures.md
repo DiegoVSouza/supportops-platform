@@ -15,3 +15,9 @@ Observed: P05 API/worker restarted repeatedly with psycopg OperationalError (Nam
 - Local `FakeWorker` previously persisted `str(exc)`, and the authenticated task-status route could return the P04 backend worker's stored exception text. Fixed-code normalization now occurs before local failure persistence, at the P05 service wrapper, in durable task reads, and again at the API boundary. Existing history is not rewritten; read-time masking is tested.
 - A new in-memory exporter regression reproduced exception text in the `worker.run` span because `start_as_current_span` defaulted to automatic exception recording. All P05-owned spans now set `record_exception=False`; an AST invariant covers all span call sites.
 - Offline full gate passed 133 unit/contract/package/fake-control tests. Service-backed behavior remains INCOMPLETE because this validation intentionally did not run Docker or modify the active P05 stack.
+
+## 2026-10-27 — Phase 023 service verification
+
+- The first isolated service rerun found two assertions still expected raw `authorization lease expired` prose. Phase 022 correctly maps it to `authorization_expired`; assertions now require that fixed code and retain failed-status, late-approval denial, and zero-effect checks. The corrected full service gate passed.
+- A synthetic service-worker exception probe did not observe its trace in Jaeger; no trace-delivery claim is made for that probe. The in-memory exporter regression confirms exception events are disabled, and the full service gate independently verifies correlated traces for normal service execution.
+- An offline Docker image build could not install non-vendored `uv` with `--network=none`; no image was created or pulled. The isolated gate used an already-local compatible image with current P05 source/scripts mounted read-only. No existing stack was targeted.

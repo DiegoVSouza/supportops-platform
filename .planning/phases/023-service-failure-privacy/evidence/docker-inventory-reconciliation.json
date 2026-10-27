@@ -1,0 +1,32 @@
+{
+  "containers_before": 102,
+  "containers_after": 102,
+  "container_identity_and_normalized_state_diff": 0,
+  "exact_status_text_differences": 2,
+  "networks_before": 21,
+  "networks_after": 21,
+  "network_diff_count": 0,
+  "volumes_before": 89,
+  "volumes_after": 89,
+  "volume_diff_count": 0,
+  "phase_project_resources_after": 0,
+  "exact_status_drift": [
+    {
+      "ID": "2b6551ac517bef5063b0fd9cb9c2c1811009c5d526f89dd06e18257a21d603f5",
+      "Names": "gossett_backend",
+      "Image": "gosset-backend",
+      "Status": "Restarting (1) 56 seconds ago",
+      "SideIndicator": "=>"
+    },
+    {
+      "ID": "2b6551ac517bef5063b0fd9cb9c2c1811009c5d526f89dd06e18257a21d603f5",
+      "Names": "gossett_backend",
+      "Image": "gosset-backend",
+      "Status": "Restarting (1) 21 seconds ago",
+      "SideIndicator": "<="
+    }
+  ],
+  "normalized_container_diff": [],
+  "network_diff": [],
+  "volume_diff": []
+}

@@ -1,0 +1,5 @@
+COMMAND: uv run --locked python scripts/check_full.py
+COMPOSE_PROJECT: p05-phase023-failure-privacy
+COMPOSE_OVERRIDE: .planning/phases/023-service-failure-privacy/compose.override.yml
+P05_SKIP_BUILD=1; image=existing supportops-platform:groq-live; LLM_MODE=fake; ports=38220,36520,36420,38221,36517,36686,39021,33021
+EXIT_CODE: 2

@@ -1,0 +1,2 @@
+COMMAND: uv run --locked pytest tests/test_service_retry_policy.py tests/test_api_security.py tests/test_async_tasks.py -q
+EXIT_CODE: 0

@@ -21,8 +21,16 @@ ROOT=Path(__file__).resolve().parents[1]
 ENV={**os.environ,"JWT_SECRET":secrets.token_urlsafe(48),"MCP_SIGNING_SECRET":secrets.token_urlsafe(48)}
 PROJECT=os.getenv('P05_COMPOSE_PROJECT','p05-remediation-009')
 COMPOSE=['docker','compose','-p',PROJECT,'-f','docker-compose.services.yml']
+COMPOSE_OVERRIDE=os.getenv('P05_COMPOSE_OVERRIDE')
+if COMPOSE_OVERRIDE:
+    COMPOSE += ['-f', COMPOSE_OVERRIDE]
 EVIDENCE=ROOT/'artifacts/evidence'
+EVIDENCE_DIRECTORY=os.getenv('P05_EVIDENCE_DIRECTORY')
+if EVIDENCE_DIRECTORY:
+    EVIDENCE=EVIDENCE/EVIDENCE_DIRECTORY
+EVIDENCE.mkdir(parents=True, exist_ok=True)
 GATE_PREFIX=os.getenv('P05_EVIDENCE_PREFIX','phase-010')
+SKIP_BUILD=os.getenv('P05_SKIP_BUILD')=='1'
 API_PORT=int(os.getenv('P05_API_PORT','28000'))
 POSTGRES_PORT=int(os.getenv('P05_POSTGRES_PORT','26432'))
 REDIS_PORT=int(os.getenv('P05_REDIS_PORT','26379'))
@@ -84,6 +92,10 @@ def check_network_mcp():
     command(['exec','-T','api','python','scripts/check_network_mcp.py'])
 
 
+def check_failure_privacy():
+    command(['exec','-T','api','python','scripts/check_failure_privacy.py'])
+
+
 def run(start=True,crash=True):
     started=False
     if start:
@@ -91,11 +103,13 @@ def run(start=True,crash=True):
         if existing:
             raise RuntimeError('refusing to change non-empty Docker Compose project '+PROJECT)
         command(['config','--quiet'])
-        command(['build','api'])
+        if not SKIP_BUILD:
+            command(['build','api'])
     try:
         if start:
             started=True
             command(['up','--no-build','-d','--wait'])
+            check_failure_privacy()
         return run_checks(crash)
     finally:
         if started:
@@ -193,7 +207,7 @@ def run_checks(crash):
         late_approval=api.post('/v1/tickets/'+expired_refund+'/approve',headers=approver,json={'approval_id':expired_paused['result']['approval_id']})
         assert late_approval.status_code==409,f'late approval status={late_approval.status_code}, body={late_approval.text}'
         expired_status=api.get('/v1/tasks/'+expired_job,headers=own).json()
-        assert expired_status['status']=='failed' and 'authorization lease expired' in expired_status.get('error',''),f'expired job status={expired_status}'
+        assert expired_status['status']=='failed' and expired_status.get('error')=='authorization_expired',f'expired job status={expired_status}'
         with psycopg.connect(DSN) as conn:
             assert conn.execute('SELECT count(*) FROM platform_effects WHERE job_id=%s',(expired_job,)).fetchone()[0]==0
         proof['expired_hitl_resume_denied_without_effect']='PASS'
@@ -206,7 +220,7 @@ def run_checks(crash):
             conn.execute("UPDATE platform_jobs SET authorization_expires_at=clock_timestamp()-interval '1 second' WHERE id=%s",(expired_queued_job,))
         command(['start','worker'])
         failed_before_dispatch=wait_task(api,expired_queued_job,own,'failed')
-        assert 'authorization lease expired' in failed_before_dispatch.get('error',''),f'expired before dispatch status={failed_before_dispatch}'
+        assert failed_before_dispatch.get('error')=='authorization_expired',f'expired before dispatch status={failed_before_dispatch}'
         proof['expired_job_rejected_before_dispatch']='PASS'
         feedback=api.post('/v1/feedback',headers=own,json={'ticket_id':refund,'rating':5})
         assert feedback.status_code==201

@@ -1,6 +1,6 @@
 # Phase 023 — Reverify failure privacy through isolated services
 
-Status: PLANNED. Reverify committed phase 022 without changing the evaluated source candidate.
+Status: COMPLETE for local service failure-privacy verification. The P05 phase 022 source candidate remains unchanged; independent review and model-quality evaluation remain PENDING.
 
 ## Goal
 
@@ -8,7 +8,7 @@ Exercise P05's sanitized failure persistence and authenticated API reads across 
 
 ## Acceptance criteria
 
-1. A synthetic sentinel exception passed through the actual service worker is persisted only as a fixed allowlisted category; sentinel text and traceback are absent from database state and telemetry.
+1. A synthetic sentinel exception passed through the actual service worker is persisted only as a fixed allowlisted category; sentinel text and traceback are absent from database state. Any observed exported trace also excludes the sentinel; the locked in-memory exporter regression remains the required proof that span exceptions are not recorded.
 2. The authenticated task API masks a legacy stored raw error and returns only the documented safe category; an unauthenticated caller remains denied.
 3. The phase 022 source candidate remains byte-identical and at its existing commit; only isolated fake-mode local services are used.
 4. Before/after inventory proves all pre-existing Docker container identities and states, networks, and volumes are preserved, and phase-owned temporary resources are removed.

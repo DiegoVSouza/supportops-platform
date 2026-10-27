@@ -1,0 +1,2 @@
+COMMAND: docker image inspect --format '{{.Id}} {{.RepoTags}}' supportops-platform:groq-live
+EXIT_CODE: 0

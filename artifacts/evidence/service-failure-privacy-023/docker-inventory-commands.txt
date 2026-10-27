@@ -1,0 +1,5 @@
+COMMANDS: docker ps -a --no-trunc --format {{json .}}; docker network ls --no-trunc --format {{json .}}; docker volume ls --format {{json .}}
+EXIT_CODE: 0
+BEFORE: .planning/phases/023-service-failure-privacy/evidence/docker-*-before-gate-rerun.jsonl
+AFTER: .planning/phases/023-service-failure-privacy/evidence/docker-*-after-gate.jsonl
+Reconciliation: .planning/phases/023-service-failure-privacy/evidence/docker-inventory-reconciliation.json

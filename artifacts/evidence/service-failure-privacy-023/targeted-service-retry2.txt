@@ -1,0 +1,8 @@
+Mode: LLM_MODE=fake; existing image supportops-platform:groq-live; current P05 source/scripts read-only mounts; isolated Compose network; no build/pull.
+COMMAND: docker compose -p p05-phase023-failure-privacy ... up --no-build -d --wait
+EXIT_CODE: 0
+COMMAND: docker compose -p p05-phase023-failure-privacy ... exec -T api python scripts/check_failure_privacy.py
+failure-privacy-service: PASS persisted_code=invalid_input legacy_api_code=worker_failure trace_spans=0 trace_export_observed=false sentinel_absent=true
+EXIT_CODE: 0
+COMMAND: docker compose -p p05-phase023-failure-privacy ... down --volumes --remove-orphans
+EXIT_CODE: 0
