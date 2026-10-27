@@ -20,6 +20,10 @@ Forbidden changes:
 
 - `.env*`, runtime model/provider dispatch/budget/campaign config, datasets/splits/rubrics/graders/thresholds, historical phase-023 or prior evidence, package lock unless a separate SDD phase is created, P04 source, sibling source imports, root lab files, unrelated projects/stacks/images/volumes, tenant/customer data, paid/provider/network use, external identity/deploy/publication, or approvals.
 
+## Diagnosis
+
+The phase-023 `check_failure_privacy.py` performs one Jaeger query immediately after `flush_telemetry`; the normal `check_services.py` loops until correlated stages appear or a deadline expires. OTLP flush confirms exporter delivery to its collector, not immediate Jaeger query visibility. Phase 023 captured `trace_spans=0` but returned success without requiring the two failure spans. Correct this bounded observer and fail closed; do not resend the existing request.
+
 ## Tasks
 
 1. Reproduce the trace-context/export diagnosis offline from P05-owned code and tests; identify the exact cause behind phase 023's zero-span readback. Add regression coverage for the failure trace contract and content-free probe output. If code changes are required outside listed paths or package metadata, stop and make a separate ownership phase.
@@ -32,7 +36,7 @@ Forbidden changes:
 - `PYTHONPATH=. uv run --locked pytest -q tests/test_service_retry_policy.py tests/test_async_tasks.py`
 - `PYTHONPATH=. uv run --locked pytest -q tests`
 - `LLM_MODE=fake uv run --locked python scripts/check_full.py` in isolated fake mode after service setup, per existing harness contract.
-- `docker compose -p p05-phase024-failure-trace -f docker-compose.yml -f .planning/phases/024-failure-trace-export/compose.override.yml config --quiet`
+- `docker compose -p p05-phase024-failure-trace -f docker-compose.services.yml -f .planning/phases/024-failure-trace-export/compose.override.yml config --quiet`
 - `docker compose ... up --no-build --pull never -d --wait`; run one new, one-shot service failure probe, check trace by GET only, then full fake acceptance and phase-owned cleanup.
 - Verify image `supportops-platform:groq-live` remains `sha256:0af6c40c175c5fa2f5278c01dac843b3978635ab36b9ee947071c75649203f30`; compare pre/post 102 containers, 21 networks, 89 volumes and exact unrelated identities/states.
 

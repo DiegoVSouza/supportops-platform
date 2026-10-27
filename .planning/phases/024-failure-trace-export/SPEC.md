@@ -2,7 +2,7 @@
 
 ## Goal
 
-Resolve the phase-023 gap where the real service worker sanitized a synthetic failure but the corresponding `worker.run`/`agent.triage` trace was not observed in Jaeger. Preserve phase-023 evidence and verify one fresh failure path on a new candidate without repeating its task, key, or trace.
+Resolve the phase-023 gap where the real service worker sanitized a synthetic failure but the corresponding `worker.run`/`agent.triage` trace was not observed in Jaeger. Source comparison shows the probe made a single immediate Jaeger GET after OTLP collector flush while the normal service gate polls for eventual trace ingestion. Change the probe to bounded read-only polling, require the expected spans, and verify one fresh failure path without repeating the phase-023 task, key, or trace.
 
 ## Acceptance criteria
 
