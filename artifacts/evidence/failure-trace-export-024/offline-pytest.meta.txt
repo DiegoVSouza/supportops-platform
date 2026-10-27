@@ -1,0 +1,2 @@
+COMMAND: PYTHONPATH=. uv run --locked pytest -q -rs --basetemp artifacts/evidence/failure-trace-export-024/offline-pytest-final tests
+EXIT_CODE: 0

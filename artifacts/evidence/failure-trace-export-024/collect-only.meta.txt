@@ -1,0 +1,2 @@
+COMMAND: PYTHONPATH=. uv run --locked pytest --collect-only -q tests
+EXIT_CODE: 0

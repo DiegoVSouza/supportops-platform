@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from uuid import uuid4
 
 import httpx
@@ -19,6 +20,41 @@ from supportops_platform.service_runtime import ServiceWorker, create_components
 
 
 SENTINEL = "P05_PRIVATE_FAILURE_SENTINEL_MUST_NOT_PERSIST"
+EXPECTED_FAILURE_SPANS = {"worker.run", "agent.triage"}
+
+
+def read_failure_trace(trace_id: str, *, get=httpx.get, sleep=time.sleep, attempts: int = 60):
+    """Poll Jaeger for collector-delivered spans without repeating the task."""
+    if not isinstance(trace_id, str) or len(trace_id) != 32 or any(char not in "0123456789abcdef" for char in trace_id.lower()):
+        raise ValueError("invalid trace identifier")
+    if not isinstance(attempts, int) or isinstance(attempts, bool) or attempts < 1 or attempts > 120:
+        raise ValueError("trace read attempts must be between 1 and 120")
+    last_payload = {"data": None}
+    for attempt in range(attempts):
+        try:
+            response = get("http://jaeger:16686/api/traces/" + trace_id, timeout=2)
+            response.raise_for_status()
+            payload = response.json()
+            if isinstance(payload, dict):
+                last_payload = payload
+        except httpx.HTTPError:
+            last_payload = {"data": None}
+        spans = [
+            span
+            for item in (last_payload.get("data") or [])
+            for span in item.get("spans", [])
+        ]
+        operations = {span.get("operationName") for span in spans}
+        if EXPECTED_FAILURE_SPANS.issubset(operations):
+            return last_payload, spans, True
+        if attempt + 1 < attempts:
+            sleep(0.25)
+    spans = [
+        span
+        for item in (last_payload.get("data") or [])
+        for span in item.get("spans", [])
+    ]
+    return last_payload, spans, False
 
 
 def main() -> None:
@@ -109,29 +145,22 @@ def main() -> None:
 
     flush_ok = flush_telemetry(timeout_millis=5000)
     traces = {"data": None}
+    spans = []
+    trace_export_observed = False
     if flush_ok:
-        try:
-            traces = httpx.get(
-                "http://jaeger:16686/api/traces/" + trace_id, timeout=5
-            ).json()
-        except httpx.HTTPError:
-            traces = {"data": None}
+        traces, spans, trace_export_observed = read_failure_trace(trace_id)
     encoded_trace = json.dumps(traces, ensure_ascii=False)
     assert SENTINEL not in encoded_trace
-    spans = [
-        span
-        for item in (traces.get("data") or [])
-        for span in item.get("spans", [])
-    ]
-    trace_export_observed = any(
-        span.get("operationName") == "worker.run" for span in spans
-    ) and any(span.get("operationName") == "agent.triage" for span in spans)
+    assert flush_ok, "telemetry exporter flush did not complete"
+    assert trace_export_observed, "failure worker spans were not visible in Jaeger before the bounded deadline"
     print(
         "failure-privacy-service: PASS persisted_code=invalid_input "
         "legacy_api_code=worker_failure trace_spans="
         + str(len(spans))
         + " trace_export_observed="
         + str(trace_export_observed).lower()
+        + " exporter_flush="
+        + str(flush_ok).lower()
         + " sentinel_absent=true"
     )
 

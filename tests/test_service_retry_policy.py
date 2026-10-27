@@ -171,3 +171,68 @@ def test_standalone_worker_loop_retries_transport_and_surfaces_permanent_errors(
     assert delays==[1]
     with pytest.raises(PermissionError):
         _run_once_with_retry(FailingWorker(PermissionError('denied')),sleep=delays.append)
+
+
+def test_failure_trace_probe_polls_only_jaeger_until_correlated_worker_spans_arrive():
+    from types import SimpleNamespace
+
+    from scripts.check_failure_privacy import read_failure_trace
+
+    replies = iter([
+        {"data": []},
+        {"data": [{"spans": [{"operationName": "worker.run"}]}]},
+        {"data": [{"spans": [{"operationName": "worker.run"}, {"operationName": "agent.triage"}]}]},
+    ])
+    requests = []
+    sleeps = []
+
+    def get(url, *, timeout):
+        requests.append((url, timeout))
+        return SimpleNamespace(raise_for_status=lambda: None, json=lambda: next(replies))
+
+    payload, spans, observed = read_failure_trace(
+        "a" * 32, get=get, sleep=sleeps.append, attempts=4
+    )
+
+    assert observed
+    assert {span["operationName"] for span in spans} == {"worker.run", "agent.triage"}
+    assert payload["data"]
+    assert len(requests) == 3
+    assert all(url == "http://jaeger:16686/api/traces/" + "a" * 32 for url, _ in requests)
+    assert all(timeout == 2 for _, timeout in requests)
+    assert sleeps == [0.25, 0.25]
+
+
+def test_failure_trace_probe_fails_closed_after_bounded_read_only_polls():
+    from types import SimpleNamespace
+
+    from scripts.check_failure_privacy import read_failure_trace
+
+    requests = []
+    payload, spans, observed = read_failure_trace(
+        "b" * 32,
+        get=lambda url, **_: requests.append(url) or SimpleNamespace(
+            raise_for_status=lambda: None, json=lambda: {"data": []}
+        ),
+        sleep=lambda _seconds: None,
+        attempts=2,
+    )
+
+    assert not observed
+    assert payload == {"data": []}
+    assert spans == []
+    assert len(requests) == 2
+
+
+def test_failure_trace_probe_rejects_unbounded_or_untrusted_identifiers():
+    from scripts.check_failure_privacy import read_failure_trace
+
+    requests = []
+    for trace_id, attempts in [("../private", 2), ("a" * 32, 0), ("b" * 32, True), ("c" * 32, 121)]:
+        with pytest.raises(ValueError):
+            read_failure_trace(
+                trace_id,
+                get=lambda *args, **kwargs: requests.append((args, kwargs)),
+                attempts=attempts,
+            )
+    assert requests == []

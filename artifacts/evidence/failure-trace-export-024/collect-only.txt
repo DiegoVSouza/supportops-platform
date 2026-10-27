@@ -1,0 +1,16 @@
+tests/test_api_security.py: 18
+tests/test_async_tasks.py: 10
+tests/test_campaign_ledger.py: 6
+tests/test_live_campaign_preparation.py: 11
+tests/test_live_groq.py: 2
+tests/test_live_service_mode.py: 4
+tests/test_mcp_oidc.py: 11
+tests/test_mcp_tools.py: 7
+tests/test_mcp_transport_auth.py: 2
+tests/test_p04_package_integration.py: 1
+tests/test_package_integrations.py: 5
+tests/test_quality_gate.py: 1
+tests/test_rag.py: 38
+tests/test_service_retry_policy.py: 12
+tests/test_signed_mcp_identity.py: 7
+

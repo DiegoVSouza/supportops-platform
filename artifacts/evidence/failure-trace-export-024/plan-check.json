@@ -1,7 +1,28 @@
 {
   "phase": "024-failure-trace-export",
   "plan_check": "PASS",
-  "phase_ids_inspected": ["001", "002", "003", "004", "005", "006", "007", "011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022", "023"],
+  "phase_ids_inspected": [
+    "001",
+    "002",
+    "003",
+    "004",
+    "005",
+    "006",
+    "007",
+    "011",
+    "012",
+    "013",
+    "014",
+    "015",
+    "016",
+    "017",
+    "018",
+    "019",
+    "020",
+    "021",
+    "022",
+    "023"
+  ],
   "next_id": "024",
   "allowed_paths_concrete": true,
   "forbidden_changes_defined": true,
@@ -9,5 +30,10 @@
   "budget_usd": 0,
   "provider_model_requests": 0,
   "human_or_independent_approval": "PENDING",
-  "reviewer": "implementer self-check; independent review not performed"
+  "reviewer": "implementer self-check; independent review not performed",
+  "diagnosis": {
+    "phase_023_probe": "single immediate Jaeger GET after OTLP flush; did not require spans and printed PASS with trace_export_observed=false",
+    "normal_service_gate": "polls Jaeger until correlated spans or deadline",
+    "correction": "bounded GET-only polling and fail-closed span requirement; no replay of prior task"
+  }
 }
