@@ -21,7 +21,7 @@ from supportops_platform.agents.accounted import AccountedDenied, MODEL, run as 
 PROJECT=Path(__file__).resolve().parents[1]
 LAB=PROJECT.parents[1]
 OUT=PROJECT/"artifacts/evidence/accounted-local-services-029"
-MANIFEST="artifacts/evals/live/local-operation-v1/candidate-029-v2.json"
+MANIFEST="artifacts/evals/live/local-operation-v1/candidate-029-v3.json"
 CASE="fixture-local-01"
 
 
@@ -152,6 +152,9 @@ def execute(mode,fixture_attempt=1):
     validate()
     if any(key.startswith("MCP_OIDC_") and value for key,value in os.environ.items()):
         raise OperationBlocked("external_identity_configuration_not_allowed")
+    # The API module constructs its default app during import; first telemetry setup wins.
+    os.environ.update(OTEL_SERVICE_NAME="p05-accounted-local",
+                      OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:38317")
     import httpx
     import psycopg
     from opentelemetry import trace

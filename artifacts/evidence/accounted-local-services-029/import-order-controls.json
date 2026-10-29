@@ -1,0 +1,7 @@
+{
+  "command": "uv run --locked python -m pytest tests/test_local_operation.py -q --basetemp artifacts/evidence/accounted-local-services-029/tmp-import-fix",
+  "cwd": "C:\\estudo\\Golpe\\lab\\projects\\p05",
+  "exit_code": 0,
+  "output": ".......... [100%]\n10 passed",
+  "diagnostic": "Fresh subprocess proves exporter exists after import-time app initialization, before database access."
+}

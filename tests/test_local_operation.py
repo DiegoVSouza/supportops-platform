@@ -70,3 +70,33 @@ def test_trace_polling_stops_at_five_reads_and_does_not_retry_denial():
         raise HTTPError(url,403,"denied",None,None)
     with pytest.raises(HTTPError):
         poll_trace("http://127.0.0.1/trace",opener=denied,sleep=lambda _:pytest.fail("must not retry denial"))
+
+
+def test_controller_configures_export_before_import_time_default_app():
+    import subprocess
+    import sys
+    code = """
+import os
+os.environ['LLM_MODE']='fake'
+os.environ['OTEL_EXPORTER_OTLP_ENDPOINT']=''
+for key in list(os.environ):
+    if key.startswith('MCP_OIDC_'):
+        os.environ.pop(key)
+from scripts import local_operation as controller
+controller.validate=lambda:None
+import psycopg
+def stop(*args,**kwargs):
+    raise RuntimeError('before_database')
+psycopg.connect=stop
+try:
+    controller.execute('fake')
+except RuntimeError as error:
+    assert str(error)=='before_database'
+from supportops_obs import instrumentation as obs
+processors=obs._provider._active_span_processor._span_processors
+assert len(processors)==1, 'first import silently disabled export'
+assert processors[0].span_exporter._endpoint=='127.0.0.1:38317'
+obs.shutdown_telemetry()
+"""
+    result=subprocess.run([sys.executable,'-c',code],capture_output=True,text=True,timeout=30)
+    assert result.returncode==0,result.stdout+result.stderr

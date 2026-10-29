@@ -8,3 +8,5 @@ allowed_write_paths: .planning/phases/029-accounted-local-services/**; scripts/l
 forbidden_changes: historical manifests/rows/results, production IdP/customer data, other allocations/holdout/confirmation, sibling sources, model/provider fallback, paid use, real refunds, Terraform apply, unrelated Docker resources and fabricated reviews. Fake default; at most one live workflow/four calls of migrated eight, 4096/512 per call, 20s timeout, USD 0 paid. max_tries3 local failure; no live replay. Stop on wrong identity/source, unknown work, provider/quota/schema/citation failure or cleanup mismatch. Plan-check implementer self-assessment.
 
 Ledger contract amendment before implementation: also allow `scripts/campaign_ledger.py` to reserve integer 1–4 provider calls per workflow, retaining default one, current schema and conservative cumulative accounting; cover invalid counts and the four-call reservation in the phase tests.
+
+Preserve previous candidate bindings; allow additional immutable candidate-029-v2.json and candidate-029-v3.json under the same manifest directory. Telemetry correction remains within controller ownership.
