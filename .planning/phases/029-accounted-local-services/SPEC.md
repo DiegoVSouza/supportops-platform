@@ -1,0 +1,3 @@
+# Accounted local HTTP queue RAG MCP operation
+
+Operate one fixed synthetic tenant through actual loopback HTTP, durable PostgreSQL/Redis queue, installed Worker/Core, tenant-scoped PostgreSQL RAG and signed local read-only MCP. Verify existing fake full service/crash/privacy gates plus an injected accounted fixture workflow before a single accounted live workflow. Use the migrated eight-call envelope, full four-call logical reservation before provider startup, committed source/manifest, lease rechecks and content-free correlation. Production IdP and model quality remain separate pending gates.
