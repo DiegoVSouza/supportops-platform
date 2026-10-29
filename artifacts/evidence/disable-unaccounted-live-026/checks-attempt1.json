@@ -1,0 +1,14 @@
+[
+  {
+    "command": "C:\\estudo\\Golpe\\lab\\projects\\p05\\.venv\\Scripts\\python.exe scripts/check_fast.py",
+    "cwd": "C:\\estudo\\Golpe\\lab\\projects\\p05",
+    "exit_code": 0,
+    "output": "check-fast: OK\n"
+  },
+  {
+    "command": "C:\\estudo\\Golpe\\lab\\projects\\p05\\.venv\\Scripts\\python.exe -m pytest -q tests --basetemp=artifacts/evidence/disable-unaccounted-live-026/pytest-tmp",
+    "cwd": "C:\\estudo\\Golpe\\lab\\projects\\p05",
+    "exit_code": 0,
+    "output": "........................................................................ [ 51%]\n...................................................................      [100%]\n============================== warnings summary ===============================\ntests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it\n  C:\\estudo\\Golpe\\lab\\projects\\p05\\.venv\\Lib\\site-packages\\websockets\\legacy\\__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions\n    warnings.warn(  # deprecated in 14.0 - 2024-11-09\n\ntests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it\n  C:\\estudo\\Golpe\\lab\\projects\\p05\\.venv\\Lib\\site-packages\\uvicorn\\protocols\\websockets\\websockets_impl.py:17: DeprecationWarning: websockets.server.WebSocketServerProtocol is deprecated\n    from websockets.server import WebSocketServerProtocol\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n"
+  }
+]
