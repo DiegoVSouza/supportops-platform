@@ -122,11 +122,14 @@ class CampaignLedger:
         output_tokens: int,
         estimated_cost_usd: Decimal,
         caps: dict[str, int | Decimal],
+        calls: int = 1,
     ) -> None:
         if self.read_only:
             raise CampaignBlocked("read-only ledger")
         if (
-            trial < 1
+            type(calls) is not int
+            or not 1 <= calls <= 4
+            or trial < 1
             or input_tokens < 1
             or output_tokens < 1
             or estimated_cost_usd < 0
@@ -164,7 +167,7 @@ class CampaignLedger:
             }
             projected = {
                 **current,
-                "requests": current["requests"] + 1,
+                "requests": current["requests"] + calls,
                 "input_tokens": current["input_tokens"] + input_tokens,
                 "output_tokens": current["output_tokens"] + output_tokens,
                 "estimated_cost_usd": current["estimated_cost_usd"] + estimated_cost_usd,
@@ -174,11 +177,12 @@ class CampaignLedger:
             db.execute(
                 """INSERT INTO events(campaign_id,case_id,trial,event,reserved_calls,
                    reserved_input_tokens,reserved_output_tokens,reserved_cost_usd,created_at_utc)
-                   VALUES(?,?,?,'reserved',1,?,?,?,?)""",
+                   VALUES(?,?,?,'reserved',?,?,?,?,?)""",
                 (
                     self.campaign_id,
                     case_id,
                     trial,
+                    calls,
                     input_tokens,
                     output_tokens,
                     str(estimated_cost_usd),

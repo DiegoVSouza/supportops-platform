@@ -1,0 +1,26 @@
+services:
+  api:
+    image: supportops-platform:groq-live
+    volumes:
+      - ${P05_SOURCE_ROOT}/supportops_platform:/app/supportops_platform:ro
+      - ${P05_SOURCE_ROOT}/scripts:/app/scripts:ro
+      - ${P05_SOURCE_ROOT}/migrations:/app/migrations:ro
+  worker:
+    image: supportops-platform:groq-live
+    volumes:
+      - ${P05_SOURCE_ROOT}/supportops_platform:/app/supportops_platform:ro
+      - ${P05_SOURCE_ROOT}/scripts:/app/scripts:ro
+      - ${P05_SOURCE_ROOT}/migrations:/app/migrations:ro
+  mcp:
+    image: supportops-platform:groq-live
+    volumes:
+      - ${P05_SOURCE_ROOT}/supportops_platform:/app/supportops_platform:ro
+      - ${P05_SOURCE_ROOT}/scripts:/app/scripts:ro
+      - ${P05_SOURCE_ROOT}/migrations:/app/migrations:ro
+  grafana:
+    healthcheck:
+      test: [CMD-SHELL, "wget --quiet --spider http://127.0.0.1:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+      start_period: 30s

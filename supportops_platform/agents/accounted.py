@@ -99,6 +99,8 @@ class Client:
                     raise AccountedDenied("worker_contract")
             if agent == "classifier" and output["category"] not in {"shipping", "billing", "technical", "account_access", "other"}:
                 raise AccountedDenied("worker_contract")
+            if agent == "responder" and not any(f"[{c.document_id}#{c.chunk_id}]" in output["response"] for c in self.citations):
+                raise AccountedDenied("citation_contract")
             self.check_identity()
             with closing(sqlite3.connect(self.path, timeout=5)) as db:
                 db.execute("PRAGMA synchronous=FULL")
