@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "logical_events": [
+    {
+      "sequence": 1,
+      "campaign_id": "local-operation-v1",
+      "case_id": "fixture-local-01",
+      "trial": 1,
+      "event": "reserved",
+      "reserved_calls": 4,
+      "reserved_input_tokens": 16384,
+      "reserved_output_tokens": 2048,
+      "reserved_cost_usd": "0.0018432",
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_cost_usd": null,
+      "outcome": null,
+      "error_class": null,
+      "created_at_utc": "2026-10-29T23:51:57.097028+00:00"
+    },
+    {
+      "sequence": 2,
+      "campaign_id": "local-operation-v1",
+      "case_id": "fixture-local-01",
+      "trial": 1,
+      "event": "completed",
+      "reserved_calls": 4,
+      "reserved_input_tokens": 16384,
+      "reserved_output_tokens": 2048,
+      "reserved_cost_usd": "0.0018432",
+      "actual_input_tokens": 1582,
+      "actual_output_tokens": 257,
+      "actual_cost_usd": "0.00019575",
+      "outcome": "ok",
+      "error_class": null,
+      "created_at_utc": "2026-10-29T23:52:04.062400+00:00"
+    }
+  ],
+  "provider_calls": 4,
+  "operating_cap": 8,
+  "remaining_operating_calls": 4,
+  "paid_authorized_usd": 0,
+  "actual_billed_usd": null
+}

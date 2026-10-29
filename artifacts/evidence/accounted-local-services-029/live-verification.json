@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "mode": "live",
+  "provider_calls": 4,
+  "accounted_calls": 4,
+  "input_tokens": 1582,
+  "output_tokens": 257,
+  "http_queue_rag_mcp_correlated": true,
+  "content_exported": false,
+  "receipt_matches": true,
+  "trace_id": "b550bb0476f6413aba02d3bf53f505ae",
+  "actual_billed_usd": null
+}
