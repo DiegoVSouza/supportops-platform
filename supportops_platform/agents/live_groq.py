@@ -28,9 +28,7 @@ POLICY = (
 
 
 def _new_groq(**kwargs):
-    from groq import Groq
-
-    return Groq(**kwargs)
+    raise RuntimeError("accounted_guard_required")
 
 
 def retry_delay(attempt: int, status: int | None, headers) -> float:

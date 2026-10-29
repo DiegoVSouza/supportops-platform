@@ -7,7 +7,7 @@ from pathlib import Path
 project = Path(__file__).resolve().parents[3]
 env = os.environ.copy()
 env["LLM_MODE"] = "fake"
-commands = [[sys.executable, "scripts/check_fast.py"], [sys.executable, "-m", "pytest", "-q", "tests", "--basetemp=artifacts/evidence/disable-unaccounted-live-026/pytest-tmp"]]
+commands = [[sys.executable, "scripts/check_fast.py"], [sys.executable, "-m", "pytest", "-q", "tests", "--basetemp=artifacts/evidence/disable-unaccounted-live-026/pytest-tmp2"]]
 reports = []
 for command in commands:
     result = subprocess.run(command, cwd=project, env=env, capture_output=True, text=True, timeout=180)
@@ -15,5 +15,5 @@ for command in commands:
     print(command[1], result.returncode)
     if result.returncode:
         break
-(Path(__file__).resolve().parent / "checks-attempt1.json").write_text(json.dumps(reports, indent=2) + "\n", newline="\n")
+(Path(__file__).resolve().parent / "checks-runtime-attempt1.json").write_text(json.dumps(reports, indent=2) + "\n", newline="\n")
 sys.exit(any(report["exit_code"] for report in reports))
