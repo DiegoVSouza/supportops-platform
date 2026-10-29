@@ -12,6 +12,8 @@ import uuid
 from contextlib import nullcontext
 from decimal import Decimal
 from pathlib import Path
+from urllib.request import urlopen
+from urllib.error import HTTPError
 
 from scripts.campaign_ledger import CampaignLedger
 from supportops_platform.agents.accounted import AccountedDenied, MODEL, run as run_accounted
@@ -19,12 +21,29 @@ from supportops_platform.agents.accounted import AccountedDenied, MODEL, run as 
 PROJECT=Path(__file__).resolve().parents[1]
 LAB=PROJECT.parents[1]
 OUT=PROJECT/"artifacts/evidence/accounted-local-services-029"
-MANIFEST="artifacts/evals/live/local-operation-v1/manifest.json"
+MANIFEST="artifacts/evals/live/local-operation-v1/candidate-029-v2.json"
 CASE="fixture-local-01"
 
 
 class OperationBlocked(RuntimeError):
     pass
+
+
+def poll_trace(url,*,opener=urlopen,sleep=time.sleep):
+    """Bounded read-only polling for asynchronous export; never resubmit work."""
+    for attempt in range(5):
+        try:
+            with opener(url,timeout=5) as response:
+                data=json.load(response)
+        except HTTPError as error:
+            if error.code!=404:
+                raise
+            data={"data":[]}
+        if data.get("data"):
+            return data
+        if attempt<4:
+            sleep((1,2,4,8)[attempt])
+    raise OperationBlocked("trace_not_observed")
 
 
 def git(project,*args):
@@ -125,8 +144,10 @@ def start_server(app,port):
     return server,thread
 
 
-def execute(mode):
-    if mode not in {"fake","live"} or os.getenv("LLM_MODE","fake")!=mode:
+def execute(mode,fixture_attempt=1):
+    if (mode not in {"fake","live"} or os.getenv("LLM_MODE","fake")!=mode
+            or type(fixture_attempt) is not int or fixture_attempt not in (1,2,3)
+            or (mode=="live" and fixture_attempt!=1)):
         raise OperationBlocked("explicit_mode_required")
     validate()
     if any(key.startswith("MCP_OIDC_") and value for key,value in os.environ.items()):
@@ -150,7 +171,8 @@ def execute(mode):
     policy=json.loads((LAB/"shared/policies/groq-free-campaign.json").read_text())
     if policy["projects"]["p05"]["requests"]!=1712:
         raise OperationBlocked("allocation_not_migrated")
-    database="supportops_accounted_029_"+mode
+    label=mode if fixture_attempt==1 else mode+"-"+str(fixture_attempt)
+    database="supportops_accounted_029_"+mode+"_"+str(fixture_attempt)
     admin="postgresql://supportops:local-test-only@127.0.0.1:38432/supportops"
     with psycopg.connect(admin,autocommit=True) as conn:
         if conn.execute("SELECT 1 FROM pg_database WHERE datname=%s",(database,)).fetchone():
@@ -168,7 +190,7 @@ def execute(mode):
     retriever.ingest(KnowledgeDocument("accounted-tracking-029","tenant-a","Synthetic tracking policy",
                                       "The synthetic tracking link is available in the synthetic order dashboard. No refund or real account action is performed."))
     queue=DurableQueue(dsn,"redis://127.0.0.1:38379/0","p05-accounted-029-"+mode)
-    base=PROJECT/"artifacts/evals/live" if mode=="live" else OUT/"fake-runtime"
+    base=PROJECT/"artifacts/evals/live" if mode=="live" else OUT/("fake-runtime-"+str(fixture_attempt))
     base.mkdir(parents=True,exist_ok=True)
     session=LazySession(lambda:ProviderSession(LAB,"p05",policy)) if mode=="live" else FixtureSession()
     trace_id=uuid.uuid4().hex
@@ -201,7 +223,7 @@ def execute(mode):
                 task.raise_for_status()
                 context["job_id"]=task.json()["id"]
                 context["status"]="submitted"
-                (OUT/(mode+"-context.json")).write_text(json.dumps(context,indent=2)+"\n",newline="\n")
+                (OUT/(label+"-context.json")).write_text(json.dumps(context,indent=2)+"\n",newline="\n")
                 queue.dispatch_pending()
                 worker=ServiceWorker(store,retriever,queue,triage_handler=handler)
                 if not worker.worker.run_once():
@@ -227,7 +249,7 @@ def execute(mode):
             result={**context,"status":"ok","provenance":mode,"provider_calls":4 if mode=="live" else 0,
                     "accounted_calls":4,"input_tokens":inp,"output_tokens":out,"receipts":[r[0] for r in rows],
                     "telemetry_flushed":flushed,"duplicate_job_reused":True,"mcp_read_only":True,"actual_billed_usd":None}
-            (OUT/(mode+"-result.json")).write_text(json.dumps(result,indent=2)+"\n",newline="\n")
+            (OUT/(label+"-result.json")).write_text(json.dumps(result,indent=2)+"\n",newline="\n")
             return result
     except Exception as error:
         allowed={"fixed_job_required","authorization_denied","authorization_expired_or_revoked","authorization_unavailable",
@@ -251,7 +273,7 @@ def execute(mode):
             except sqlite3.Error:
                 report["provider_calls"]=None
                 report["provider_accounting"]="unknown"
-        (OUT/(mode+"-stop.json")).write_text(json.dumps(report,indent=2)+"\n",newline="\n")
+        (OUT/(label+"-stop.json")).write_text(json.dumps(report,indent=2)+"\n",newline="\n")
         raise OperationBlocked(reason) from None
     finally:
         for server,thread in reversed(servers):
@@ -262,9 +284,10 @@ def execute(mode):
 if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode",choices=("fake","live"),default="fake")
+    parser.add_argument("--fixture-attempt",type=int,choices=(1,2,3),default=1)
     args=parser.parse_args()
     try:
-        result=execute(args.mode)
+        result=execute(args.mode,args.fixture_attempt)
         print(json.dumps(result))
         raise SystemExit(0 if result["telemetry_flushed"] else 2)
     except OperationBlocked as error:

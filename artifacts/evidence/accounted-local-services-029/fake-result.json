@@ -1,0 +1,22 @@
+{
+  "mode": "fake",
+  "trace_id": "ce78e8e7e802410ab33242f6420bfe2b",
+  "status": "ok",
+  "provider_calls": 0,
+  "ticket_id": "1bfb9fc4-4741-4cce-8b66-b65c50e5c1a6",
+  "job_id": "9494a35b-f93f-403f-b7fd-5f7cd35d3433",
+  "provenance": "fake",
+  "accounted_calls": 4,
+  "input_tokens": 400,
+  "output_tokens": 80,
+  "receipts": [
+    "00000000000000000000000000000001",
+    "00000000000000000000000000000002",
+    "00000000000000000000000000000003",
+    "00000000000000000000000000000004"
+  ],
+  "telemetry_flushed": true,
+  "duplicate_job_reused": true,
+  "mcp_read_only": true,
+  "actual_billed_usd": null
+}
