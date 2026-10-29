@@ -88,8 +88,9 @@ def _run_once_with_retry(worker, *, sleep=time.sleep):
 
 
 class ServiceWorker:
-    def __init__(self, store, retriever, queue):
+    def __init__(self, store, retriever, queue, *, triage_handler=None):
         self.store, self.retriever, self.queue = store, retriever, queue
+        self.triage_handler = triage_handler
         self.worker = Worker(
             queue.backend,
             queue.broker,
@@ -154,13 +155,18 @@ class ServiceWorker:
                 record_exception=False,
                 set_status_on_exception=False,
             ):
-                execution = run_configured_triage(
-                    ticket,
-                    self.retriever,
-                    runner_name="langgraph",
-                    resume_key=job["id"],
-                    approved=approved,
-                )
+                handler=getattr(self,"triage_handler",None)
+                if handler is not None:
+                    execution=handler(ticket,self.retriever,actor=actor,job_id=job["id"],
+                                      authorize=lambda checked: checked==actor and self.queue.authorization_active(job["id"],job["generation"]))
+                else:
+                    execution = run_configured_triage(
+                        ticket,
+                        self.retriever,
+                        runner_name="langgraph",
+                        resume_key=job["id"],
+                        approved=approved,
+                    )
                 record_agent_execution(
                     steps=len(execution.result.trace), success=True, task_type="triage"
                 )
@@ -180,9 +186,8 @@ class ServiceWorker:
                 "customer": customer,
                 "invoice": invoice,
                 "llm_mode": configured_llm_mode(),
-                "runner": "P01 installed core"
-                if configured_llm_mode() == "live"
-                else "P01 installed langgraph",
+                "runner": ("P01 installed accounted core" if handler is not None else
+                           "P01 installed core" if configured_llm_mode() == "live" else "P01 installed langgraph"),
                 "trace_id": format(
                     trace.get_current_span().get_span_context().trace_id, "032x"
                 ),

@@ -70,6 +70,7 @@ def create_app(
     task_queue=None,
     rate_limiter=None,
     token_verifier=None,
+    triage_handler=None,
 ) -> FastAPI:
     if requests_per_minute < 1:
         raise ValueError("requests_per_minute must be positive")
@@ -198,7 +199,8 @@ def create_app(
             raise HTTPException(status_code=403, detail="triage:run scope required")
         try:
             ticket = app.state.store.get_ticket(actor, ticket_id)
-            execution = run_configured_triage(ticket, app.state.retriever)
+            execution = (triage_handler(ticket, app.state.retriever, actor=actor)
+                         if triage_handler is not None else run_configured_triage(ticket, app.state.retriever))
         except AuthorizationError as exc:
             raise HTTPException(status_code=404, detail="ticket not found") from exc
         except ValueError as exc:

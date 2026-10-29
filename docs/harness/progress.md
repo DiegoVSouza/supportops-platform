@@ -174,3 +174,9 @@ Corrected inconsistent service restart policies after Docker startup left Postgr
 - Added P05-owned installed Core fixture-accounted client with trusted principal/tenant/scope checks and authorization rechecks before dispatch and after result; bounded durable receipts/usage and unknown-work stop prevent identity-based replay. RAG text remains untrusted; detected injection is refused.
 - Seven focused tests passed on attempt 2 after adapting to the installed guard API. Locked full offline gate passed 147 tests and all package/OpenAPI/fake controls; exit 2 accurately marks services explicitly omitted. Evidence artifacts/evidence/accounted-identity-027/.
 - Actual HTTP/queue/MCP wiring, service acceptance, finite live allocation/manifest, production identity and quality/reviews remain pending. No provider, credentials, Docker lifecycle or refund effects.
+
+## 2026-10-29 — Phase 028 explicit accounted wiring
+
+- Added optional authenticated triage handler injection to the real HTTP API and ServiceWorker, with principal outside model input and current durable lease callback for each accounted model call. Existing defaults and live legacy guards remain unchanged.
+- Nine focused HTTP/identity tests pass; locked full offline gate passes 149 tests and all package/OpenAPI/fake controls. Exit 2 accurately records deliberately omitted services. Fixture execution has no live-metrics claim. Evidence artifacts/evidence/accounted-http-028/.
+- Finite live envelope is migrated at root phase 034 but owning frozen controller/manifest and actual HTTP/queue/MCP/service acceptance remain pending. No provider, credentials or Docker use in this phase.

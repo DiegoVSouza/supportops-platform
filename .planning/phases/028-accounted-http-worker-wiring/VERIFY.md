@@ -1,1 +1,5 @@
-PENDING HTTP/worker injection and locked fake controls; no live activation.
+# Verification
+
+PASS nine focused HTTP/accounted identity tests, first attempt; locked fast check exit 0. Complete offline check_full --skip-services passed 149 tests, package provenance/retrieval/OpenAPI and positive/negative fake quality controls, exit 2 INCOMPLETE solely because service gate deliberately omitted. Command/cwd/exit/output in artifacts/evidence/accounted-http-028/.
+
+HTTP verified principal is injected outside model input; wrong tenant/scope/expired token never reaches handler. ServiceWorker's optional handler receives actor and a current durable authorization callback; default legacy behavior/guards remain unchanged. Accounted client now enforces exact JSON types/categories, returns the existing AgentTriageRun contract, emits measured content-free usage telemetry and labels fixture responses as fake (no live metrics). Existing expiry/revocation/unknown-work tests preserved. No provider credentials/calls or Docker lifecycle. Actual live service/queue/MCP acceptance and quality/reviews remain pending; implementer self-assessment only.
