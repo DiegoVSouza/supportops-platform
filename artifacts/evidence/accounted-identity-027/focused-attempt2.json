@@ -1,0 +1,6 @@
+{
+  "command": "uv run --locked python -m pytest tests/test_accounted_identity.py --basetemp artifacts/evidence/accounted-identity-027/tmp-focused2 -q",
+  "cwd": "C:\\estudo\\Golpe\\lab\\projects\\p05",
+  "exit_code": 0,
+  "output": ".......                                                                  [100%]\r\n"
+}
