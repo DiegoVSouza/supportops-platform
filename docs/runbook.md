@@ -41,3 +41,11 @@ pgvector 0.8.7, the `vector` extension, a `vector(32)` embedding, cosine distanc
 and full-text GIN. The 32-dimensional hashed fake embedding is test-only; replace it
 with a versioned real embedding model and evaluate against traceable data before
 claiming semantic retrieval quality. No service or live model evaluation is recorded.
+
+## Roll back a migration
+
+`migrations/down/` reverses each file. Migrations run automatically at start, so first stop the API and worker and deploy the previous image, or they will reapply them. Take a `pg_dump` before running a down file: 002 and 003 destroy data, and 004 only drops a column. Apply them newest first with `psql -f`. The up, down, up cycle is proven by `python scripts/harness/check_migrations.py` in the lab root.
+
+## Readiness
+
+`/healthz` means the process is alive. `/readyz` means PostgreSQL and Redis answer, and returns 503 with the failed dependency name otherwise. Route traffic on `/readyz`; restart on `/healthz`.

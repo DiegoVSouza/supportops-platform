@@ -13,6 +13,9 @@ return n"""
         self.client = Redis.from_url(url, socket_connect_timeout=2, socket_timeout=2)
         self.namespace = namespace
 
+    def ping(self):
+        self.client.ping()
+
     def allow(self, identity, limit):
         if limit < 1: raise ValueError("rate limit must be positive")
         key = self.namespace + ":" + hashlib.sha256(identity.encode()).hexdigest()

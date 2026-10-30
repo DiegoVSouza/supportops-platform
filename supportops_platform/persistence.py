@@ -32,6 +32,10 @@ class PostgresStore:
             for name in ("002_pgvector_knowledge.sql", "003_product_state.sql", "004_authorization_lease.sql"):
                 conn.execute((root / "migrations" / name).read_text(encoding="utf-8"))
 
+    def ping(self):
+        with psycopg.connect(self.dsn, connect_timeout=2) as conn:
+            conn.execute("SELECT 1")
+
     @contextmanager
     def _domain(self, actor):
         with psycopg.connect(self.dsn, row_factory=dict_row) as conn:

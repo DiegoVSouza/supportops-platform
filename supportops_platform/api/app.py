@@ -224,6 +224,22 @@ def create_app(
             "llm_mode": os.getenv("LLM_MODE", "fake"),
         }
 
+    @app.get("/readyz", include_in_schema=False)
+    def ready() -> JSONResponse:
+        checks = {"postgres": app.state.store, "redis": app.state.rate_limiter}
+        failed = []
+        for name, dependency in checks.items():
+            ping = getattr(dependency, "ping", None)
+            if ping is None:
+                continue
+            try:
+                ping()
+            except Exception:
+                failed.append(name)
+        if failed:
+            return JSONResponse(status_code=503, content={"status": "unavailable", "failed": failed})
+        return JSONResponse(content={"status": "ready"})
+
     @app.get("/metrics", include_in_schema=False)
     def metrics() -> Response:
         package_metrics, _ = prometheus_metrics()

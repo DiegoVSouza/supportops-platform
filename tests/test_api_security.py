@@ -331,6 +331,32 @@ def test_top_level_feedback_route_is_tenant_scoped() -> None:
     assert denied.status_code == 403
 
 
+class Dependency:
+    def __init__(self, healthy: bool = True) -> None:
+        self.healthy = healthy
+
+    def ping(self) -> None:
+        if not self.healthy:
+            raise ConnectionError("secret-host:5432 refused")
+
+    def allow(self, identity: str, limit: int) -> bool:
+        return True
+
+
+def test_readyz_reports_healthy_dependencies_outside_the_contract() -> None:
+    api = TestClient(create_app(token_secret=TEST_SECRET, rate_limiter=Dependency()))
+    assert api.get("/readyz").json() == {"status": "ready"}
+    assert "/readyz" not in api.get("/openapi.json").json()["paths"]
+
+
+def test_readyz_fails_closed_without_leaking_the_error() -> None:
+    api = TestClient(create_app(token_secret=TEST_SECRET, rate_limiter=Dependency(healthy=False)))
+    response = api.get("/readyz")
+    assert response.status_code == 503
+    assert response.json() == {"status": "unavailable", "failed": ["redis"]}
+    assert "secret-host" not in response.text
+
+
 def request_refund(api: TestClient, ticket_id: str, cents: int, key: str):
     return api.post(
         f"/v1/tickets/{ticket_id}/refund-approvals",
