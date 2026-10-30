@@ -1,0 +1,22 @@
+{
+  "mode": "live",
+  "trace_id": "8103e5c1b8c44854821a320aa047f687",
+  "status": "ok",
+  "provider_calls": 4,
+  "ticket_id": "157a78e4-d193-4fa1-a6c2-9232c54f2d67",
+  "job_id": "7036d004-a0ff-4d18-b499-0a73cfe8852c",
+  "provenance": "live",
+  "accounted_calls": 4,
+  "input_tokens": 1578,
+  "output_tokens": 262,
+  "receipts": [
+    "0c2b3ca6e5ad46c4ac7cd61eb9cb2cc4",
+    "ee61aeff6cec4b4daf130dbdc6b3d159",
+    "9035db3e1c31451da3f40ff569d4c594",
+    "eccbdfc2fe06498ca7913c4726938f81"
+  ],
+  "telemetry_flushed": true,
+  "duplicate_job_reused": true,
+  "mcp_read_only": true,
+  "actual_billed_usd": null
+}

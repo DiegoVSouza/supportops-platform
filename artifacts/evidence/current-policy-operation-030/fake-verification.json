@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "mode": "fake",
+  "provider_calls": 0,
+  "accounted_calls": 4,
+  "input_tokens": 400,
+  "output_tokens": 80,
+  "http_queue_rag_mcp_correlated": true,
+  "content_exported": false,
+  "receipt_matches": true,
+  "trace_id": "be5aca597a4d41ddb1ad56b4f2fed09c",
+  "actual_billed_usd": null
+}
