@@ -41,7 +41,7 @@ def test_health_is_fake_by_default_and_openapi_is_versioned() -> None:
     assert api.get("/health").json()["llm_mode"] == "fake"
     assert api.get("/healthz").json()["status"] == "ok"
     schema = api.get("/openapi.json").json()
-    assert schema["info"]["version"] == "0.4.3"
+    assert schema["info"]["version"] == "0.4.4"
     assert "/healthz" in schema["paths"]
     assert "/health" not in schema["paths"]
     assert "/v1/tickets/{ticket_id}/refund-approvals" in schema["paths"]
@@ -329,3 +329,80 @@ def test_top_level_feedback_route_is_tenant_scoped() -> None:
         json={"ticket_id": ticket_id, "rating": 4},
     )
     assert denied.status_code == 403
+
+
+def request_refund(api: TestClient, ticket_id: str, cents: int, key: str):
+    return api.post(
+        f"/v1/tickets/{ticket_id}/refund-approvals",
+        headers={**auth_headers("tenant-a-agent"), "Idempotency-Key": key},
+        json={"amount_cents": cents},
+    )
+
+
+def test_pending_approvals_show_amount_to_the_approver() -> None:
+    api = client()
+    ticket_id = create_ticket(api)
+    approval = request_refund(api, ticket_id, 4200, "list-1").json()
+    listed = api.get("/v1/approvals", headers=auth_headers("tenant-a-approver"))
+    assert listed.status_code == 200
+    assert len(listed.json()) == 1
+    row = listed.json()[0]
+    assert row["id"] == approval["id"]
+    assert row["ticket_id"] == ticket_id
+    assert row["amount_cents"] == 4200
+    assert row["action"] == "issue_refund"
+    assert row["state"] == "pending"
+    assert row["requested_by"] == "agent-a"
+    assert row["created_at"]
+    assert "idempotency_key" not in row
+    assert "tenant_id" not in row
+
+
+def test_approval_list_requires_decide_scope_and_stays_in_the_tenant() -> None:
+    api = client()
+    request_refund(api, create_ticket(api), 100, "list-2")
+    assert api.get("/v1/approvals").status_code == 401
+    assert api.get("/v1/approvals", headers=auth_headers("tenant-a-agent")).status_code == 403
+    other = dict(IDENTITIES)
+    subject = issue_demo_token("approver-b", "tenant-b", ["approver"], ["approval:decide"], secret=TEST_SECRET)
+    foreign = api.get("/v1/approvals", headers={"Authorization": f"Bearer {subject}"})
+    assert other and foreign.status_code == 200 and foreign.json() == []
+
+
+def test_approval_list_filters_by_state() -> None:
+    api = client()
+    ticket_id = create_ticket(api)
+    approval = request_refund(api, ticket_id, 700, "list-3").json()
+    headers = auth_headers("tenant-a-approver")
+    decided = api.post(f"/v1/approvals/{approval['id']}/decision", headers=headers, json={"decision": "approved"})
+    assert decided.status_code == 200
+    assert api.get("/v1/approvals", headers=headers).json() == []
+    done = api.get("/v1/approvals", params={"state": "approved"}, headers=headers).json()
+    assert [row["id"] for row in done] == [approval["id"]]
+    assert api.get("/v1/approvals", params={"state": "unknown"}, headers=headers).status_code == 422
+
+
+def test_console_responses_are_typed_in_the_contract() -> None:
+    schemas = client().get("/openapi.json").json()
+    def response_ref(path: str, method: str, status: str) -> str:
+        return schemas["paths"][path][method]["responses"][status]["content"]["application/json"]["schema"]["$ref"]
+    assert response_ref("/v1/tickets/{ticket_id}/triage", "post", "200").endswith("/TriageView")
+    assert response_ref("/v1/tasks/{task_id}", "get", "200").endswith("/TaskView")
+    assert response_ref("/v1/tasks", "post", "202").endswith("/TaskView")
+    assert response_ref("/v1/tickets/{ticket_id}/refund-approvals", "post", "202").endswith("/RefundAccepted")
+    assert response_ref("/v1/approvals/{approval_id}/decision", "post", "200").endswith("/ApprovalState")
+    assert response_ref("/v1/tickets/{ticket_id}/feedback", "post", "201").endswith("/FeedbackRecorded")
+
+
+def test_optional_keys_stay_omitted_from_typed_responses() -> None:
+    api = client()
+    ticket_id = create_ticket(api)
+    triage = api.post(f"/v1/tickets/{ticket_id}/triage", headers=auth_headers("tenant-a-agent"))
+    assert triage.status_code == 200
+    assert "llm_usage" not in triage.json()
+    task = api.post(
+        "/v1/tasks",
+        headers={**auth_headers("tenant-a-agent"), "Idempotency-Key": "typed-1"},
+        json={"ticket_id": ticket_id},
+    ).json()
+    assert set(task) == {"id", "status", "attempts"}

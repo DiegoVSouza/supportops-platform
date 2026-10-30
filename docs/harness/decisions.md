@@ -24,3 +24,6 @@ The user requested diagnosis and repair of restarting P05 services. Application 
 ## 2026-10-26 — Privacy-safe campaign ledger
 
 Phase 019 adds P05-local reservation accounting, a process lease, and content-free read-only resume inspection. It does not authorize campaign calls, change the prior USD 0.01 single-task exception, or modify any Docker stack. Campaign spend remains USD 0; quota, finite cumulative caps, human review, candidate identity, confirmation funding, and model preflight remain `PENDING`. Ledger records must not contain tenant content.
+## 2026-10-30 — Console contract
+
+P06 consumes `openapi.yaml`. ADR-009 adds an approval list and typed responses without changing existing payloads; package moves to 0.4.4.

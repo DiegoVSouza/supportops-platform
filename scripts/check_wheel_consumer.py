@@ -11,7 +11,7 @@ from supportops_platform.persistence import PostgresStore
 EXPECTED = os.environ["P05_WHEEL_TARGET"]
 PACKAGE_ROOT = Path(supportops_platform.__file__).resolve().parent
 assert Path(supportops_platform.__file__).resolve().is_relative_to(Path(EXPECTED).resolve())
-assert supportops_platform.__version__ == "0.4.3"
+assert supportops_platform.__version__ == "0.4.4"
 migration = resources.files("supportops_platform").joinpath("migrations/003_product_state.sql")
 assert migration.is_file() and "platform_jobs" in migration.read_text(encoding="utf-8")
 PostgresStore(os.environ["P05_TEST_DSN"]).migrate()

@@ -1,0 +1,66 @@
+..................FFFF.                                                  [100%]
+================================== FAILURES ===================================
+_____________ test_pending_approvals_show_amount_to_the_approver ______________
+
+    def test_pending_approvals_show_amount_to_the_approver() -> None:
+        api = client()
+        ticket_id = create_ticket(api)
+        approval = request_refund(api, ticket_id, 4200, "list-1").json()
+        listed = api.get("/v1/approvals", headers=auth_headers("tenant-a-approver"))
+>       assert listed.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\test_api_security.py:347: AssertionError
+______ test_approval_list_requires_decide_scope_and_stays_in_the_tenant _______
+
+    def test_approval_list_requires_decide_scope_and_stays_in_the_tenant() -> None:
+        api = client()
+        request_refund(api, create_ticket(api), 100, "list-2")
+>       assert api.get("/v1/approvals").status_code == 401
+E       AssertionError: assert 404 == 401
+E        +  where 404 = <Response [404 Not Found]>.status_code
+E        +    where <Response [404 Not Found]> = get('/v1/approvals')
+E        +      where get = <starlette.testclient.TestClient object at 0x000002AEB10952B0>.get
+
+tests\test_api_security.py:364: AssertionError
+_____________________ test_approval_list_filters_by_state _____________________
+
+    def test_approval_list_filters_by_state() -> None:
+        api = client()
+        ticket_id = create_ticket(api)
+        approval = request_refund(api, ticket_id, 700, "list-3").json()
+        headers = auth_headers("tenant-a-approver")
+        decided = api.post(f"/v1/approvals/{approval['id']}/decision", headers=headers, json={"decision": "approved"})
+        assert decided.status_code == 200
+>       assert api.get("/v1/approvals", headers=headers).json() == []
+E       AssertionError: assert {'detail': 'Not Found'} == []
+E         
+E         Use -v to get more diff
+
+tests\test_api_security.py:379: AssertionError
+______________ test_console_responses_are_typed_in_the_contract _______________
+
+    def test_console_responses_are_typed_in_the_contract() -> None:
+        schemas = client().get("/openapi.json").json()
+        def response_ref(path: str, method: str, status: str) -> str:
+            return schemas["paths"][path][method]["responses"][status]["content"]["application/json"]["schema"]["$ref"]
+>       assert response_ref("/v1/tickets/{ticket_id}/triage", "post", "200").endswith("/TriageView")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_api_security.py:389: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = '/v1/tickets/{ticket_id}/triage', method = 'post', status = '200'
+
+    def response_ref(path: str, method: str, status: str) -> str:
+>       return schemas["paths"][path][method]["responses"][status]["content"]["application/json"]["schema"]["$ref"]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: '$ref'
+
+tests\test_api_security.py:388: KeyError
+=========================== short test summary info ===========================
+FAILED tests/test_api_security.py::test_pending_approvals_show_amount_to_the_approver
+FAILED tests/test_api_security.py::test_approval_list_requires_decide_scope_and_stays_in_the_tenant
+FAILED tests/test_api_security.py::test_approval_list_filters_by_state - Asse...
+FAILED tests/test_api_security.py::test_console_responses_are_typed_in_the_contract

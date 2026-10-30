@@ -67,6 +67,9 @@ class PostgresStore:
     def list_tickets(self, actor):
         with self._domain(actor) as domain: return domain.list_tickets(actor)
 
+    def list_approvals(self, actor, state):
+        with self._domain(actor) as domain: return domain.list_approvals(actor, state)
+
     def request_refund(self, actor, ticket_id, amount_cents, idempotency_key):
         with self._domain(actor) as domain:
             return domain.request_refund(actor, ticket_id, amount_cents, idempotency_key)

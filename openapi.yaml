@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SupportOps Platform",
-    "version": "0.4.3"
+    "version": "0.4.4"
   },
   "paths": {
     "/healthz": {
@@ -165,9 +165,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Triage Ticket V1 Tickets  Ticket Id  Triage Post"
+                  "$ref": "#/components/schemas/TriageView"
                 }
               }
             }
@@ -221,11 +219,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "title": "Response Submit Feedback V1 Tickets  Ticket Id  Feedback Post"
+                  "$ref": "#/components/schemas/FeedbackRecorded"
                 }
               }
             }
@@ -263,11 +257,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "type": "object",
-                  "title": "Response Submit Feedback Compat V1 Feedback Post"
+                  "$ref": "#/components/schemas/FeedbackRecorded"
                 }
               }
             }
@@ -326,11 +316,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "title": "Response Approve Ticket V1 Tickets  Ticket Id  Approve Post"
+                  "$ref": "#/components/schemas/ApprovalState"
                 }
               }
             }
@@ -400,9 +386,61 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Request Refund V1 Tickets  Ticket Id  Refund Approvals Post"
+                  "$ref": "#/components/schemas/RefundAccepted"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/approvals": {
+      "get": {
+        "summary": "List Approvals",
+        "operationId": "list_approvals_v1_approvals_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "pending",
+                "approved",
+                "rejected"
+              ],
+              "type": "string",
+              "default": "pending",
+              "title": "State"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApprovalView"
+                  },
+                  "title": "Response List Approvals V1 Approvals Get"
                 }
               }
             }
@@ -456,11 +494,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "title": "Response Decide Approval V1 Approvals  Approval Id  Decision Post"
+                  "$ref": "#/components/schemas/ApprovalState"
                 }
               }
             }
@@ -521,9 +555,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Enqueue Triage Task V1 Tasks Post"
+                  "$ref": "#/components/schemas/TaskView"
                 }
               }
             }
@@ -567,9 +599,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Task V1 Tasks  Task Id  Get"
+                  "$ref": "#/components/schemas/TaskView"
                 }
               }
             }
@@ -602,6 +632,119 @@
           "decision"
         ],
         "title": "ApprovalDecision"
+      },
+      "ApprovalState": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state"
+        ],
+        "title": "ApprovalState"
+      },
+      "ApprovalView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "ticket_id": {
+            "type": "string",
+            "title": "Ticket Id"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "amount_cents": {
+            "type": "integer",
+            "title": "Amount Cents"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "requested_by": {
+            "type": "string",
+            "title": "Requested By"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "ticket_id",
+          "action",
+          "amount_cents",
+          "state",
+          "requested_by",
+          "created_at"
+        ],
+        "title": "ApprovalView"
+      },
+      "CitationView": {
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "title": "Document Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "chunk_id": {
+            "type": "string",
+            "title": "Chunk Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "document_id",
+          "title",
+          "chunk_id",
+          "text",
+          "score"
+        ],
+        "title": "CitationView"
+      },
+      "FeedbackRecorded": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "title": "FeedbackRecorded"
       },
       "FeedbackSubmission": {
         "properties": {
@@ -644,6 +787,29 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "RefundAccepted": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "state",
+          "action"
+        ],
+        "title": "RefundAccepted"
+      },
       "RefundRequest": {
         "properties": {
           "amount_cents": {
@@ -673,6 +839,52 @@
           "ticket_id"
         ],
         "title": "TaskCreate"
+      },
+      "TaskView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "attempts"
+        ],
+        "title": "TaskView"
       },
       "Ticket": {
         "properties": {
@@ -789,6 +1001,138 @@
           "rating"
         ],
         "title": "TicketFeedback"
+      },
+      "TriageDecisionView": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "respond",
+              "escalate"
+            ],
+            "title": "Action"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "response": {
+            "type": "string",
+            "title": "Response"
+          },
+          "approved": {
+            "type": "boolean",
+            "title": "Approved"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "category",
+          "response",
+          "approved",
+          "reason"
+        ],
+        "title": "TriageDecisionView"
+      },
+      "TriageStepView": {
+        "properties": {
+          "step": {
+            "type": "integer",
+            "title": "Step"
+          },
+          "agent": {
+            "type": "string",
+            "title": "Agent"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step",
+          "agent",
+          "action",
+          "detail"
+        ],
+        "title": "TriageStepView"
+      },
+      "TriageView": {
+        "properties": {
+          "ticket_id": {
+            "type": "string",
+            "title": "Ticket Id"
+          },
+          "decision": {
+            "$ref": "#/components/schemas/TriageDecisionView"
+          },
+          "trace": {
+            "items": {
+              "$ref": "#/components/schemas/TriageStepView"
+            },
+            "type": "array",
+            "title": "Trace"
+          },
+          "citations": {
+            "items": {
+              "$ref": "#/components/schemas/CitationView"
+            },
+            "type": "array",
+            "title": "Citations"
+          },
+          "stop_reason": {
+            "type": "string",
+            "title": "Stop Reason"
+          },
+          "llm_mode": {
+            "type": "string",
+            "title": "Llm Mode"
+          },
+          "llm_usage": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Usage"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticket_id",
+          "decision",
+          "trace",
+          "citations",
+          "stop_reason",
+          "llm_mode"
+        ],
+        "title": "TriageView"
       },
       "ValidationError": {
         "properties": {

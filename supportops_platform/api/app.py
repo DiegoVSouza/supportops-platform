@@ -3,9 +3,11 @@
 import asyncio
 import os
 from collections import deque
+from datetime import datetime
 from secrets import token_urlsafe
 from threading import Lock
 from time import monotonic
+from typing import Literal
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
@@ -60,6 +62,71 @@ class TicketFeedback(BaseModel):
 
 class FeedbackSubmission(TicketFeedback):
     ticket_id: str = Field(min_length=1, max_length=100)
+
+
+class ApprovalView(BaseModel):
+    id: str
+    ticket_id: str
+    action: str
+    amount_cents: int
+    state: str
+    requested_by: str
+    created_at: datetime
+
+
+class ApprovalState(BaseModel):
+    id: str
+    state: str
+
+
+class RefundAccepted(ApprovalState):
+    action: str
+
+
+class FeedbackRecorded(BaseModel):
+    id: str
+    status: str
+
+
+class TaskView(BaseModel):
+    id: str
+    status: str
+    attempts: int
+    result: dict[str, object] | None = None
+    error: str | None = None
+
+
+class TriageDecisionView(BaseModel):
+    action: Literal["respond", "escalate"]
+    category: str
+    response: str
+    approved: bool
+    reason: str
+
+
+class TriageStepView(BaseModel):
+    step: int
+    agent: str
+    action: str
+    detail: str
+
+
+class CitationView(BaseModel):
+    document_id: str
+    title: str
+    chunk_id: str
+    text: str
+    score: float
+
+
+class TriageView(BaseModel):
+    ticket_id: str
+    decision: TriageDecisionView
+    trace: list[TriageStepView]
+    citations: list[CitationView]
+    stop_reason: str
+    llm_mode: str
+    llm_usage: dict[str, int | float | str] | None = None
 
 
 def create_app(
@@ -191,10 +258,10 @@ def create_app(
         except AuthorizationError as exc:
             raise HTTPException(status_code=404, detail="ticket not found") from exc
 
-    @app.post("/v1/tickets/{ticket_id}/triage")
+    @app.post("/v1/tickets/{ticket_id}/triage", response_model_exclude_unset=True)
     def triage_ticket(
         ticket_id: str, actor: Principal = Depends(principal)
-    ) -> dict[str, object]:
+    ) -> TriageView:
         if "triage:run" not in actor.scopes:
             raise HTTPException(status_code=403, detail="triage:run scope required")
         try:
@@ -245,7 +312,7 @@ def create_app(
     @app.post("/v1/tickets/{ticket_id}/feedback", status_code=201)
     def submit_feedback(
         ticket_id: str, payload: TicketFeedback, actor: Principal = Depends(principal)
-    ) -> dict[str, str]:
+    ) -> FeedbackRecorded:
         try:
             feedback_id = app.state.store.add_feedback(
                 actor, ticket_id, payload.rating, payload.comment
@@ -259,7 +326,7 @@ def create_app(
     @app.post("/v1/feedback", status_code=201)
     def submit_feedback_compat(
         payload: FeedbackSubmission, actor: Principal = Depends(principal)
-    ) -> dict[str, str]:
+    ) -> FeedbackRecorded:
         try:
             feedback_id = app.state.store.add_feedback(
                 actor, payload.ticket_id, payload.rating, payload.comment
@@ -275,7 +342,7 @@ def create_app(
         ticket_id: str,
         payload: TicketApprovalDecision,
         actor: Principal = Depends(principal),
-    ) -> dict[str, str]:
+    ) -> ApprovalState:
         try:
             approval = app.state.store.decide_ticket_approval(
                 actor, ticket_id, payload.approval_id, payload.decision
@@ -297,7 +364,7 @@ def create_app(
         payload: RefundRequest,
         actor: Principal = Depends(principal),
         idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
-    ) -> dict[str, object]:
+    ) -> RefundAccepted:
         try:
             approval = app.state.store.request_refund(
                 actor, ticket_id, payload.amount_cents, idempotency_key or ""
@@ -308,12 +375,34 @@ def create_app(
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         return {"id": approval.id, "state": approval.state, "action": approval.action}
 
+    @app.get("/v1/approvals")
+    def list_approvals(
+        state: Literal["pending", "approved", "rejected"] = "pending",
+        actor: Principal = Depends(principal),
+    ) -> list[ApprovalView]:
+        try:
+            approvals = app.state.store.list_approvals(actor, state)
+        except AuthorizationError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        return [
+            ApprovalView(
+                id=item.id,
+                ticket_id=item.ticket_id,
+                action=item.action,
+                amount_cents=item.amount_cents,
+                state=item.state,
+                requested_by=item.requested_by,
+                created_at=item.created_at,
+            )
+            for item in approvals
+        ]
+
     @app.post("/v1/approvals/{approval_id}/decision")
     def decide_approval(
         approval_id: str,
         payload: ApprovalDecision,
         actor: Principal = Depends(principal),
-    ) -> dict[str, str]:
+    ) -> ApprovalState:
         try:
             approval = app.state.store.decide_approval(
                 actor, approval_id, payload.decision
@@ -329,12 +418,12 @@ def create_app(
                 raise HTTPException(status_code=409, detail=str(exc)) from exc
         return {"id": approval.id, "state": approval.state}
 
-    @app.post("/v1/tasks", status_code=202)
+    @app.post("/v1/tasks", status_code=202, response_model_exclude_unset=True)
     def enqueue_triage_task(
         payload: TaskCreate,
         actor: Principal = Depends(principal),
         idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
-    ) -> dict[str, object]:
+    ) -> TaskView:
         if "task:write" not in actor.scopes:
             raise HTTPException(status_code=403, detail="task:write scope required")
         try:
@@ -348,10 +437,10 @@ def create_app(
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         return {"id": task.id, "status": task.status.value, "attempts": task.attempts}
 
-    @app.get("/v1/tasks/{task_id}")
+    @app.get("/v1/tasks/{task_id}", response_model_exclude_unset=True)
     def get_task(
         task_id: str, actor: Principal = Depends(principal)
-    ) -> dict[str, object]:
+    ) -> TaskView:
         if "task:read" not in actor.scopes:
             raise HTTPException(status_code=403, detail="task:read scope required")
         try:
