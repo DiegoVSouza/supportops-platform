@@ -1,0 +1,20 @@
+{
+  "command": [
+    "uv",
+    "run",
+    "--locked",
+    "python",
+    "-m",
+    "pytest",
+    "tests/test_current_operation.py",
+    "tests/test_local_operation.py",
+    "tests/test_accounted_identity.py",
+    "tests/test_accounted_http.py",
+    "-q",
+    "--basetemp",
+    "artifacts\\evidence\\current-policy-operation-030\\tmp-focused1"
+  ],
+  "cwd": "C:\\estudo\\Golpe\\lab\\projects\\p05",
+  "exit_code": 0,
+  "output": ".....................                                                    [100%]\n"
+}

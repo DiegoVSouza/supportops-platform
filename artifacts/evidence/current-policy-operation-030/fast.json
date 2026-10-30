@@ -1,0 +1,12 @@
+{
+  "command": [
+    "uv",
+    "run",
+    "--locked",
+    "python",
+    "scripts/check_fast.py"
+  ],
+  "cwd": "C:\\estudo\\Golpe\\lab\\projects\\p05",
+  "exit_code": 0,
+  "output": "check-fast: OK\n"
+}
