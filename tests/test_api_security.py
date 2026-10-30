@@ -369,6 +369,12 @@ def test_approval_list_requires_decide_scope_and_stays_in_the_tenant() -> None:
     assert other and foreign.status_code == 200 and foreign.json() == []
 
 
+def test_approval_list_rejects_scope_without_approver_role() -> None:
+    token = issue_demo_token("agent-a", "tenant-a", ["agent"], ["approval:decide"], secret=TEST_SECRET)
+    response = client().get("/v1/approvals", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 403
+
+
 def test_approval_list_filters_by_state() -> None:
     api = client()
     ticket_id = create_ticket(api)

@@ -10,7 +10,7 @@ P06 is a browser console generated from `openapi.yaml`. Approvers could not list
 
 ## Decision
 
-- Add `GET /v1/approvals?state=pending|approved|rejected`. It requires `approval:decide`, is tenant-scoped, and omits `idempotency_key` and `tenant_id`.
+- Add `GET /v1/approvals?state=pending|approved|rejected`. It requires the `approver` role and the `approval:decide` scope, the same rule as deciding, is tenant-scoped, and omits `idempotency_key` and `tenant_id`.
 - Replace bare dictionary responses with named models. Keys that were omitted stay omitted through `response_model_exclude_unset`.
 - Bump the package to 0.4.4.
 

@@ -185,4 +185,4 @@ Corrected inconsistent service restart policies after Docker startup left Postgr
 
 2026-10-29 phase030: final-policy current fingerprint14aee7b67b77491332aa83b02e0bb2b84a23fd70ed5a0bbc7a0e90902ca704b7 accepted by actual accounted HTTP/queue/RAG/MCP workflow4calls1578/262 and private correlated OTLP trace; fake161/servicesPASS, cleanup0 preserved baseline. First operation unchanged; total8/8. Semantic quality/human/productionIdP/holdout/promotion PENDING. See phase030 VERIFY/current-policy-operation-030 evidence.
 
-2026-10-30 phase031: additive console contract, ADR-009, package 0.4.4. New `GET /v1/approvals`, typed responses, . Earlier live acceptance describes the prior source. See phase031 VERIFY.
+2026-10-30 phase031: additive console contract, ADR-009, package 0.4.4. New `GET /v1/approvals`, typed responses, 167 passed, 2 warnings in 16.77s. Earlier live acceptance describes the prior source. See phase031 VERIFY.

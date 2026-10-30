@@ -44,8 +44,8 @@ class InMemoryStore:
         )
 
     def list_approvals(self, principal: Principal, state: str) -> list[Approval]:
-        if "approval:decide" not in principal.scopes:
-            raise AuthorizationError("missing approval:decide scope")
+        if "approval:decide" not in principal.scopes or "approver" not in principal.roles:
+            raise AuthorizationError("approver role and approval:decide scope required")
         return sorted(
             (a for a in self.approvals.values()
              if a.tenant_id == principal.tenant_id and a.state == state),
