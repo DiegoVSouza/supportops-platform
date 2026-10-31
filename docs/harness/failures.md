@@ -30,3 +30,7 @@ Observed: P05 API/worker restarted repeatedly with psycopg OperationalError (Nam
 ## 2026-10-27 — Phase 025 status-description correction
 
 - Added `set_status_on_exception=False` to every P05-owned span alongside `record_exception=False`. Offline regressions now check the worker and `agent.triage` spans' events, status descriptions, attributes and serialized representation; an AST invariant covers source and scripts. The isolated fake service probe observed both failure spans and confirmed sentinel absence. Full service/crash-recovery gate passed; the Jaeger artifact was reduced to names and counts. Phase 024 remains immutable FAIL; its task was not queried or replayed. Model evaluation and reviews remain pending.
+
+## 2026-10-31 — check_services default project
+
+`scripts/check_services.py` defaults to `p05-remediation-009` and removes volumes at the end. Pass a private `P05_COMPOSE_PROJECT`.

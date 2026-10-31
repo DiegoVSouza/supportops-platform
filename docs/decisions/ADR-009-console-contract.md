@@ -6,7 +6,7 @@ Accepted.
 
 ## Context
 
-P06 is a browser console generated from `openapi.yaml`. Approvers could not list pending approvals, and the worker does not update ticket status, so a refund had to be decided without seeing its amount. Several responses were bare dictionaries, which give a generated client no types.
+P06 is a browser console generated from `openapi.yaml`. Approvers could not list pending approvals. The worker does mark a ticket `needs_approval`, but no route exposed the amount, so a refund had to be decided without seeing it. Several responses were bare dictionaries, which give a generated client no types.
 
 ## Decision
 

@@ -41,7 +41,7 @@ def test_health_is_fake_by_default_and_openapi_is_versioned() -> None:
     assert api.get("/health").json()["llm_mode"] == "fake"
     assert api.get("/healthz").json()["status"] == "ok"
     schema = api.get("/openapi.json").json()
-    assert schema["info"]["version"] == "0.4.4"
+    assert schema["info"]["version"] == "0.4.5"
     assert "/healthz" in schema["paths"]
     assert "/health" not in schema["paths"]
     assert "/v1/tickets/{ticket_id}/refund-approvals" in schema["paths"]
@@ -438,3 +438,104 @@ def test_optional_keys_stay_omitted_from_typed_responses() -> None:
         json={"ticket_id": ticket_id},
     ).json()
     assert set(task) == {"id", "status", "attempts"}
+
+
+class SubjectVerifier:
+    """Tokens are `subject|role|scope,scope`, as an introspection result."""
+
+    async def verify_token(self, token):
+        subject, role, scopes = token.split("|")
+        return SimpleNamespace(
+            subject=subject,
+            scopes=scopes.split(","),
+            claims={"tenant_id": "tenant-a", "roles": [role]},
+        )
+
+
+def bearer(subject: str, role: str, scopes: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer {subject}|{role}|{scopes}"}
+
+
+def test_each_verified_subject_has_its_own_limit_behind_one_proxy_ip() -> None:
+    api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=SubjectVerifier(), requests_per_minute=2))
+    first = bearer("agent-one", "agent", "ticket:read")
+    second = bearer("agent-two", "agent", "ticket:read")
+    assert [api.get("/v1/tickets", headers=first).status_code for _ in range(3)] == [200, 200, 429]
+    assert api.get("/v1/tickets", headers=second).status_code == 200
+
+
+def test_preauthentication_ceiling_still_stops_a_flood_of_tokens() -> None:
+    api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=SubjectVerifier(), requests_per_minute=1))
+    codes = [api.get("/v1/tickets", headers=bearer(f"user-{index}", "agent", "ticket:read")).status_code
+             for index in range(11)]
+    assert codes[:10] == [200] * 10
+    assert codes[10] == 429
+
+
+def test_unverified_tokens_never_reach_the_subject_bucket() -> None:
+    class Rejecting:
+        async def verify_token(self, token):
+            return None
+
+    api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=Rejecting(), requests_per_minute=1))
+    assert api.get("/v1/tickets", headers={"Authorization": "Bearer x"}).status_code == 401
+    assert api.get("/v1/tickets", headers={"Authorization": "Bearer x"}).status_code == 401
+
+
+def test_role_limits_the_scopes_a_token_can_use() -> None:
+    api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=SubjectVerifier()))
+    everything = "ticket:read,ticket:write,refund:request,approval:decide"
+    approver = bearer("approver-a", "approver", everything)
+    agent = bearer("agent-a", "agent", everything)
+    payload = {"customer_id": "c", "subject": "s", "body": "b"}
+    assert api.post("/v1/tickets", headers=approver, json=payload).status_code == 403
+    created = api.post("/v1/tickets", headers=agent, json=payload)
+    assert created.status_code == 201
+    assert api.get("/v1/approvals", headers=approver).status_code == 200
+    assert api.get("/v1/approvals", headers=agent).status_code == 403
+    refund = api.post(
+        f"/v1/tickets/{created.json()['id']}/refund-approvals",
+        headers={**approver, "Idempotency-Key": "role-1"},
+        json={"amount_cents": 100},
+    )
+    assert refund.status_code == 403
+
+
+def test_unknown_role_gets_no_scopes() -> None:
+    api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=SubjectVerifier()))
+    assert api.get("/v1/tickets", headers=bearer("x", "viewer", "ticket:read")).status_code == 403
+
+
+def test_local_demo_tokens_keep_their_declared_scopes() -> None:
+    api = client()
+    assert api.post(
+        "/v1/tickets",
+        headers=auth_headers("tenant-a-agent"),
+        json={"customer_id": "c", "subject": "s", "body": "b"},
+    ).status_code == 201
+
+
+def test_manual_refund_is_owned_by_a_durable_task() -> None:
+    from supportops_platform.async_tasks.queue import LocalTaskQueue
+
+    class Tracking(LocalTaskQueue):
+        def __init__(self) -> None:
+            super().__init__()
+            self.tracked = []
+
+        def track_refund(self, actor, ticket_id, approval_id, idempotency_key):
+            self.tracked.append((actor.subject, ticket_id, approval_id, idempotency_key))
+            return "task-1"
+
+    queue = Tracking()
+    api = TestClient(create_app(token_secret=TEST_SECRET, task_queue=queue))
+    ticket_id = create_ticket(api)
+    response = request_refund(api, ticket_id, 900, "manual-1")
+    assert response.status_code == 202
+    assert response.json()["task_id"] == "task-1"
+    assert queue.tracked == [("agent-a", ticket_id, response.json()["id"], "manual-1")]
+
+
+def test_refund_response_omits_task_id_without_a_durable_queue() -> None:
+    api = client()
+    assert set(request_refund(api, create_ticket(api), 900, "manual-2").json()) == {"id", "state", "action"}

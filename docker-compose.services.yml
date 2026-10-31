@@ -1,6 +1,6 @@
 x-runtime: &runtime
   build: .
-  image: supportops-platform:0.4.4-local
+  image: supportops-platform:0.4.5-local
   environment: &runtime-env
     LLM_MODE: fake
     P05_RUNTIME: services

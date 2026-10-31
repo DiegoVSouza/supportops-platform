@@ -1,0 +1,105 @@
+..........................FFFFF.F.                                       [100%]
+================================== FAILURES ===================================
+______ test_each_verified_subject_has_its_own_limit_behind_one_proxy_ip _______
+
+    def test_each_verified_subject_has_its_own_limit_behind_one_proxy_ip() -> None:
+        api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=SubjectVerifier(), requests_per_minute=2))
+        first = bearer("agent-one", "agent", "ticket:read")
+        second = bearer("agent-two", "agent", "ticket:read")
+        assert [api.get("/v1/tickets", headers=first).status_code for _ in range(3)] == [200, 200, 429]
+>       assert api.get("/v1/tickets", headers=second).status_code == 200
+E       AssertionError: assert 429 == 200
+E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+E        +    where <Response [429 Too Many Requests]> = get('/v1/tickets', headers={'Authorization': 'Bearer agent-two|agent|ticket:read'})
+E        +      where get = <starlette.testclient.TestClient object at 0x00000233CF77BD90>.get
+
+tests\test_api_security.py:464: AssertionError
+________ test_preauthentication_ceiling_still_stops_a_flood_of_tokens _________
+
+    def test_preauthentication_ceiling_still_stops_a_flood_of_tokens() -> None:
+        api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=SubjectVerifier(), requests_per_minute=1))
+        codes = [api.get("/v1/tickets", headers=bearer(f"user-{index}", "agent", "ticket:read")).status_code
+                 for index in range(11)]
+>       assert codes[:10] == [200] * 10
+E       assert [200, 429, 42...429, 429, ...] == [200, 200, 20...200, 200, ...]
+E         
+E         At index 1 diff: 429 != 200
+E         Use -v to get more diff
+
+tests\test_api_security.py:471: AssertionError
+____________ test_unverified_tokens_never_reach_the_subject_bucket ____________
+
+    def test_unverified_tokens_never_reach_the_subject_bucket() -> None:
+        class Rejecting:
+            async def verify_token(self, token):
+                return None
+    
+        api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=Rejecting(), requests_per_minute=1))
+        assert api.get("/v1/tickets", headers={"Authorization": "Bearer x"}).status_code == 401
+>       assert api.get("/v1/tickets", headers={"Authorization": "Bearer x"}).status_code == 401
+E       AssertionError: assert 429 == 401
+E        +  where 429 = <Response [429 Too Many Requests]>.status_code
+E        +    where <Response [429 Too Many Requests]> = get('/v1/tickets', headers={'Authorization': 'Bearer x'})
+E        +      where get = <starlette.testclient.TestClient object at 0x00000233CF7E0050>.get
+
+tests\test_api_security.py:482: AssertionError
+_________________ test_role_limits_the_scopes_a_token_can_use _________________
+
+    def test_role_limits_the_scopes_a_token_can_use() -> None:
+        api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=SubjectVerifier()))
+        everything = "ticket:read,ticket:write,refund:request,approval:decide"
+        approver = bearer("approver-a", "approver", everything)
+        agent = bearer("agent-a", "agent", everything)
+        payload = {"customer_id": "c", "subject": "s", "body": "b"}
+>       assert api.post("/v1/tickets", headers=approver, json=payload).status_code == 403
+E       AssertionError: assert 201 == 403
+E        +  where 201 = <Response [201 Created]>.status_code
+E        +    where <Response [201 Created]> = post('/v1/tickets', headers={'Authorization': 'Bearer approver-a|approver|ticket:read,ticket:write,refund:request,approval:decide'}, json={'body': 'b', 'customer_id': 'c', 'subject': 's'})
+E        +      where post = <starlette.testclient.TestClient object at 0x00000233CF9783D0>.post
+
+tests\test_api_security.py:491: AssertionError
+______________________ test_unknown_role_gets_no_scopes _______________________
+
+    def test_unknown_role_gets_no_scopes() -> None:
+        api = TestClient(create_app(token_secret=TEST_SECRET, token_verifier=SubjectVerifier()))
+>       assert api.get("/v1/tickets", headers=bearer("x", "viewer", "ticket:read")).status_code == 403
+E       AssertionError: assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+E        +    where <Response [200 OK]> = get('/v1/tickets', headers={'Authorization': 'Bearer x|viewer|ticket:read'})
+E        +      where get = <starlette.testclient.TestClient object at 0x00000233CF97B850>.get
+E        +      and   {'Authorization': 'Bearer x|viewer|ticket:read'} = bearer('x', 'viewer', 'ticket:read')
+
+tests\test_api_security.py:506: AssertionError
+________________ test_manual_refund_is_owned_by_a_durable_task ________________
+
+    def test_manual_refund_is_owned_by_a_durable_task() -> None:
+        from supportops_platform.async_tasks.queue import LocalTaskQueue
+    
+        class Tracking(LocalTaskQueue):
+            def __init__(self) -> None:
+                super().__init__()
+                self.tracked = []
+    
+            def track_refund(self, actor, ticket_id, approval_id, idempotency_key):
+                self.tracked.append((actor.subject, ticket_id, approval_id, idempotency_key))
+                return "task-1"
+    
+        queue = Tracking()
+        api = TestClient(create_app(token_secret=TEST_SECRET, task_queue=queue))
+        ticket_id = create_ticket(api)
+        response = request_refund(api, ticket_id, 900, "manual-1")
+        assert response.status_code == 202
+>       assert response.json()["task_id"] == "task-1"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'task_id'
+
+tests\test_api_security.py:535: KeyError
+=========================== short test summary info ===========================
+FAILED tests/test_api_security.py::test_each_verified_subject_has_its_own_limit_behind_one_proxy_ip
+FAILED tests/test_api_security.py::test_preauthentication_ceiling_still_stops_a_flood_of_tokens
+FAILED tests/test_api_security.py::test_unverified_tokens_never_reach_the_subject_bucket
+FAILED tests/test_api_security.py::test_role_limits_the_scopes_a_token_can_use
+FAILED tests/test_api_security.py::test_unknown_role_gets_no_scopes - Asserti...
+FAILED tests/test_api_security.py::test_manual_refund_is_owned_by_a_durable_task
+6 failed, 28 passed in 3.69s
+exit=1

@@ -24,7 +24,7 @@ from .agents.triage import (
     configured_llm_mode,
     run_configured_triage,
 )
-from .async_tasks.durable import DurableQueue
+from .async_tasks.durable import MANUAL_REFUND_PREFIX, DurableQueue
 from .async_tasks.failures import failure_code
 from .auth.rate_limit import RedisRateLimiter
 from .contracts import AuthorizationLeaseExpired
@@ -111,6 +111,20 @@ class ServiceWorker:
                 raise TransientFailure("transient_failure") from exc
             raise PermanentFailure(failure_code(exc) or "worker_failure") from exc
 
+    def _finish_manual_refund(self, job, actor):
+        """Carry out a human decision; no triage ran, so there is no agent to resume."""
+        approval = self.store.approval(actor, job["approval_id"])
+        result = {
+            "response": "Refund " + approval.state + " by an approver.",
+            "citations": [],
+            "approval_id": approval.id,
+            "approval_state": approval.state,
+        }
+        if approval.state == "approved":
+            result["refund"] = self.store.simulated_refund(job["id"], approval.amount_cents)
+        self.queue.finish(job["id"], "succeeded", result, generation=job["generation"])
+        return result
+
     def _run_job(self, payload, step):
         job = self.queue.job(payload["job_id"])
         if payload.get("generation", 0) != job["generation"]:
@@ -129,6 +143,8 @@ class ServiceWorker:
             ticket = self.store.get_ticket(actor, job["ticket_id"])
             if job["status"] in {"succeeded", "needs_approval"}:
                 return job["result"]
+            if job["idempotency_key"].startswith(MANUAL_REFUND_PREFIX):
+                return self._finish_manual_refund(job, actor)
             verdict = guard(ticket.subject + "\n" + ticket.body, role="support")
             if verdict.action == "block":
                 result = {
@@ -198,7 +214,7 @@ class ServiceWorker:
                     model=execution.live_metrics["model"],
                     llm_usage=execution.live_metrics,
                 )
-            if "refund" in (ticket.subject + " " + ticket.body).lower():
+            if job["approval_id"] or "refund" in (ticket.subject + " " + ticket.body).lower():
                 approval = (
                     self.store.approval(actor, job["approval_id"])
                     if job["approval_id"]

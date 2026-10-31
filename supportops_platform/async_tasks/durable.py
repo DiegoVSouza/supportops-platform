@@ -17,6 +17,7 @@ from supportops_platform.repositories import AuthorizationError
 from supportops_platform.async_tasks.failures import failure_code
 
 TRACER = trace.get_tracer("p05.durable")
+MANUAL_REFUND_PREFIX = "refund:"
 
 
 @dataclass
@@ -59,6 +60,24 @@ class DurableQueue:
                     if row["ticket_id"] != payload["ticket_id"]:
                         raise ValueError("idempotency key reused with different task")
             return self.get(actor,row["id"])
+
+    def track_refund(self, actor, ticket_id, approval_id, idempotency_key):
+        """Own a manually requested refund, so its decision runs through the worker."""
+        carrier = {}
+        propagate.inject(carrier)
+        identity = {"subject":actor.subject,"tenant_id":actor.tenant_id,
+                    "roles":sorted(actor.roles),"scopes":sorted(actor.scopes)}
+        key = MANUAL_REFUND_PREFIX + idempotency_key
+        with psycopg.connect(self.dsn) as conn:
+            row = conn.execute("INSERT INTO platform_jobs(id,tenant_id,idempotency_key,ticket_id,principal,trace_context,status,approval_id) "
+                               "VALUES(%s,%s,%s,%s,%s,%s,'needs_approval',%s) ON CONFLICT(tenant_id,idempotency_key) DO NOTHING RETURNING id",
+                               (str(uuid4()),actor.tenant_id,key,ticket_id,Jsonb(identity),Jsonb(carrier),approval_id)).fetchone()
+            if row is None:
+                return conn.execute("SELECT id FROM platform_jobs WHERE tenant_id=%s AND idempotency_key=%s",
+                                    (actor.tenant_id,key)).fetchone()[0]
+            conn.execute("UPDATE platform_objects SET data=jsonb_set(data,'{status}',%s::jsonb) WHERE tenant_id=%s AND kind='ticket' AND id=%s",
+                         (Jsonb("needs_approval"),actor.tenant_id,ticket_id))
+            return row[0]
 
     def job(self, identifier):
         with psycopg.connect(self.dsn, row_factory=dict_row) as conn:

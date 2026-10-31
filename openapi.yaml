@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "SupportOps Platform",
-    "version": "0.4.4"
+    "version": "0.4.5"
   },
   "paths": {
     "/healthz": {
@@ -800,6 +800,17 @@
           "action": {
             "type": "string",
             "title": "Action"
+          },
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id"
           }
         },
         "type": "object",

@@ -125,7 +125,7 @@ def test_agent_triage_span_does_not_export_exception_status(monkeypatch):
     ticket=SimpleNamespace(subject='safe',body='safe',customer_id='customer-a',id='ticket-1')
     runtime=ServiceWorker.__new__(ServiceWorker)
     runtime.queue=SimpleNamespace(
-        job=lambda _: {'id':'job-2','generation':0,'status':'queued','trace_context':{},'ticket_id':'ticket-1','approval_id':None},
+        job=lambda _: {'id':'job-2','generation':0,'status':'queued','trace_context':{},'ticket_id':'ticket-1','approval_id':None,'idempotency_key':'triage-2'},
         authorization_active=lambda *_: True,
         effect_exists=lambda *_: False,
         actor=lambda _: object(),

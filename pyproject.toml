@@ -1,6 +1,6 @@
 [project]
 name = "supportops-platform"
-version = "0.4.4"
+version = "0.4.5"
 description = "Tenant-scoped support operations platform with deterministic AI boundaries"
 requires-python = ">=3.13,<3.14"
 dependencies = [

@@ -188,3 +188,5 @@ Corrected inconsistent service restart policies after Docker startup left Postgr
 2026-10-30 phase031: additive console contract, ADR-009, package 0.4.4. New `GET /v1/approvals`, typed responses, 167 passed, 2 warnings in 16.77s. Earlier live acceptance describes the prior source. See phase031 VERIFY.
 
 2026-10-30 phase032: `/readyz` checks PostgreSQL and Redis; down migrations added and cycled in a disposable database. 169 tests pass.
+
+2026-10-31 phase033: per-subject rate limit, role-bound scopes, manual refunds owned by a durable job (ADR-010, 0.4.5). 179 tests and the isolated service gate pass. See phase033 VERIFY.

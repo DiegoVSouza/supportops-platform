@@ -81,6 +81,7 @@ class ApprovalState(BaseModel):
 
 class RefundAccepted(ApprovalState):
     action: str
+    task_id: str | None = None
 
 
 class FeedbackRecorded(BaseModel):
@@ -127,6 +128,22 @@ class TriageView(BaseModel):
     stop_reason: str
     llm_mode: str
     llm_usage: dict[str, int | float | str] | None = None
+
+
+# Keycloak scopes are requested per client, not per role, so a browser token can
+# carry scopes its user's role must not exercise.
+ROLE_SCOPES = {
+    "agent": frozenset({
+        "ticket:read", "ticket:write", "task:read", "task:write", "triage:run",
+        "billing:read", "crm:read", "refund:request", "feedback:write",
+    }),
+    "approver": frozenset({"ticket:read", "task:read", "approval:decide"}),
+}
+PREAUTH_LIMIT_MULTIPLIER = 10
+
+
+def role_scopes(roles: frozenset[str]) -> frozenset[str]:
+    return frozenset().union(*(ROLE_SCOPES.get(role, frozenset()) for role in roles))
 
 
 def create_app(
@@ -184,6 +201,33 @@ def create_app(
     app.state.request_times_lock = Lock()
     bearer_scheme = HTTPBearer(auto_error=False)
 
+    def allow_locally(bucket: str, limit: int) -> bool:
+        now = monotonic()
+        with app.state.request_times_lock:
+            events = app.state.request_times.setdefault(bucket, deque())
+            while events and events[0] <= now - 60:
+                events.popleft()
+            if len(events) >= limit:
+                return False
+            events.append(now)
+        return True
+
+    async def enforce_subject_limit(actor: Principal) -> None:
+        bucket = f"subject:{actor.tenant_id}:{actor.subject}"
+        if app.state.rate_limiter is None:
+            allowed = allow_locally(bucket, app.state.rate_limit)
+        else:
+            try:
+                allowed = await asyncio.to_thread(
+                    app.state.rate_limiter.allow, bucket, app.state.rate_limit
+                )
+            except Exception as exc:
+                raise HTTPException(
+                    status_code=503, detail="rate-limit service unavailable"
+                ) from exc
+        if not allowed:
+            raise HTTPException(status_code=429, detail="rate limit exceeded")
+
     async def principal(
         credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     ) -> Principal:
@@ -201,19 +245,23 @@ def create_app(
                 if accepted is None:
                     raise InvalidTokenError("external token is inactive or invalid")
                 claims = accepted.claims
-                return Principal(
+                roles = frozenset(claims["roles"])
+                actor = Principal(
                     subject=accepted.subject,
                     tenant_id=claims["tenant_id"],
-                    roles=frozenset(claims["roles"]),
-                    scopes=frozenset(accepted.scopes),
+                    roles=roles,
+                    scopes=frozenset(accepted.scopes) & role_scopes(roles),
                 )
-            return decode_principal(credentials.credentials, app.state.token_secret)
+            else:
+                return decode_principal(credentials.credentials, app.state.token_secret)
         except InvalidTokenError as exc:
             raise HTTPException(
                 status_code=401,
                 detail="invalid token",
                 headers={"WWW-Authenticate": "Bearer"},
             ) from exc
+        await enforce_subject_limit(actor)
+        return actor
 
     @app.get("/healthz")
     @app.get("/health", include_in_schema=False)
@@ -374,7 +422,11 @@ def create_app(
                 raise HTTPException(status_code=409, detail=str(exc)) from exc
         return {"id": approval.id, "state": approval.state}
 
-    @app.post("/v1/tickets/{ticket_id}/refund-approvals", status_code=202)
+    @app.post(
+        "/v1/tickets/{ticket_id}/refund-approvals",
+        status_code=202,
+        response_model_exclude_unset=True,
+    )
     def request_refund(
         ticket_id: str,
         payload: RefundRequest,
@@ -389,7 +441,12 @@ def create_app(
             raise HTTPException(status_code=403, detail=str(exc)) from exc
         except ValueError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
-        return {"id": approval.id, "state": approval.state, "action": approval.action}
+        accepted = {"id": approval.id, "state": approval.state, "action": approval.action}
+        if hasattr(app.state.task_queue, "track_refund"):
+            accepted["task_id"] = app.state.task_queue.track_refund(
+                actor, ticket_id, approval.id, approval.idempotency_key
+            )
+        return accepted
 
     @app.get("/v1/approvals")
     def list_approvals(
@@ -486,10 +543,14 @@ def create_app(
                 return JSONResponse(
                     status_code=413, content={"detail": "request too large"}
                 )
-        now = monotonic()
         bucket = request.client.host if request.client else "unknown"
+        authorization = request.headers.get("authorization", "")
+        limit = app.state.rate_limit
+        if app.state.auth_mode == "oidc" and authorization.startswith("Bearer "):
+            # Verified subjects are limited in `principal`. Here one proxy IP
+            # carries many users, and this only guards introspection from floods.
+            limit *= PREAUTH_LIMIT_MULTIPLIER
         if app.state.rate_limiter is not None:
-            authorization = request.headers.get("authorization", "")
             if authorization.startswith("Bearer "):
                 try:
                     actor = decode_principal(authorization[7:], app.state.token_secret)
@@ -498,7 +559,7 @@ def create_app(
                     pass
             try:
                 allowed = await asyncio.to_thread(
-                    app.state.rate_limiter.allow, bucket, app.state.rate_limit
+                    app.state.rate_limiter.allow, bucket, limit
                 )
             except Exception:
                 return JSONResponse(
@@ -509,19 +570,10 @@ def create_app(
                 return JSONResponse(
                     status_code=429, content={"detail": "rate limit exceeded"}
                 )
-        else:
-            limited = False
-            with app.state.request_times_lock:
-                events = app.state.request_times.setdefault(bucket, deque())
-                while events and events[0] <= now - 60:
-                    events.popleft()
-                limited = len(events) >= app.state.rate_limit
-                if not limited:
-                    events.append(now)
-            if limited:
-                return JSONResponse(
-                    status_code=429, content={"detail": "rate limit exceeded"}
-                )
+        elif not allow_locally(bucket, limit):
+            return JSONResponse(
+                status_code=429, content={"detail": "rate limit exceeded"}
+            )
         response = await call_next(request)
         app.state.metrics.record_request(request.method, response.status_code)
         return response
