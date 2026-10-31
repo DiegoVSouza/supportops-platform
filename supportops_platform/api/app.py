@@ -268,6 +268,13 @@ def create_app(
         await enforce_subject_limit(actor)
         return actor
 
+    @app.get("/v1/demo/runs")
+    def demo_runs() -> dict[str, list]:
+        """Public, read-only: the last live runs as numbers and identifiers only (no ticket text, no model output)."""
+        from supportops_platform.agents.demo_live import public_runs
+
+        return {"runs": public_runs()}
+
     @app.get("/healthz")
     @app.get("/health", include_in_schema=False)
     def health() -> dict[str, str]:

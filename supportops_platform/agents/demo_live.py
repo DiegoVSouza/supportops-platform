@@ -23,6 +23,7 @@ import threading
 import time
 import uuid
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from decimal import ROUND_CEILING, Decimal
 from typing import Any, Callable, Mapping, Protocol
 
@@ -41,6 +42,7 @@ OUTPUT_USD_PER_MILLION = Decimal("0.30")
 MAX_OUTPUT_TOKENS = 512
 MAX_INPUT_BYTES = 4096
 STEPS = 4
+RUNS_KEPT = 20
 CATEGORIES = {"shipping", "billing", "technical", "account_access", "other"}
 RETRYABLE = {408, 409, 429, 500, 502, 503, 504}
 
@@ -92,6 +94,7 @@ class MemoryLedger:
         self.ceiling_micro = ceiling_micro
         self._committed = 0
         self._open: dict[str, int] = {}
+        self._runs: list[dict[str, Any]] = []
         self._lock = threading.Lock()
 
     def reserve(self, agent: str, worst_micro: int) -> str:
@@ -116,6 +119,15 @@ class MemoryLedger:
         with self._lock:
             return self._committed
 
+    def record_run(self, steps: list[dict[str, Any]]) -> None:
+        with self._lock:
+            self._runs.append({"id": uuid.uuid4().hex[:12], "at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "steps": steps})
+            del self._runs[:-RUNS_KEPT]
+
+    def recent_runs(self, limit: int = 5) -> list[dict[str, Any]]:
+        with self._lock:
+            return list(reversed(self._runs[-limit:]))
+
 
 class PostgresLedger:
     """Persistent ledger. One atomic UPDATE both checks the ceiling and takes the reservation."""
@@ -128,6 +140,8 @@ class PostgresLedger:
         "id uuid PRIMARY KEY, campaign text NOT NULL REFERENCES llm_budget(campaign), agent text NOT NULL,"
         " reserved_micro bigint NOT NULL, actual_micro bigint, status text NOT NULL,"
         " input_tokens integer, output_tokens integer, key_slot integer, created_at timestamptz NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS llm_runs("
+        "id uuid PRIMARY KEY, campaign text NOT NULL, steps jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now())",
     )
 
     def __init__(self, dsn: str, ceiling_micro: int, campaign: str = CAMPAIGN, connect: Callable[..., Any] | None = None) -> None:
@@ -214,6 +228,25 @@ class PostgresLedger:
         return self._run(
             lambda db: db.execute("SELECT committed_micro FROM llm_budget WHERE campaign = %s", (self.campaign,)).fetchone()[0]
         )
+
+    def record_run(self, steps: list[dict[str, Any]]) -> None:
+        import json as _json
+
+        self._run(
+            lambda db: db.execute(
+                "INSERT INTO llm_runs(id, campaign, steps) VALUES (%s, %s, %s::jsonb)",
+                (str(uuid.uuid4()), self.campaign, _json.dumps(steps)),
+            )
+        )
+
+    def recent_runs(self, limit: int = 5) -> list[dict[str, Any]]:
+        rows = self._run(
+            lambda db: db.execute(
+                "SELECT id, created_at, steps FROM llm_runs WHERE campaign = %s ORDER BY created_at DESC LIMIT %s",
+                (self.campaign, limit),
+            ).fetchall()
+        )
+        return [{"id": str(r[0])[:12], "at": r[1].isoformat(timespec="seconds"), "steps": r[2]} for r in rows]
 
 
 # ------------------------------------------------------------------------------------ transport
@@ -427,7 +460,40 @@ def run_demo_triage(ticket, retriever, *, ledger: Ledger, ring: KeyRing) -> Agen
     result = get_runner("core").run(agent_ticket, llm=client, max_steps=STEPS)
     if len(client.steps) != STEPS:
         raise AccountedDenied("incomplete_workflow")
+    record = getattr(ledger, "record_run", None)
+    if record is not None:
+        try:
+            record(public_steps(client.steps))
+        except Exception:  # noqa: BLE001 - the public run list is a convenience, never a reason to fail a paid run
+            pass
     return AgentTriageRun(result, citations, client.totals(), tuple(client.steps))
+
+
+def public_steps(steps) -> list[dict[str, Any]]:
+    """Numbers and identifiers only. No ticket text, no model output, no key slot."""
+    return [
+        {
+            "id": str(s["step"]),
+            "agent": str(s["agent"]),
+            "project": "P01",
+            "model": str(s["model"]),
+            "latencyMs": int(s["latency_ms"]),
+            "tokens": int(s["input_tokens"]) + int(s["output_tokens"]),
+            "costUsd": float(s["estimated_cost_usd"]),
+        }
+        for s in steps
+    ]
+
+
+def public_runs(limit: int = 5) -> list[dict[str, Any]]:
+    """What GET /v1/demo/runs serves. Empty when the live demo is not configured; never raises."""
+    if not demo_live_enabled():
+        return []
+    try:
+        ledger, _ = configured_demo()
+        return list(getattr(ledger, "recent_runs")(limit))
+    except Exception:  # noqa: BLE001
+        return []
 
 
 # ------------------------------------------------------------------------------ configuration

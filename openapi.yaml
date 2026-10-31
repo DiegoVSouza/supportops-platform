@@ -5,6 +5,30 @@
     "version": "0.4.5"
   },
   "paths": {
+    "/v1/demo/runs": {
+      "get": {
+        "summary": "Demo Runs",
+        "description": "Public, read-only: the last live runs as numbers and identifiers only (no ticket text, no model output).",
+        "operationId": "demo_runs_v1_demo_runs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "items": {},
+                    "type": "array"
+                  },
+                  "type": "object",
+                  "title": "Response Demo Runs V1 Demo Runs Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/healthz": {
       "get": {
         "summary": "Health",

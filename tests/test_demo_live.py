@@ -259,3 +259,34 @@ def test_postgres_unreachable_fails_closed():
 
     with pytest.raises(BudgetUnavailable):
         PostgresLedger("postgresql://nobody:nothing@127.0.0.1:1/none?connect_timeout=1", 10)
+
+
+def test_a_finished_run_is_listed_publicly_as_numbers_only():
+    ledger = MemoryLedger(10_000_000)
+    run_demo_triage(ticket(), Retriever(), ledger=ledger, ring=ring(FakePost()))
+    runs = ledger.recent_runs()
+    assert len(runs) == 1 and len(runs[0]["steps"]) == 4
+    public = json.dumps(runs)
+    # No ticket text, no model output, no credential slot.
+    for forbidden in ("refund", "policy", "See the", "key_slot", "k1"):
+        assert forbidden not in public
+    step = runs[0]["steps"][0]
+    assert set(step) == {"id", "agent", "project", "model", "latencyMs", "tokens", "costUsd"}
+    assert step["tokens"] == 960
+
+
+def test_a_failed_run_is_not_listed():
+    ledger = MemoryLedger(10_000_000)
+    with pytest.raises(AccountedDenied):
+        run_demo_triage(ticket(), Retriever(), ledger=ledger, ring=ring(FakePost(failing={k: ProviderError(429, False) for k in ("k1", "k2", "k3", "k4")})))
+    assert ledger.recent_runs() == []
+
+
+def test_public_runs_endpoint_needs_no_credential_and_is_empty_when_not_configured(monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from supportops_platform.api.app import create_app
+
+    monkeypatch.delenv("DEMO_LIVE_DSN", raising=False)
+    response = TestClient(create_app(token_secret="x" * 40)).get("/v1/demo/runs")
+    assert response.status_code == 200 and response.json() == {"runs": []}
