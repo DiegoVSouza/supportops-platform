@@ -7,6 +7,7 @@ COPY migrations ./migrations
 COPY scripts ./scripts
 COPY supportops_platform ./supportops_platform
 COPY agent/prompts ./agent/prompts
+COPY infra/logging ./logcfg
 ARG INSTALL_LIVE=false
 RUN if [ "$INSTALL_LIVE" = "true" ]; then uv sync --locked --no-dev --extra live; else uv sync --locked --no-dev; fi
 
