@@ -101,6 +101,12 @@
       "description": "Local and durable task failure errors are limited to fixed codes before persistence or authenticated task-status responses",
       "status": "PASS_PHASE_025_OFFLINE_AND_FAKE_SERVICE_PRIVACY; MODEL_QUALITY_AND_HUMAN_REVIEW_PENDING",
       "evidence": "artifacts/evidence/span-status-privacy-025/focused-tests.txt; artifacts/evidence/span-status-privacy-025/offline-tests.txt; artifacts/evidence/span-status-privacy-025/full-gate.txt; artifacts/evidence/span-status-privacy-025/phase-025-product-trace.json"
+    },
+    {
+        "id": "demo-live-v1",
+        "description": "Accounted live triage for public traffic: Postgres ledger failing closed at USD 10, 429 failover across numbered credentials, per-step llm_steps",
+        "status": "PASS_LOCAL_OFFLINE_FAKE_TRANSPORT; LIVE_SMOKE_PENDING; FLY_DEPLOY_PENDING",
+        "evidence": ".planning/phases/036-demo-live/VERIFY.md; artifacts/evidence/demo-live-v1/pytest-demo-live-postgres.txt"
     }
   ]
 }

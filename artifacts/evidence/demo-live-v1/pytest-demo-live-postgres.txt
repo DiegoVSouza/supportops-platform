@@ -1,0 +1,3 @@
+$ docker run postgres:16-alpine; P05_TEST_PG_DSN=postgresql://postgres:***@127.0.0.1:55432/postgres uv run --locked pytest tests/test_demo_live.py -v
+============================= 17 passed in 7.14s ==============================
+exit=0

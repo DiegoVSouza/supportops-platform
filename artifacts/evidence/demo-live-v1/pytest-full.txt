@@ -1,0 +1,14 @@
+$ uv run --locked pytest -q -rs (full suite)
+..................................................................       [100%]
+============================== warnings summary ===============================
+tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
+    warnings.warn(  # deprecated in 14.0 - 2024-11-09
+
+tests/test_mcp_oidc.py::test_mcp_tcp_denies_token_after_issuer_revokes_it
+    from websockets.server import WebSocketServerProtocol
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\test_demo_live.py:229: needs a PostgreSQL server: set P05_TEST_PG_DSN (the service gate does, with the compose database)
+SKIPPED [1] tests\test_demo_live.py:256: needs a PostgreSQL server: set P05_TEST_PG_DSN (the service gate does, with the compose database)
+exit=0

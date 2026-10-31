@@ -190,3 +190,5 @@ Corrected inconsistent service restart policies after Docker startup left Postgr
 2026-10-30 phase032: `/readyz` checks PostgreSQL and Redis; down migrations added and cycled in a disposable database. 169 tests pass.
 
 2026-10-31 phase033: per-subject rate limit, role-bound scopes, manual refunds owned by a durable job (ADR-010, 0.4.5). 179 tests and the isolated service gate pass. See phase033 VERIFY.
+
+2026-10-31 phase036: demo-live-v1 offline. Persistent Postgres ledger that fails closed at USD 10, key failover on 429, per-step `llm_steps` in the API. 17 tests pass against PostgreSQL 16; no provider contacted. Live smoke PENDING. See phase036 VERIFY.

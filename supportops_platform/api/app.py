@@ -130,6 +130,8 @@ class TriageView(BaseModel):
     stop_reason: str
     llm_mode: str
     llm_usage: dict[str, int | float | str] | None = None
+    # Additive: one entry per model call, with model, tokens, latency and cost estimate.
+    llm_steps: list[dict[str, int | float | str]] | None = None
 
 
 # Keycloak scopes are requested per client, not per role, so a browser token can
@@ -372,6 +374,11 @@ def create_app(
             **(
                 {"llm_usage": execution.live_metrics}
                 if execution.live_metrics is not None
+                else {}
+            ),
+            **(
+                {"llm_steps": list(execution.llm_steps)}
+                if execution.llm_steps is not None
                 else {}
             ),
         }

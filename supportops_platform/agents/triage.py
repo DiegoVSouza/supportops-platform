@@ -22,6 +22,7 @@ class AgentTriageRun:
     result: TriageResult
     citations: tuple[Citation, ...]
     live_metrics: dict[str, int | float | str] | None = None
+    llm_steps: tuple[dict[str, int | float | str], ...] | None = None
 
 
 class _RetrievalAwareFakeClient:
@@ -164,6 +165,15 @@ def configured_live_keys() -> list[str]:
 def run_configured_triage(ticket: Ticket, retriever, **fake_options) -> AgentTriageRun:
     if configured_llm_mode() == "fake":
         return run_fake_triage(ticket, retriever, **fake_options)
+    from supportops_platform.agents import demo_live
+
+    if demo_live.demo_live_enabled():
+        # demo-live-v1: accounted path with a persistent ledger. The refund decision itself stays
+        # downstream (deterministic gate plus a human), so a refund ticket is allowed to reach the model.
+        if fake_options.get("approved") is not None:
+            raise ValueError("a decided approval resumes without a model call")
+        ledger, ring = demo_live.configured_demo()
+        return demo_live.run_demo_triage(ticket, retriever, ledger=ledger, ring=ring)
     if (
         "refund" in (ticket.subject + " " + ticket.body).lower()
         or fake_options.get("approved") is not None

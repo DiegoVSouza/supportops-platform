@@ -114,12 +114,15 @@ class ServiceWorker:
     def _finish_manual_refund(self, job, actor):
         """Carry out a human decision; no triage ran, so there is no agent to resume."""
         approval = self.store.approval(actor, job["approval_id"])
+        earlier = job.get("result") if isinstance(job.get("result"), dict) else {}
         result = {
+            # Keep what the triage run already recorded (steps, usage, trace id) for the run viewer.
+            **{key: earlier[key] for key in ("llm_steps", "llm_usage", "provider", "model", "trace_id", "citations") if key in earlier},
             "response": "Refund " + approval.state + " by an approver.",
-            "citations": [],
             "approval_id": approval.id,
             "approval_state": approval.state,
         }
+        result.setdefault("citations", [])
         if approval.state == "approved":
             result["refund"] = self.store.simulated_refund(job["id"], approval.amount_cents)
         self.queue.finish(job["id"], "succeeded", result, generation=job["generation"])
@@ -166,6 +169,9 @@ class ServiceWorker:
                 if prior_approval and prior_approval.state != "pending"
                 else None
             )
+            if approved is not None and configured_llm_mode() == "live":
+                # The model proposed before the pause. A human decided; carrying that out needs no new call.
+                return self._finish_manual_refund(job, actor)
             with trace.get_tracer("p05.worker").start_as_current_span(
                 "agent.triage",
                 record_exception=False,
@@ -214,6 +220,8 @@ class ServiceWorker:
                     model=execution.live_metrics["model"],
                     llm_usage=execution.live_metrics,
                 )
+                if execution.llm_steps is not None:
+                    result["llm_steps"] = list(execution.llm_steps)
             if job["approval_id"] or "refund" in (ticket.subject + " " + ticket.body).lower():
                 approval = (
                     self.store.approval(actor, job["approval_id"])
