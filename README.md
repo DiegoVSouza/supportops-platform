@@ -1,5 +1,16 @@
 # P05 — SupportOps Platform
 
+<!-- case:start -->
+## The case
+
+- **Problem.** Support automation crosses tenant data, tools, background work and money. A model must not be able to approve its own refund.
+- **Decision.** Tenant and role come from authenticated context. The model proposes, a deterministic gate checks, and a second person approves; the requester is refused. Retrieval is tenant-scoped and answers cite sources.
+- **Measured.** 179 tests and the isolated service gate passed at phase 033 (PostgreSQL, pgvector, Redis, MCP, crash recovery). The live path `demo-live-v1` has 17 tests against PostgreSQL 16, including the ceiling boundary and concurrent reservations. No provider was contacted for those.
+- **Run it.** `uv sync --locked && uv run --locked pytest`. Service gate: `uv run --locked python scripts/check_full.py` (needs Docker).
+- **Limits.** The refund amount comes from a deterministic tool, not the model. Semantic quality, cost and latency are not measured yet.
+- **Docs.** [Architecture](docs/architecture.md), [security model](docs/harness/security.md), [runbook](docs/runbook.md).
+<!-- case:end -->
+
 An independently versioned, tenant-scoped support operations API with deterministic
 RAG, an MCP tool boundary, asynchronous task contracts, human approval for refund
 requests, and privacy-aware observability interfaces. Local fake mode is the default.
