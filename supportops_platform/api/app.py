@@ -10,6 +10,7 @@ from time import monotonic
 from typing import Literal
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt.exceptions import InvalidTokenError
@@ -19,6 +20,7 @@ from pydantic import BaseModel, Field
 from supportops_platform import __version__
 from supportops_platform.agents.triage import configured_llm_mode, run_configured_triage
 from supportops_platform.async_tasks.queue import LocalTaskQueue
+from supportops_platform.api.cors import ALLOWED_HEADERS, ALLOWED_METHODS, EXPOSED_HEADERS, parse_cors_origins
 from supportops_platform.async_tasks.failures import failure_code
 from supportops_platform.auth.jwt import decode_principal
 from supportops_platform.contracts import AuthorizationLeaseExpired, Principal, Ticket
@@ -155,6 +157,7 @@ def create_app(
     rate_limiter=None,
     token_verifier=None,
     triage_handler=None,
+    cors_origins: str | None = None,
 ) -> FastAPI:
     if requests_per_minute < 1:
         raise ValueError("requests_per_minute must be positive")
@@ -594,6 +597,18 @@ def create_app(
             )
             return response
 
+    # Outermost on purpose: a preflight must be answered before authentication or rate limits run.
+    origins = parse_cors_origins(cors_origins if cors_origins is not None else os.getenv("CORS_ALLOWED_ORIGINS"))
+    if origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_methods=ALLOWED_METHODS,
+            allow_headers=ALLOWED_HEADERS,
+            expose_headers=EXPOSED_HEADERS,
+            allow_credentials=False,
+            max_age=600,
+        )
     return app
 
 
