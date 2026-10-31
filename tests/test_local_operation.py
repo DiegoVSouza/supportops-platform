@@ -2,6 +2,7 @@ from decimal import Decimal
 from urllib.error import HTTPError
 import io
 
+import pathlib
 import pytest
 
 from scripts.campaign_ledger import CampaignBlocked,CampaignLedger
@@ -72,6 +73,10 @@ def test_trace_polling_stops_at_five_reads_and_does_not_retry_denial():
         poll_trace("http://127.0.0.1/trace",opener=denied,sleep=lambda _:pytest.fail("must not retry denial"))
 
 
+@pytest.mark.skipif(
+    not (pathlib.Path(__file__).resolve().parents[3] / "scripts/harness/live_free_account.py").is_file(),
+    reason="lab integration test: the controller imports live_free_account from the ai-engineer-lab scripts/harness directory, which is absent outside the lab",
+)
 def test_controller_configures_export_before_import_time_default_app():
     import subprocess
     import sys
