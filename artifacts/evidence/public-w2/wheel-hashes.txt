@@ -1,0 +1,6 @@
+7126517f9c64202b034b8a067dedf29e1313bb3139f15a984e93660654eb4d10 *supportops_ai_toolkit-0.2.0-py3-none-any.whl
+dd77e9b91f2d9ba7ac84178bbb557e0ea50bde954554a528b4632dec18ddb51f *supportops_agents-0.1.1-py3-none-any.whl
+fefb871993591cabe7f9baba132e9f430ddbd65dd730c6789e22dc86d4d87c3f *supportops_async-0.1.4-py3-none-any.whl
+df4292756676d02490a908b609b8f9474f35f3c5f56131809f3e4a83659b4795 *supportops_foundation-1.0.1-py3-none-any.whl
+82b3a79aacd0ac4faa1082087c0237487264b2a6497d9b77b79c1d6bb86f66a8 *supportops_obs-0.3.1-py3-none-any.whl
+all five match uv.lock hashes (checked 2026-10-31, exit 0)
