@@ -11,6 +11,31 @@
 - **Docs.** [Architecture](docs/architecture.md), [security model](docs/harness/security.md), [runbook](docs/runbook.md).
 <!-- case:end -->
 
+<!-- flow:start -->
+## How it works
+
+Generated from the same data as the diagram on the portfolio site (`projects/supportops/`), so the two cannot drift.
+
+```mermaid
+flowchart LR
+  ticket["Ticket"]
+  auth["Tenant from token"]
+  rag["Tenant-scoped search"]
+  agents["Four agents"]
+  ledger["Budget ledger"]
+  gate["Refund gate"]
+  approver["Second person"]
+  refund["Simulated refund"]
+  ticket --> auth
+  auth --> rag
+  rag --> agents
+  agents --> ledger
+  ledger -->|proposal| gate
+  gate --> approver
+  approver -->|approved| refund
+```
+<!-- flow:end -->
+
 An independently versioned, tenant-scoped support operations API with deterministic
 RAG, an MCP tool boundary, asynchronous task contracts, human approval for refund
 requests, and privacy-aware observability interfaces. Local fake mode is the default.
