@@ -119,6 +119,12 @@
       ],
       "status": "PASS_LOCAL_FAKE_TRANSPORT; PASS_FLY_DEPLOYED_ONE_LIVE_RUN",
       "evidence": ".planning/phases/037-toolkit-limits/VERIFY.md; artifacts/evidence/toolkit-limits-037/red.txt; artifacts/evidence/toolkit-limits-037/green.txt; artifacts/evidence/toolkit-limits-037/check-fast.txt; artifacts/evidence/status-reconcile/fly-deploy-adapter.txt (deploy exit 0); artifacts/evidence/status-reconcile/live-demo-runs-after-adapter.json (a live run at 2026-11-02T14:30Z, four steps, 2730 tokens, under the 8192 limit); artifacts/evidence/status-reconcile/e2e-fly-after-adapter.txt (3 passed)"
+    },
+    {
+      "id": "service-gate-0-4-5",
+      "description": "The full local gate with Docker services (integration, E2E, crash recovery, privacy, authorization expiry) on the current version",
+      "status": "PASS_LOCAL_SERVICE_GATE",
+      "evidence": "artifacts/evidence/status-reconcile/check-full-with-services-0.4.5.txt (P05 0.4.5, 214 passed 2 skipped, every service layer PASS, exit 0 on 2026-11-02)"
     }
   ]
 }
