@@ -1,0 +1,11 @@
+
+Running 4 tests using 1 worker
+
+  ✓  1 e2e\console.spec.ts:25:1 › agent and approver complete a refund, and tenants stay apart (43.2s)
+  ✓  2 e2e\console.spec.ts:73:1 › a manual refund runs after approval, with the requested amount (17.4s)
+  ✓  3 e2e\console.spec.ts:102:1 › narrow screen keeps the console usable (5.7s)
+  -  4 e2e\renewal.spec.ts:4:1 › the session renews itself before the access token expires
+
+  1 skipped
+  3 passed (1.1m)
+exit=0

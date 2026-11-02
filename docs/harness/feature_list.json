@@ -58,7 +58,7 @@
       "id": "real-model-evaluation",
       "description": "Replay/live model quality evaluation",
       "status": "PENDING",
-      "evidence": "Fake control fixtures are not model quality; user selected to keep evaluation pending until a traceable cassette or separately authorized live run is available"
+      "evidence": "No model-quality evaluation was run on 2026-11-02. P00 owns the controlled campaign (ledger, gates, FAIL_PROVISIONAL review pending); a parallel ad hoc run would bypass that counter. Fake fixtures are not model quality. Needs P00's review and promotion first"
     },
     {
       "id": "product-end-to-end-orchestration",
@@ -117,8 +117,8 @@
         "LIM-003",
         "LIM-004"
       ],
-      "status": "PASS_LOCAL_FAKE_TRANSPORT; FLY_DEPLOY_PENDING",
-      "evidence": ".planning/phases/037-toolkit-limits/VERIFY.md; artifacts/evidence/toolkit-limits-037/red.txt; artifacts/evidence/toolkit-limits-037/green.txt; artifacts/evidence/toolkit-limits-037/check-fast.txt"
+      "status": "PASS_LOCAL_FAKE_TRANSPORT; PASS_FLY_DEPLOYED_ONE_LIVE_RUN",
+      "evidence": ".planning/phases/037-toolkit-limits/VERIFY.md; artifacts/evidence/toolkit-limits-037/red.txt; artifacts/evidence/toolkit-limits-037/green.txt; artifacts/evidence/toolkit-limits-037/check-fast.txt; artifacts/evidence/status-reconcile/fly-deploy-adapter.txt (deploy exit 0); artifacts/evidence/status-reconcile/live-demo-runs-after-adapter.json (a live run at 2026-11-02T14:30Z, four steps, 2730 tokens, under the 8192 limit); artifacts/evidence/status-reconcile/e2e-fly-after-adapter.txt (3 passed)"
     }
   ]
 }
