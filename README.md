@@ -111,6 +111,10 @@ deterministic fixtures do not establish semantic quality or production readiness
 
 Tenant and role come from authenticated context, refund approval requires a distinct principal, and fake embeddings remain labeled as control-flow fixtures.
 
+## Run limits on the live path
+
+Each live triage run owns one `ExecutionLimits` from the P02 toolkit (`agents/demo_live.py`): before every provider call it checks the time limit, and after each receipt is settled in the ledger it consumes one step and the real input plus output tokens. A crossing ends the run with `execution_limit`. `RUN_MAX_TOKENS` (8192) and `RUN_MAX_SECONDS` (120) are policy values, not measurements; the money bound stays in the ledger (USD 10, fail closed).
+
 ## Limitations
 
 External identity-provider acceptance is incomplete. Replay/model quality, cost, and comparable latency remain `PENDING`; deterministic retrieval fixtures do not establish semantic retrieval quality.

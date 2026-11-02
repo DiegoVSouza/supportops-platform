@@ -1,5 +1,7 @@
 # Phase 037: toolkit limits on the live path
 
+Status: done.
+
 Owner decision (2026-11-02): the P02 feature `token-limit-in-agent-path` closes with a real adapter in P05, not by dropping it.
 
 P02 does not own an LLM runtime, so callers report usage through `ExecutionLimits.consume(tokens=...)`. P05's fake path already does this with word counts. The live demo path (`agents/demo_live.py`) bounds money in a ledger and bytes per request, but never reports real tokens to the toolkit limits.

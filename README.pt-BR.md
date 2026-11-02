@@ -43,6 +43,10 @@ agente. O servidor MCP Streamable HTTP verifica bearer token e deriva tenant/pap
 contexto autenticado do SDK. A fase 009 testa MCP assinado por TCP loopback, retrieval
 asyncpg nativo, fila durável P04/P01, reinício da API, aprovação distinta e tracing.
 
+## Limites de execução no caminho live
+
+Cada execução de triagem live tem um `ExecutionLimits` do toolkit P02 (`agents/demo_live.py`): antes de cada chamada ao provedor confere o limite de tempo e, depois que o recibo é liquidado no ledger, consome um passo e os tokens reais de entrada e saída. Passar do limite encerra a execução com `execution_limit`. `RUN_MAX_TOKENS` (8192) e `RUN_MAX_SECONDS` (120) são valores de política, não medições; o limite de dinheiro continua no ledger (USD 10, falha fechada).
+
 ## Limitações
 
 PostgreSQL/pgvector, Redis, LocalStack, recuperação de worker após efeito, MCP TCP,
