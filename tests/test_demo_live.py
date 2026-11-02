@@ -290,3 +290,31 @@ def test_public_runs_endpoint_needs_no_credential_and_is_empty_when_not_configur
     monkeypatch.delenv("DEMO_LIVE_DSN", raising=False)
     response = TestClient(create_app(token_secret="x" * 40)).get("/v1/demo/runs")
     assert response.status_code == 200 and response.json() == {"runs": []}
+
+
+def test_toolkit_limits_count_the_real_tokens_and_steps_of_a_run():
+    post = FakePost()
+    client = demo_live.DemoClient(MemoryLedger(10_000_000), ring(post), (CITATION,))
+    client.complete("classifier", {"ticket": "x"})
+    assert client.limits.steps == 1
+    assert client.limits.tokens == 900 + 60
+
+
+def test_a_run_over_the_toolkit_token_limit_is_denied_after_its_receipt_is_settled():
+    # 4 calls of 2560 tokens cross the per-run limit on the fourth.
+    post = FakePost(input_tokens=2500, output_tokens=60)
+    ledger = MemoryLedger(10_000_000)
+    with pytest.raises(AccountedDenied, match="execution_limit"):
+        run_demo_triage(ticket(), Retriever(), ledger=ledger, ring=ring(post))
+    assert len(post.calls) == 4
+    # The call was paid, so the ledger holds its actual cost even though the run was denied.
+    assert ledger.spent_micro() == 4 * micro_usd(2500, 60)
+
+
+def test_an_expired_run_never_contacts_the_provider():
+    post = FakePost()
+    client = demo_live.DemoClient(MemoryLedger(10_000_000), ring(post), (CITATION,))
+    client.limits.started_at -= demo_live.RUN_MAX_SECONDS + 1
+    with pytest.raises(AccountedDenied, match="execution_limit"):
+        client.complete("classifier", {"ticket": "x"})
+    assert post.calls == []

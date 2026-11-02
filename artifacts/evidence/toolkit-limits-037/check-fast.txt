@@ -1,0 +1,2 @@
+check-fast: OK
+exit=0

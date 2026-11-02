@@ -1,0 +1,2 @@
+command=uv run --locked pytest tests/test_demo_live.py -q (after the change)
+...............ss......                                                  [100%]

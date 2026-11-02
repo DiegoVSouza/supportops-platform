@@ -30,7 +30,7 @@ from typing import Any, Callable, Mapping, Protocol
 from supportops_agents import get_runner
 from supportops_agents.contracts import Ticket as AgentTicket
 from supportops_obs import LLMResponse, record_llm_call
-from supportops_toolkit.guardrails import guard
+from supportops_toolkit.guardrails import ExecutionLimits, LimitExceeded, guard
 
 from supportops_platform.agents.accounted import FIELDS, MODEL, AccountedDenied
 from supportops_platform.agents.triage import AgentTriageRun
@@ -42,6 +42,9 @@ OUTPUT_USD_PER_MILLION = Decimal("0.30")
 MAX_OUTPUT_TOKENS = 512
 MAX_INPUT_BYTES = 4096
 STEPS = 4
+# Per-run limits handed to the toolkit's ExecutionLimits. They are policy values, not measurements.
+RUN_MAX_TOKENS = 8192
+RUN_MAX_SECONDS = 120.0
 RUNS_KEPT = 20
 CATEGORIES = {"shipping", "billing", "technical", "account_access", "other"}
 RETRYABLE = {408, 409, 429, 500, 502, 503, 504}
@@ -335,6 +338,7 @@ class DemoClient:
     def __init__(self, ledger: Ledger, ring: KeyRing, citations) -> None:
         self.ledger, self.ring, self.citations = ledger, ring, citations
         self.index, self.stopped = 0, False
+        self.limits = ExecutionLimits(max_steps=STEPS, max_tokens=RUN_MAX_TOKENS, max_seconds=RUN_MAX_SECONDS)
         self.steps: list[dict[str, int | float | str]] = []
 
     def complete(self, agent: str, state: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -373,6 +377,10 @@ class DemoClient:
         }
 
     def _complete(self, agent: str, state: Mapping[str, Any]) -> Mapping[str, Any]:
+        try:
+            self.limits.remaining_seconds()
+        except LimitExceeded:
+            raise AccountedDenied("execution_limit") from None
         payload = self._payload(agent, state)
         size = len(json.dumps(payload, ensure_ascii=False).encode())
         if size + 640 > MAX_INPUT_BYTES:
@@ -401,6 +409,11 @@ class DemoClient:
             raise AccountedDenied("invalid_accounted_receipt")
         actual = micro_usd(reply.input_tokens, reply.output_tokens)
         self.ledger.settle(reservation, actual, reply.input_tokens, reply.output_tokens, slot)
+        # The money is settled first: the call happened and was paid. Then the real usage goes to the toolkit limits.
+        try:
+            self.limits.consume(steps=1, tokens=reply.input_tokens + reply.output_tokens)
+        except LimitExceeded:
+            raise AccountedDenied("execution_limit") from None
         self.index += 1
         output = self._validated(agent, reply.content)
         step = {

@@ -1,0 +1,16 @@
+command=uv run --locked pytest tests/test_demo_live.py -q -k toolkit_limits or token_limit or expired_run (red, before the change)
+tests\test_demo_live.py:307: Failed
+_______________ test_an_expired_run_never_contacts_the_provider _______________
+
+    def test_an_expired_run_never_contacts_the_provider():
+        post = FakePost()
+        client = demo_live.DemoClient(MemoryLedger(10_000_000), ring(post), (CITATION,))
+>       client.limits.started_at -= demo_live.RUN_MAX_SECONDS + 1
+        ^^^^^^^^^^^^^
+E       AttributeError: 'DemoClient' object has no attribute 'limits'
+
+tests\test_demo_live.py:317: AttributeError
+=========================== short test summary info ===========================
+FAILED tests/test_demo_live.py::test_toolkit_limits_count_the_real_tokens_and_steps_of_a_run
+FAILED tests/test_demo_live.py::test_a_run_over_the_toolkit_token_limit_is_denied_after_its_receipt_is_settled
+FAILED tests/test_demo_live.py::test_an_expired_run_never_contacts_the_provider
