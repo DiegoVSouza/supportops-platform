@@ -1,0 +1,3 @@
+allowed_tool_error=false
+cross_tenant_tool_error=true
+allowed_tool_returned_content=True

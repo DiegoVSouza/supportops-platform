@@ -1,0 +1,8 @@
+unauthenticated_tickets=401
+ticket_created=True
+tenant_a_read=200
+tenant_b_read=404
+fake_triage=200
+mcp_initialize=200
+mcp_tool_call=200
+mcp_response_contains_result=True

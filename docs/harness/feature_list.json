@@ -3,14 +3,14 @@
     {
       "id": "auth-tenant-scope",
       "description": "Locally verified JWT or introspected principal scopes API and repository access by tenant",
-      "status": "PASS_LOCAL_HS256_AND_KEYCLOAK_OIDC; INCOMPLETE_EXTERNAL_IDP_ACCEPTANCE",
-      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt; artifacts/evidence/phase-015-keycloak-api.txt"
+      "status": "PASS_LOCAL_HS256_AND_KEYCLOAK_OIDC; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_PENDING",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt; artifacts/evidence/phase-015-keycloak-api.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-oidc-acceptance.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-mcp-acceptance.txt; artifacts/evidence/status-reconcile/console-e2e-on-fly-head-20261102.txt"
     },
     {
       "id": "mcp-trusted-principal",
       "description": "In-memory MCP tools use injected principal and fail closed without it",
-      "status": "PASS_LOCAL_TCP; INCOMPLETE_EXTERNAL_IDENTITY",
-      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt"
+      "status": "PASS_LOCAL_TCP; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_PENDING",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-oidc-acceptance.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-mcp-acceptance.txt; artifacts/evidence/status-reconcile/console-e2e-on-fly-head-20261102.txt"
     },
     {
       "id": "refund-dual-control",
@@ -39,8 +39,8 @@
     {
       "id": "network-mcp-auth",
       "description": "Verified bearer creates a tenant principal through authenticated Streamable HTTP over loopback TCP",
-      "status": "PASS_LOCAL_HS256_AND_RFC7662_CONTRACT; INCOMPLETE_EXTERNAL_IDP_ACCEPTANCE",
-      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-011-introspection-green.txt; artifacts/evidence/phase-014-service-summary.json"
+      "status": "PASS_LOCAL_HS256_AND_RFC7662_CONTRACT; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_PENDING",
+      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-011-introspection-green.txt; artifacts/evidence/phase-014-service-summary.json; artifacts/evidence/status-reconcile/keycloak-on-fly-oidc-acceptance.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-mcp-acceptance.txt; artifacts/evidence/status-reconcile/console-e2e-on-fly-head-20261102.txt"
     },
     {
       "id": "pgvector-hybrid-contract",
@@ -63,8 +63,8 @@
     {
       "id": "product-end-to-end-orchestration",
       "description": "Durable authenticated API to P04 worker to P01 agent to PostgreSQL RAG/MCP flow",
-      "status": "PASS_LOCAL_SERVICE; INCOMPLETE_EXTERNAL_IDENTITY",
-      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-014-full-gate.txt; artifacts/evidence/phase-014-service-summary.json"
+      "status": "PASS_LOCAL_SERVICE; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_PENDING",
+      "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-014-full-gate.txt; artifacts/evidence/phase-014-service-summary.json; artifacts/evidence/status-reconcile/keycloak-on-fly-oidc-acceptance.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-mcp-acceptance.txt; artifacts/evidence/status-reconcile/console-e2e-on-fly-head-20261102.txt"
     },
     {
       "id": "p05-release-wheel",
@@ -103,10 +103,22 @@
       "evidence": "artifacts/evidence/span-status-privacy-025/focused-tests.txt; artifacts/evidence/span-status-privacy-025/offline-tests.txt; artifacts/evidence/span-status-privacy-025/full-gate.txt; artifacts/evidence/span-status-privacy-025/phase-025-product-trace.json"
     },
     {
-        "id": "demo-live-v1",
-        "description": "Accounted live triage for public traffic: Postgres ledger failing closed at USD 10, 429 failover across numbered credentials, per-step llm_steps",
-        "status": "PASS_LOCAL_OFFLINE_FAKE_TRANSPORT; LIVE_SMOKE_PENDING; FLY_DEPLOY_PENDING",
-        "evidence": ".planning/phases/036-demo-live/VERIFY.md; artifacts/evidence/demo-live-v1/pytest-demo-live-postgres.txt"
+      "id": "demo-live-v1",
+      "description": "Accounted live triage for public traffic: Postgres ledger failing closed at USD 10, 429 failover across numbered credentials, per-step llm_steps",
+      "status": "PASS_LOCAL_OFFLINE_FAKE_TRANSPORT; PASS_LIVE_RUNS_ON_FLY; PASS_FLY_DEPLOYED",
+      "evidence": ".planning/phases/036-demo-live/VERIFY.md; artifacts/evidence/demo-live-v1/pytest-demo-live-postgres.txt; artifacts/evidence/status-reconcile/live-smoke-20261031.txt (one ticket, four live calls on four keys); artifacts/evidence/status-reconcile/live-demo-runs-20261102.json (three live runs listed by /v1/demo/runs, latest 2026-11-02T14:07Z, model openai/gpt-oss-20b)"
+    },
+    {
+      "id": "toolkit-token-limit-live-path",
+      "description": "Each live triage run reports real token usage to the toolkit's ExecutionLimits and stops at its limits",
+      "requirement_ids": [
+        "LIM-001",
+        "LIM-002",
+        "LIM-003",
+        "LIM-004"
+      ],
+      "status": "PASS_LOCAL_FAKE_TRANSPORT; FLY_DEPLOY_PENDING",
+      "evidence": ".planning/phases/037-toolkit-limits/VERIFY.md; artifacts/evidence/toolkit-limits-037/red.txt; artifacts/evidence/toolkit-limits-037/green.txt; artifacts/evidence/toolkit-limits-037/check-fast.txt"
     }
   ]
 }
