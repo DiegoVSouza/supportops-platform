@@ -111,6 +111,19 @@ class ServiceWorker:
                 raise TransientFailure("transient_failure") from exc
             raise PermanentFailure(failure_code(exc) or "worker_failure") from exc
 
+    @staticmethod
+    def _customer_record(actor, customer_id):
+        """The CRM row for the ticket's customer, or an explicit unknown record.
+
+        The console lets a visitor type any customer. The tool answers "customer not found" the same way for a missing row and for another
+        tenant's row (it must not tell them apart), so both become one honest record. The run keeps its answer instead of failing
+        with authorization_failure after the model call was already paid.
+        """
+        try:
+            return call_tool(actor, "lookup_customer", {"customer_id": customer_id})
+        except PermissionError:
+            return {"customer_id": customer_id, "tier": "unknown", "found": False}
+
     def _finish_manual_refund(self, job, actor):
         """Carry out a human decision; no triage ran, so there is no agent to resume."""
         approval = self.store.approval(actor, job["approval_id"])
@@ -196,9 +209,7 @@ class ServiceWorker:
             if not active and not self.queue.effect_exists(job["id"]):
                 self.queue.expire(job["id"], job["generation"])
                 return {"authorization_expired": True}
-            customer = call_tool(
-                actor, "lookup_customer", {"customer_id": ticket.customer_id}
-            )
+            customer = self._customer_record(actor, ticket.customer_id)
             invoice_id = "inv-a-1" if actor.tenant_id == "tenant-a" else "inv-b-1"
             invoice = call_tool(actor, "lookup_invoice", {"invoice_id": invoice_id})
             result = {
