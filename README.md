@@ -7,7 +7,7 @@
 - **Decision.** Tenant and role come from authenticated context. The model proposes, a deterministic gate checks, and a second person approves; the requester is refused. Retrieval is tenant-scoped and answers cite sources.
 - **Measured.** 179 tests and the isolated service gate passed at phase 033 (PostgreSQL, pgvector, Redis, MCP, crash recovery). The live path `demo-live-v1` has 17 tests against PostgreSQL 16, including the ceiling boundary and concurrent reservations. No provider was contacted for those.
 - **Run it.** `uv sync --locked && uv run --locked pytest`. Service gate: `uv run --locked python scripts/check_full.py` (needs Docker).
-- **Limits.** The refund amount comes from a deterministic tool, not the model. Semantic quality was measured only on a 16-case development split (8 of 16 passed, one trial each, Wilson 95% 0.28 to 0.72; `artifacts/evals/live/p05-dev-v1/report.json`); there is no holdout result, no human review and no cost or latency benchmark.
+- **Limits.** The refund amount comes from a deterministic tool, not the model. Semantic quality was measured only on a 16-case development split (8 of 16 passed, one trial each, Wilson 95% 0.28 to 0.72; `artifacts/evals/live/p05-dev-v1/report.json`); there is no holdout result and no cost or latency benchmark.
 - **Docs.** [Architecture](docs/architecture.md), [security model](docs/harness/security.md), [runbook](docs/runbook.md).
 <!-- case:end -->
 
