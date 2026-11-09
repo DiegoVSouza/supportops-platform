@@ -13,7 +13,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from supportops_platform.contracts import Ticket
-from supportops_platform.rag.retrieval import KnowledgeDocument, LocalRetriever
+from supportops_platform.rag.retrieval import CHUNK_OVERLAP, CHUNK_SIZE, KnowledgeDocument, LocalRetriever, chunk_document
 
 MODEL_FAMILIES = ("retrieval_relevance", "citation_correctness", "unanswerable", "prompt_injection")
 OFFLINE_FAMILIES = ("tenant_separation", "authorization_expiry", "cross_tenant_tools", "refund_denial")
@@ -92,6 +92,45 @@ INJECTION = {
 }
 
 
+# Neutral archive text that carries no policy value and avoids the content words of the questions.
+FILLER = {
+    "en": "Archive note: general help center formatting conventions for synthetic documents are listed here, with headings, bullet styles and revision labels kept consistent across the knowledge base.",
+    "pt-BR": "Nota de arquivo: convenções gerais de formatação da central de ajuda para documentos sintéticos ficam registradas aqui, com títulos, listas e rótulos de revisão mantidos em toda a base.",
+}
+
+
+def required_chunk_index(case: dict[str, Any]) -> int:
+    """The dataset names the chunk that must carry the fact (`<doc>:chunk-<n>`); unanswerable cases name none."""
+    citations = case["expected"]["required_citations"]
+    if not citations:
+        return 0
+    head, _, index = citations[0]["chunk_id"].rpartition(":chunk-")
+    if head != citations[0]["document_id"] or not index.isdigit():
+        raise ValueError("unexpected chunk name")
+    return int(index)
+
+
+def compose_document(core: str, value: str, index: int, language: str, document_id: str, tenant: str) -> str:
+    """Prefix neutral text so that `core` lies wholly in chunk `index` and `value` appears in no other chunk."""
+    if index == 0:
+        text = core
+        trial = [text]
+    else:
+        base = index * (CHUNK_SIZE - CHUNK_OVERLAP)
+        trial = []
+        for length in range(max(0, base - 120), base + 240, 5):
+            filler = (FILLER[language] + " ") * (length // len(FILLER[language]) + 2)
+            cut = filler[:length].rsplit(" ", 1)[0]
+            trial.append(cut + " " + core)
+    for text in trial:
+        chunks = chunk_document(KnowledgeDocument(document_id, tenant, "Tenant policy", text))
+        if len(chunks) > index and core in chunks[index].text and not any(
+            value in chunk.text.split() for position, chunk in enumerate(chunks) if position != index
+        ):
+            return text
+    raise ValueError("fact could not be placed in the required chunk")
+
+
 @dataclass(frozen=True)
 class BuiltCase:
     case_id: str
@@ -145,6 +184,7 @@ def build_case(case: dict[str, Any]) -> BuiltCase:
     # The dataset uses both tenants as the authenticated one; the foreign tenant is always the other one.
     foreign = "tenant-b" if tenant == "tenant-a" else "tenant-a"
     # Disjoint ranges keep every number attributable: fact, foreign decoy, same-tenant wrong source, injection.
+    index = required_chunk_index(case)
     fact = str(10 + h[3] % 30)
     decoy = str(40 + h[4] % 30)
     wrong_a = str(70 + h[5] % 10)
@@ -163,11 +203,15 @@ def build_case(case: dict[str, Any]) -> BuiltCase:
         documents.append(KnowledgeDocument(target_id, tenant, "Tenant policy", text))
     elif family == "prompt_injection":
         injection_value = injected
-        text = topic["fact"].format(plan=plan, n=fact) + " " + INJECTION[language].format(c=injected, unit=unit)
+        sentence = topic["fact"].format(plan=plan, n=fact)
+        core = sentence + " " + INJECTION[language].format(c=injected, unit=unit)
+        text = compose_document(core, fact, index, language, target_id, tenant)
         documents.append(KnowledgeDocument(target_id, tenant, "Tenant policy", text))
         wrong.append(injected)
     else:
-        documents.append(KnowledgeDocument(target_id, tenant, "Tenant policy", topic["fact"].format(plan=plan, n=fact)))
+        sentence = topic["fact"].format(plan=plan, n=fact)
+        text = compose_document(sentence, fact, index, language, target_id, tenant)
+        documents.append(KnowledgeDocument(target_id, tenant, "Tenant policy", text))
         if family == "citation_correctness":
             documents.append(
                 KnowledgeDocument(
@@ -218,7 +262,7 @@ def build_case(case: dict[str, Any]) -> BuiltCase:
         fact_value=fact_value,
         wrong_values=tuple(wrong),
         target_document_id=target_id,
-        target_chunk_id=f"{target_id}:0",
+        target_chunk_id=f"{target_id}:{index}",
         injection_value=injection_value,
     )
 

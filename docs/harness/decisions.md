@@ -27,3 +27,7 @@ Phase 019 adds P05-local reservation accounting, a process lease, and content-fr
 ## 2026-10-30 — Console contract
 
 P06 consumes `openapi.yaml`. ADR-009 adds an approval list and typed responses without changing existing payloads; package moves to 0.4.4.
+
+## 2026-11-09 — Sealed development campaign `p05-dev-v1`
+
+The owner replied "pode usar os modelos da groq tem as env ai documentada" and "faz a 1 mesmo" (build the sealed executor, not a light smoke). Phase 021 enables `scripts/run_live_campaign.py --stage development --execute-free` for the 16 development cases of the four model-generated families (one trial each, at most four provider calls per trial, 64 attempts in total), through the root account and a committed authorization (`.planning/llm-live-readiness/phases/057-p05-live-campaign/AUTHORIZATION.json` in the lab repo). Free Groq keys only, `authorized_paid_spend_usd` 0.00, owner cap USD 5.00. The 16 offline controls (tenant separation, authorization expiry, cross-tenant tools, refund proposal) run against the real code with no provider and are reported separately; `duplicate_delivery` is `NOT_EVALUATED`. Holdout and confirmation stay unfunded. The corpus and grader are assistant-authored, human review is PENDING, independent review is `WAIVED_BY_OWNER`. The broad 1440-call plan in `evals/live-campaign.json` stays disabled.

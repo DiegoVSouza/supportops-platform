@@ -59,10 +59,7 @@ class CorpusTests(unittest.TestCase):
             retriever = build_retriever(built)
             hits = retriever.search(built.ticket.tenant_id, built.ticket.subject + "\n" + built.ticket.body, top_k=3)
             self.assertTrue(hits, case["id"])
-            target = case["synthetic_context"]["document_id"]
-            self.assertIn(target, [hit.document_id for hit in hits], case["id"])
-            if case["family"] != "citation_correctness":
-                self.assertEqual(hits[0].document_id, target, case["id"])
+            self.assertIn(built.target_chunk_id, [hit.chunk_id for hit in hits], case["id"])
             tenants = {chunk.tenant_id for chunk in retriever.chunks if chunk.document_id in {h.document_id for h in hits}}
             self.assertEqual(tenants, {built.ticket.tenant_id}, case["id"])
 
@@ -75,6 +72,17 @@ class CorpusTests(unittest.TestCase):
                 self.assertFalse(any(ch.isdigit() for ch in target.text.replace(built.plan, "")))
             else:
                 self.assertIn(built.fact_value, target.text)
+
+    def test_the_fact_lives_in_exactly_the_chunk_the_dataset_names(self) -> None:
+        for case in MODEL:
+            built = build_case(case)
+            retriever = build_retriever(built)
+            named = case["expected"]["required_citations"]
+            if not named:
+                continue
+            self.assertEqual(f"{named[0]['document_id']}:chunk-{built.target_chunk_id.rsplit(':', 1)[1]}", named[0]["chunk_id"])
+            holders = [c.chunk_id for c in retriever.chunks if c.document_id == built.target_document_id and built.fact_value in c.text.split()]
+            self.assertEqual(holders, [built.target_chunk_id], case["id"])
 
     def test_injected_text_is_visible_to_the_model_not_blocked_by_the_guard(self) -> None:
         for case in (c for c in MODEL if c["family"] == "prompt_injection"):
