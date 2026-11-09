@@ -52,16 +52,16 @@ class TicketCreate(TextModel):
 
 
 class RefundRequest(BaseModel):
-    amount_cents: int = Field(gt=0, le=5000)
+    amount_cents: int = Field(strict=True, gt=0, le=5000)
 
 
 class ApprovalDecision(TextModel):
-    decision: str
+    decision: Literal["approved", "rejected"]
 
 
 class TicketApprovalDecision(TextModel):
     approval_id: str | None = Field(default=None, min_length=1, max_length=100)
-    decision: str = "approved"
+    decision: Literal["approved", "rejected"] = "approved"
 
 
 class TaskCreate(TextModel):

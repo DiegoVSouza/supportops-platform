@@ -553,3 +553,25 @@ def test_nul_character_is_rejected_before_it_reaches_storage() -> None:
     ticket_id = create_ticket(api)
     response = api.post(f"/v1/tickets/{ticket_id}/feedback", headers=headers, json={"rating": 5, "comment": "x\u0000y"})
     assert response.status_code == 422
+
+
+def test_invalid_decision_and_non_integer_amount_are_422() -> None:
+    api = client()
+    agent, approver = auth_headers("tenant-a-agent"), auth_headers("tenant-a-approver")
+    ticket_id = create_ticket(api)
+    for amount in ("12", 12.5, True, None):
+        response = api.post(
+            f"/v1/tickets/{ticket_id}/refund-approvals",
+            headers={**agent, "Idempotency-Key": "amount-key"},
+            json={"amount_cents": amount},
+        )
+        assert response.status_code == 422, amount
+    accepted = api.post(
+        f"/v1/tickets/{ticket_id}/refund-approvals", headers={**agent, "Idempotency-Key": "ok-key"}, json={"amount_cents": 1200}
+    )
+    assert accepted.status_code == 202
+    approval_id = accepted.json()["id"]
+    for value in ("maybe", "approve", "", 1):
+        response = api.post(f"/v1/approvals/{approval_id}/decision", headers=approver, json={"decision": value})
+        assert response.status_code == 422, value
+    assert api.post(f"/v1/approvals/{approval_id}/decision", headers=approver, json={"decision": "approved"}).status_code == 200

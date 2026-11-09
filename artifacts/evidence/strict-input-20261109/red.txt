@@ -1,0 +1,4 @@
+
+tests\test_api_security.py:568: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_api_security.py::test_invalid_decision_and_non_integer_amount_are_422

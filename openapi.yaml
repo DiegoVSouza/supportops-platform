@@ -648,6 +648,10 @@
         "properties": {
           "decision": {
             "type": "string",
+            "enum": [
+              "approved",
+              "rejected"
+            ],
             "title": "Decision"
           }
         },
@@ -980,6 +984,10 @@
           },
           "decision": {
             "type": "string",
+            "enum": [
+              "approved",
+              "rejected"
+            ],
             "title": "Decision",
             "default": "approved"
           }
