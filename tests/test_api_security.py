@@ -539,3 +539,17 @@ def test_manual_refund_is_owned_by_a_durable_task() -> None:
 def test_refund_response_omits_task_id_without_a_durable_queue() -> None:
     api = client()
     assert set(request_refund(api, create_ticket(api), 900, "manual-2").json()) == {"id", "state", "action"}
+
+
+def test_nul_character_is_rejected_before_it_reaches_storage() -> None:
+    api = client()
+    headers = auth_headers("tenant-a-agent")
+    for body in (
+        {"customer_id": "c-1", "subject": "Invoice", "body": "a\u0000b"},
+        {"customer_id": "c\u0000", "subject": "Invoice", "body": "ok"},
+        {"customer_id": "c-1", "subject": "In\u0000voice", "body": "ok"},
+    ):
+        assert api.post("/v1/tickets", headers=headers, json=body).status_code == 422
+    ticket_id = create_ticket(api)
+    response = api.post(f"/v1/tickets/{ticket_id}/feedback", headers=headers, json={"rating": 5, "comment": "x\u0000y"})
+    assert response.status_code == 422

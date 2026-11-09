@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt.exceptions import InvalidTokenError
 from opentelemetry import propagate, trace
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from supportops_platform import __version__
 from supportops_platform.agents.triage import configured_llm_mode, run_configured_triage
@@ -34,7 +34,18 @@ from supportops_platform.rag.retrieval import LocalRetriever
 from supportops_platform.repositories import AuthorizationError, InMemoryStore
 
 
-class TicketCreate(BaseModel):
+class TextModel(BaseModel):
+    """Request model whose text fields cannot carry a NUL byte, which PostgreSQL cannot store."""
+
+    @field_validator("*", mode="after")
+    @classmethod
+    def reject_nul(cls, value):
+        if isinstance(value, str) and "\x00" in value:
+            raise ValueError("text must not contain NUL characters")
+        return value
+
+
+class TicketCreate(TextModel):
     customer_id: str = Field(min_length=1, max_length=100)
     subject: str = Field(min_length=1, max_length=200)
     body: str = Field(min_length=1, max_length=10_000)
@@ -44,20 +55,20 @@ class RefundRequest(BaseModel):
     amount_cents: int = Field(gt=0, le=5000)
 
 
-class ApprovalDecision(BaseModel):
+class ApprovalDecision(TextModel):
     decision: str
 
 
-class TicketApprovalDecision(BaseModel):
+class TicketApprovalDecision(TextModel):
     approval_id: str | None = Field(default=None, min_length=1, max_length=100)
     decision: str = "approved"
 
 
-class TaskCreate(BaseModel):
+class TaskCreate(TextModel):
     ticket_id: str = Field(min_length=1, max_length=100)
 
 
-class TicketFeedback(BaseModel):
+class TicketFeedback(TextModel):
     rating: int = Field(ge=1, le=5)
     comment: str = Field(default="", max_length=1000)
 

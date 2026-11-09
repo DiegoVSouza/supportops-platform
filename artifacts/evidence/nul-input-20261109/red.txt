@@ -1,0 +1,8 @@
+E           AssertionError: assert 201 == 422
+E            +  where 201 = <Response [201 Created]>.status_code
+E            +    where <Response [201 Created]> = post('/v1/tickets', headers={'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBwb3J0b3BzLXBsYXRmb3JtIiwic3ViIjoiYWdlbnQ...2s6d3JpdGUgdHJpYWdlOnJ1biIsImlhdCI6MTc5NDI0NzM4MCwiZXhwIjoxNzk0MjQ4MjgwfQ.OxxkHU7UtO80gAazggID8x9EXp2VeKcgJyyfEJ5J6sA'}, json={'body': 'a\x00b', 'customer_id': 'c-1', 'subject': 'Invoice'})
+E            +      where post = <starlette.testclient.TestClient object at 0x000001BDE56BC440>.post
+
+tests\test_api_security.py:552: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_api_security.py::test_nul_character_is_rejected_before_it_reaches_storage
