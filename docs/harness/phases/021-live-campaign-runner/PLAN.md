@@ -1,7 +1,7 @@
 # Plan
 
 1. Write SPEC, PLAN, VERIFY and run the plan check (`artifacts/evidence/live-campaign-runner/plan-check.txt`).
-2. Tests first: `tests/test_campaign_corpus.py`, `tests/test_campaign_grader.py`, `tests/test_campaign_execution.py` (fake provider, no network). Then `scripts/campaign_corpus.py`, `scripts/campaign_grader.py`.
+2. Tests first: `tests/test_campaign_corpus.py`, `tests/test_campaign_observe.py`, `tests/test_campaign_execution.py` (fake provider, no network). Then `scripts/campaign_corpus.py`, `scripts/campaign_observe.py`.
 3. Root guard in the lab repo (phase 057): authorization-gated branch for `p05-dev-v1` in `scripts/harness/live_free_account.py` with tests; `AUTHORIZATION.json`.
 4. `scripts/campaign_execution.py` and the `--execute-free` path of `scripts/run_live_campaign.py`: committed-source fingerprint, ledger reservation per trial, lease, private fake-first dry execution, resumable batches, content-free per-trial records under `artifacts/evals/live/p05-dev-v1/`, Wilson interval.
 5. Full fake gate (`uv run --locked python scripts/check_full.py`, private TEMP) and root tests; commit.
@@ -11,7 +11,7 @@
 allowed_write_paths:
 - docs/harness/phases/021-live-campaign-runner/**
 - scripts/campaign_corpus.py
-- scripts/campaign_grader.py
+- scripts/campaign_observe.py
 - scripts/campaign_execution.py
 - scripts/run_live_campaign.py
 - evals/live-campaign.json
