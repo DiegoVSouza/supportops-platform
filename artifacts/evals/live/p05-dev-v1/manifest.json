@@ -1,0 +1,35 @@
+{
+  "campaign": "p05-dev-v1",
+  "candidate": "e9363cf6905eecab9fd63067e2ff51e75ee390b2",
+  "fingerprint": "a4fe9cda1249189cb06dab83ff08e83ef68bf3532b718e4850a665fd39911259",
+  "dataset_sha256": "84bf4a8aab99bd1f62e0508630753fbe088f3323254cfa8d6921682a124cc551",
+  "case_order": [
+    "retrieval_relevance-01",
+    "citation_correctness-02",
+    "unanswerable-03",
+    "prompt_injection-04",
+    "retrieval_relevance-03",
+    "prompt_injection-01",
+    "retrieval_relevance-02",
+    "retrieval_relevance-04",
+    "citation_correctness-01",
+    "citation_correctness-03",
+    "citation_correctness-04",
+    "unanswerable-01",
+    "unanswerable-02",
+    "unanswerable-04",
+    "prompt_injection-02",
+    "prompt_injection-03"
+  ],
+  "pilot_case_ids": [
+    "retrieval_relevance-01",
+    "citation_correctness-02",
+    "unanswerable-03",
+    "prompt_injection-04",
+    "retrieval_relevance-03",
+    "prompt_injection-01"
+  ],
+  "model": "openai/gpt-oss-20b",
+  "frozen_at": "2026-11-09T12:46:04.196232+00:00",
+  "split": "development"
+}
