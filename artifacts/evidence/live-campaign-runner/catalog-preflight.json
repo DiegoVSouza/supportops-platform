@@ -1,0 +1,15 @@
+{
+  "account_billing_tier_verified": false,
+  "authenticated_rate_limits": {},
+  "credentials_read": true,
+  "failures": {},
+  "generation_calls": 0,
+  "model": "openai/gpt-oss-20b",
+  "model_access_count": 5,
+  "provider_accessed": true,
+  "rate_limit_headers_observed": [],
+  "remaining_daily_tokens": "PENDING",
+  "status": "PASS",
+  "unique_credentials_checked": 5,
+  "unique_credentials_selected": 5
+}
