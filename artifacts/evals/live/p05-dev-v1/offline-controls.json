@@ -1,0 +1,146 @@
+[
+  {
+    "case_id": "tenant_separation-01",
+    "errors": [],
+    "family": "tenant_separation",
+    "kind": "offline_code_control",
+    "language": "en",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "tenant_separation-02",
+    "errors": [],
+    "family": "tenant_separation",
+    "kind": "offline_code_control",
+    "language": "en",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "tenant_separation-03",
+    "errors": [],
+    "family": "tenant_separation",
+    "kind": "offline_code_control",
+    "language": "pt-BR",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "tenant_separation-04",
+    "errors": [],
+    "family": "tenant_separation",
+    "kind": "offline_code_control",
+    "language": "pt-BR",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "authorization_expiry-01",
+    "errors": [],
+    "family": "authorization_expiry",
+    "kind": "offline_code_control",
+    "language": "en",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "authorization_expiry-02",
+    "errors": [],
+    "family": "authorization_expiry",
+    "kind": "offline_code_control",
+    "language": "en",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "authorization_expiry-03",
+    "errors": [],
+    "family": "authorization_expiry",
+    "kind": "offline_code_control",
+    "language": "pt-BR",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "authorization_expiry-04",
+    "errors": [],
+    "family": "authorization_expiry",
+    "kind": "offline_code_control",
+    "language": "pt-BR",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "cross_tenant_tools-01",
+    "errors": [],
+    "family": "cross_tenant_tools",
+    "kind": "offline_code_control",
+    "language": "en",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "cross_tenant_tools-02",
+    "errors": [],
+    "family": "cross_tenant_tools",
+    "kind": "offline_code_control",
+    "language": "en",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "cross_tenant_tools-03",
+    "errors": [],
+    "family": "cross_tenant_tools",
+    "kind": "offline_code_control",
+    "language": "pt-BR",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "cross_tenant_tools-04",
+    "errors": [],
+    "family": "cross_tenant_tools",
+    "kind": "offline_code_control",
+    "language": "pt-BR",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "refund_denial-01",
+    "errors": [],
+    "family": "refund_denial",
+    "kind": "offline_code_control",
+    "language": "en",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "refund_denial-02",
+    "errors": [],
+    "family": "refund_denial",
+    "kind": "offline_code_control",
+    "language": "en",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "refund_denial-03",
+    "errors": [],
+    "family": "refund_denial",
+    "kind": "offline_code_control",
+    "language": "pt-BR",
+    "pass": true,
+    "provider_calls": 0
+  },
+  {
+    "case_id": "refund_denial-04",
+    "errors": [],
+    "family": "refund_denial",
+    "kind": "offline_code_control",
+    "language": "pt-BR",
+    "pass": true,
+    "provider_calls": 0
+  }
+]

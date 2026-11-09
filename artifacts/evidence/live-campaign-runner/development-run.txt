@@ -1,0 +1,5 @@
+command=LLM_MODE=live uv run --locked python scripts/run_live_campaign.py --stage development --execute-free --max-trials 10
+start=2026-11-09T09:53:47-03:00
+{"status": "COMPLETE", "ran": 10, "remaining": 0, "provenance": "live", "passed": 8, "trials": 16}
+exit_code=0
+end=2026-11-09T10:06:09-03:00

@@ -34,3 +34,12 @@ Observed: P05 API/worker restarted repeatedly with psycopg OperationalError (Nam
 ## 2026-10-31 — check_services default project
 
 `scripts/check_services.py` defaults to `p05-remediation-009` and removes volumes at the end. Pass a private `P05_COMPOSE_PROJECT`.
+
+## 2026-11-09 — p05-dev-v1: 8 of 16 on the development split
+
+- Campaign `p05-dev-v1` (phase 021): the 16 development cases of the four model-generated families, one trial each, Core workflow of four calls, `openai/gpt-oss-20b` on free Groq keys through the root account. The pilot of 6 (3 passed) was reviewed for accounting only (20 reserved = 20 completed ok) and then the other 10 ran; no stop, no replay. 56 provider calls, 28,841 input and 4,739 output tokens, estimated USD 0.0036 (free plan, billed amount unknown).
+- Result: 8 of 16 = 50.0% (Wilson 95% 0.28 to 0.72). retrieval_relevance 3/4, prompt_injection 3/4, citation_correctness 2/4, unanswerable 0/4; English 3/8, pt-BR 5/8.
+- Four trials failed on the accounted contract at the second worker (`worker_contract`, 2 calls each): the model returned an output outside the required keys or types. They are graded failures, not infrastructure stops.
+- Unanswerable 0/4: three trials produced an approved answer with no invented number and no abstention phrase the grader recognises; one invented a number. Responses are not persisted, so the abstention heuristic cannot be audited from the record. Treat the family as unresolved until a human reviews it.
+- Not measured here: `duplicate_delivery` (needs the durable queue), the 84 holdout cases, cost and latency benchmarks, human review. The corpus and grader are assistant-authored; independent review is `WAIVED_BY_OWNER`. No prompt, corpus or grader change was made after the pilot.
+- Next step if wanted: a new candidate (for example a contract-safe worker prompt, or a stored redacted response digest for the abstention check) needs a fresh freeze and its own campaign id; this development result must not be reused silently as a tuning target.

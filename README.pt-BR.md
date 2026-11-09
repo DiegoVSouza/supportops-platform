@@ -7,7 +7,7 @@
 - **Decisão.** Tenant e papel vêm do contexto autenticado. O modelo propõe, um gate determinístico confere e uma segunda pessoa aprova; quem pediu é recusado. A busca é isolada por tenant e as respostas citam fontes.
 - **Medido.** 179 testes e o gate de serviços isolado passaram na fase 033 (PostgreSQL, pgvector, Redis, MCP, recuperação de crash). O caminho live `demo-live-v1` tem 17 testes contra PostgreSQL 16, incluindo a fronteira do teto e reservas concorrentes. Nenhum provedor foi chamado nesses testes.
 - **Como rodar.** `uv sync --locked && uv run --locked pytest`. Gate de serviços: `uv run --locked python scripts/check_full.py` (precisa de Docker).
-- **Limites.** O valor do reembolso vem de uma ferramenta determinística, não do modelo. Qualidade semântica, custo e latência ainda não foram medidos.
+- **Limites.** O valor do reembolso vem de uma ferramenta determinística, não do modelo. A qualidade semântica foi medida apenas em um split de desenvolvimento de 16 casos (8 de 16 passaram, uma tentativa cada, Wilson 95% de 0,28 a 0,72; `artifacts/evals/live/p05-dev-v1/report.json`); não há resultado de holdout, revisão humana nem benchmark de custo e latência.
 - **Docs.** [Arquitetura](docs/architecture.md), [modelo de segurança](docs/harness/security.md), [runbook](docs/runbook.md).
 <!-- case:end -->
 
