@@ -71,7 +71,7 @@ class SpecTests(unittest.TestCase):
             self.assertEqual((report["live_model"]["cases_planned"], report["live_model"]["trials"]), (expected, expected))
 
     def test_each_campaign_binds_its_own_authorization_file(self) -> None:
-        for name in ("p05-dev-v1", "p05-diag-v1", "p05-diag-v2", "p05-holdout-v1"):
+        for name in ("p05-dev-v1", "p05-diag-v1", "p05-diag-v2", "p05-diag-v3", "p05-holdout-v1"):
             ex.use_campaign(name)
             self.assertIn(ex.ACTIVE.authorization, ex.root_files())
             self.assertEqual(sum("AUTHORIZATION.json" in p for p in ex.root_files()), 1)

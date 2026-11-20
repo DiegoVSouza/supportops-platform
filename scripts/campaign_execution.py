@@ -74,6 +74,12 @@ SPECS = {
         ("citation_correctness-02", "prompt_injection-01", "retrieval_relevance-02", "citation_correctness-04"),
         16, PHASES + "062-p05-candidate-smoke/AUTHORIZATION.json",
     ),
+    # Candidate v2 on the four development unanswerable cases (0 of 4 before): does the abstention rule work?
+    "p05-diag-v3": CampaignSpec(
+        "p05-diag-v3", "development", ("unanswerable-01", "unanswerable-02", "unanswerable-03", "unanswerable-04"),
+        ("unanswerable-01", "unanswerable-02", "unanswerable-03", "unanswerable-04"), 16,
+        PHASES + "063-p05-abstention-smoke/AUTHORIZATION.json",
+    ),
     # The 39 holdout cases of the four model-generated families, one trial each. Single use.
     "p05-holdout-v1": CampaignSpec(
         "p05-holdout-v1", "holdout",
