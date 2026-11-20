@@ -32,6 +32,12 @@ class SpecTests(unittest.TestCase):
         self.assertEqual(order, ["citation_correctness-02", "prompt_injection-01"])
         self.assertEqual((ex.CAMPAIGN, ex.ACTIVE.max_requests, ex.ACTIVE.split), ("p05-diag-v1", 8, "development"))
 
+    def test_the_candidate_smoke_runs_the_four_worker_contract_failures_with_sixteen_calls(self) -> None:
+        ex.use_campaign("p05-diag-v2")
+        order = [c["id"] for c in ex.ordered_model_cases(CASES)]
+        self.assertEqual(sorted(order), ["citation_correctness-02", "citation_correctness-04", "prompt_injection-01", "retrieval_relevance-02"])
+        self.assertEqual((ex.ACTIVE.max_requests, ex.ACTIVE.split), (16, "development"))
+
     def test_the_holdout_runs_only_the_thirty_nine_model_family_holdout_cases(self) -> None:
         ex.use_campaign("p05-holdout-v1")
         ordered = ex.ordered_model_cases(CASES)
@@ -65,7 +71,7 @@ class SpecTests(unittest.TestCase):
             self.assertEqual((report["live_model"]["cases_planned"], report["live_model"]["trials"]), (expected, expected))
 
     def test_each_campaign_binds_its_own_authorization_file(self) -> None:
-        for name in ("p05-dev-v1", "p05-diag-v1", "p05-holdout-v1"):
+        for name in ("p05-dev-v1", "p05-diag-v1", "p05-diag-v2", "p05-holdout-v1"):
             ex.use_campaign(name)
             self.assertIn(ex.ACTIVE.authorization, ex.root_files())
             self.assertEqual(sum("AUTHORIZATION.json" in p for p in ex.root_files()), 1)

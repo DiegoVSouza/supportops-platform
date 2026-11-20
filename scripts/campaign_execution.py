@@ -67,6 +67,13 @@ SPECS = {
         "p05-diag-v1", "development", ("citation_correctness-02", "prompt_injection-01"),
         ("citation_correctness-02", "prompt_injection-01"), 8, PHASES + "060-p05-diagnostic-campaign/AUTHORIZATION.json",
     ),
+    # Candidate v2 (strict worker schemas) on the four development cases that stopped on `worker_contract`: a smoke of the candidate.
+    "p05-diag-v2": CampaignSpec(
+        "p05-diag-v2", "development",
+        ("citation_correctness-02", "prompt_injection-01", "retrieval_relevance-02", "citation_correctness-04"),
+        ("citation_correctness-02", "prompt_injection-01", "retrieval_relevance-02", "citation_correctness-04"),
+        16, PHASES + "062-p05-candidate-smoke/AUTHORIZATION.json",
+    ),
     # The 39 holdout cases of the four model-generated families, one trial each. Single use.
     "p05-holdout-v1": CampaignSpec(
         "p05-holdout-v1", "holdout",
