@@ -1,0 +1,21 @@
+.F.........                                                              [100%]
+================================== FAILURES ===================================
+_ ExecutionTests.test_a_provider_refusal_stop_records_its_content_free_cause __
+
+self = <test_campaign_execution.ExecutionTests testMethod=test_a_provider_refusal_stop_records_its_content_free_cause>
+
+    def test_a_provider_refusal_stop_records_its_content_free_cause(self) -> None:
+        inner = RejectedSession(BUILT)
+        paced = ex.PacedSession(inner)
+        paced.usage_for = inner.usage_for
+        with self.assertRaises(ex.ExecutionBlocked):
+            run(self.out, paced, 1)
+        stop = json.loads((self.out / "stop.json").read_text())
+>       self.assertEqual(stop["provider_diagnostic"], {"reason": "bad_request", "http_status": 400,
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                       "provider_error_code": "json_validate_failed"})
+E       KeyError: 'provider_diagnostic'
+
+tests\test_campaign_execution.py:110: KeyError
+=========================== short test summary info ===========================
+FAILED tests/test_campaign_execution.py::ExecutionTests::test_a_provider_refusal_stop_records_its_content_free_cause

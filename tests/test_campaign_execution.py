@@ -43,6 +43,14 @@ class BrokenSession(ex.OracleFixtureSession):
         raise RuntimeError("PRIVATE-PROVIDER-DETAIL")
 
 
+class RejectedSession(ex.OracleFixtureSession):
+    """Answers like the root transport does when the provider refuses a request."""
+
+    def complete(self, envelope):
+        return {"status": "INCOMPLETE", "reason": "bad_request", "http_status": 400,
+                "provider_error_code": "json_validate_failed", "attempt_id": "x", "detail": "PRIVATE-PROVIDER-DETAIL"}
+
+
 class ExecutionTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory(prefix="p05-campaign-")
@@ -91,6 +99,17 @@ class ExecutionTests(unittest.TestCase):
         self.assertNotIn("PRIVATE", json.dumps(stop))
         with self.assertRaisesRegex(ex.ExecutionBlocked, "campaign_stopped_requires_review"):
             run(self.out, ex.OracleFixtureSession(BUILT), 2)
+
+    def test_a_provider_refusal_stop_records_its_content_free_cause(self) -> None:
+        inner = RejectedSession(BUILT)
+        paced = ex.PacedSession(inner)
+        paced.usage_for = inner.usage_for
+        with patch.object(sys, "path", [str(LAB / "scripts/harness"), *sys.path]), self.assertRaises(ex.ExecutionBlocked):
+            run(self.out, paced, 1)
+        stop = json.loads((self.out / "stop.json").read_text())
+        self.assertEqual(stop["provider_diagnostic"], {"reason": "bad_request", "http_status": 400,
+                                                       "provider_error_code": "json_validate_failed"})
+        self.assertNotIn("PRIVATE", json.dumps(stop))
 
     def test_an_interrupted_reservation_requires_review(self) -> None:
         ledger = ex.CampaignLedger(self.out / "ledger.sqlite", campaign_id=ex.CAMPAIGN)

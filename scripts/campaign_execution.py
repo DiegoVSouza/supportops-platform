@@ -174,6 +174,7 @@ class PacedSession:
     def __init__(self, inner: Any, *, sleep: Callable[[float], None] = time.sleep, waits: int = 10, seconds: float = 15.0):
         self.inner, self.sleep, self.waits, self.seconds = inner, sleep, waits, seconds
         self.provenance = inner.provenance
+        self.diagnostic: dict[str, Any] | None = None
 
     def preview(self, envelope: dict[str, Any]) -> Any:
         from live_free_account import AccountBlocked  # root module, path set by the caller
@@ -187,7 +188,23 @@ class PacedSession:
                 self.sleep(self.seconds)
 
     def complete(self, envelope: dict[str, Any]) -> Any:
-        return self.inner.complete(envelope)
+        result = self.inner.complete(envelope)
+        if isinstance(result, dict) and result.get("status") != "ok":
+            self.diagnostic = provider_diagnostic(result)
+        return result
+
+
+def provider_diagnostic(result: dict[str, Any]) -> dict[str, Any] | None:
+    """Keep only the transport's categorical cause of a refused call: fixed words, a status and a code, never a message."""
+    reason, status, code = result.get("reason"), result.get("http_status"), result.get("provider_error_code")
+    kept: dict[str, Any] = {}
+    if isinstance(reason, str) and SAFE_REASON.fullmatch(reason):
+        kept["reason"] = reason
+    if type(status) is int and 100 <= status <= 599:
+        kept["http_status"] = status
+    if isinstance(code, str) and re.fullmatch(r"[a-z0-9_]{1,64}", code):
+        kept["provider_error_code"] = code
+    return kept or None
 
 
 class LazySession:
@@ -389,10 +406,10 @@ def execute_campaign(
                 outcome = run_model_trial(case, built, session, ops)
                 usage = usage_reader(case["id"])
             except ExecutionBlocked as stop:
-                _stop(ledger, out_dir, case, str(stop), usage_reader)
+                _stop(ledger, out_dir, case, str(stop), usage_reader, getattr(session, "diagnostic", None))
                 raise
             except Exception:
-                _stop(ledger, out_dir, case, "uncertain_attempt", usage_reader)
+                _stop(ledger, out_dir, case, "uncertain_attempt", usage_reader, getattr(session, "diagnostic", None))
                 raise ExecutionBlocked("uncertain_attempt") from None
             outcome["provider_calls"] = usage["calls"]
             observation = observe_model_trial(case, built, outcome)
@@ -416,7 +433,8 @@ def execute_campaign(
     return {"ran": ran, "remaining": max(0, len(queue) - ran)}
 
 
-def _stop(ledger: CampaignLedger, out_dir: Path, case: dict[str, Any], reason: str, usage_reader: Callable[[str], dict[str, int]]) -> None:
+def _stop(ledger: CampaignLedger, out_dir: Path, case: dict[str, Any], reason: str, usage_reader: Callable[[str], dict[str, int]],
+          diagnostic: dict[str, Any] | None = None) -> None:
     reason = reason if SAFE_REASON.fullmatch(reason) else "uncertain_attempt"
     try:
         usage = usage_reader(case["id"])
@@ -425,6 +443,7 @@ def _stop(ledger: CampaignLedger, out_dir: Path, case: dict[str, Any], reason: s
         calls = None
     (out_dir / "stop.json").write_text(
         json.dumps({"campaign": CAMPAIGN, "case_id": case["id"], "reason": reason, "provider_calls": calls,
+                    **({"provider_diagnostic": diagnostic} if diagnostic else {}),
                     "replay_allowed": False, "stopped_at": utc_now()}, indent=2) + "\n",
         encoding="utf-8", newline="\n",
     )
