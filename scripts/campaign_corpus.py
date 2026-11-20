@@ -162,9 +162,10 @@ def _digest(case_id: str) -> bytes:
     return hashlib.sha256(("p05-live-v1-corpus:" + case_id).encode("utf-8")).digest()
 
 
-def build_case(case: dict[str, Any]) -> BuiltCase:
-    if case.get("split") != "development":
-        raise ValueError("only development cases can be built")
+def build_case(case: dict[str, Any], *, split: str = "development") -> BuiltCase:
+    """Build one case's corpus. Each campaign names the single split it owns; any other split is refused."""
+    if split not in ("development", "holdout") or case.get("split") != split:
+        raise ValueError(f"only {split} cases can be built")
     if case["family"] not in MODEL_FAMILIES:
         raise ValueError("only model-generated families have a corpus")
     language = case["language"]

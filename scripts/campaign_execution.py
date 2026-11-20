@@ -17,6 +17,7 @@ import sys
 import time
 from contextlib import closing, nullcontext
 from datetime import UTC, datetime
+from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Callable
@@ -39,15 +40,55 @@ from supportops_platform.agents.accounted import MODEL, AccountedDenied, Client
 from supportops_platform.contracts import Principal
 from supportops_toolkit.guardrails import guard
 
-CAMPAIGN = "p05-dev-v1"
-PILOT_IDS = (
-    "retrieval_relevance-01",
-    "citation_correctness-02",
-    "unanswerable-03",
-    "prompt_injection-04",
-    "retrieval_relevance-03",
-    "prompt_injection-01",
-)
+
+
+@dataclass(frozen=True)
+class CampaignSpec:
+    """One sealed campaign: which split and cases run, the call ceiling, and the owner authorization that admits it."""
+
+    id: str
+    split: str
+    pilot_ids: tuple[str, ...]
+    case_ids: tuple[str, ...] | None
+    max_requests: int
+    authorization: str
+
+
+PHASES = ".planning/llm-live-readiness/phases/"
+SPECS = {
+    "p05-dev-v1": CampaignSpec(
+        "p05-dev-v1", "development",
+        ("retrieval_relevance-01", "citation_correctness-02", "unanswerable-03", "prompt_injection-04",
+         "retrieval_relevance-03", "prompt_injection-01"),
+        None, 64, PHASES + "057-p05-live-campaign/AUTHORIZATION.json",
+    ),
+    # Two development cases that stopped on `worker_contract`: a diagnostic of the provider cause, not a quality measurement.
+    "p05-diag-v1": CampaignSpec(
+        "p05-diag-v1", "development", ("citation_correctness-02", "prompt_injection-01"),
+        ("citation_correctness-02", "prompt_injection-01"), 8, PHASES + "060-p05-diagnostic-campaign/AUTHORIZATION.json",
+    ),
+    # The 39 holdout cases of the four model-generated families, one trial each. Single use.
+    "p05-holdout-v1": CampaignSpec(
+        "p05-holdout-v1", "holdout",
+        ("retrieval_relevance-05", "citation_correctness-05", "unanswerable-05", "prompt_injection-05"),
+        None, 156, PHASES + "061-p05-holdout-campaign/AUTHORIZATION.json",
+    ),
+}
+ACTIVE = SPECS["p05-dev-v1"]
+CAMPAIGN = ACTIVE.id
+PILOT_IDS = ACTIVE.pilot_ids
+
+
+def use_campaign(name: str) -> CampaignSpec:
+    """Select the campaign this process runs. The default is the sealed development campaign."""
+    global ACTIVE, CAMPAIGN, PILOT_IDS
+    if name not in SPECS:
+        raise ExecutionBlocked("unknown_campaign")
+    ACTIVE = SPECS[name]
+    CAMPAIGN, PILOT_IDS = ACTIVE.id, ACTIVE.pilot_ids
+    return ACTIVE
+
+
 TRIAL_CAPS = {"requests": 4, "input_tokens": 16384, "output_tokens": 2048, "estimated_cost_usd": Decimal("0.0018432")}
 CAPACITY_WAITS = {
     "free_token_minute_checkpoint",
@@ -103,25 +144,27 @@ def source_paths(project: Path) -> list[str]:
     )
 
 
-ROOT_FILES = (
-    "scripts/harness/live_free_account.py",
-    "scripts/harness/live_provider_transport.py",
-    "shared/policies/groq-free-campaign.json",
-    ".planning/llm-live-readiness/phases/057-p05-live-campaign/AUTHORIZATION.json",
-)
+def root_files() -> tuple[str, ...]:
+    return (
+        "scripts/harness/live_free_account.py",
+        "scripts/harness/live_provider_transport.py",
+        "shared/policies/groq-free-campaign.json",
+        ACTIVE.authorization,
+    )
 
 
 def fingerprint(project: Path, lab: Path) -> str:
     paths = source_paths(project)
     git(project, "diff", "--quiet", "HEAD", "--", *paths)
-    git(lab, "diff", "--quiet", "HEAD", "--", *ROOT_FILES)
+    git(lab, "diff", "--quiet", "HEAD", "--", *root_files())
     values = [("p05/" + p, hashlib.sha256((project / p).read_bytes()).hexdigest()) for p in paths]
-    values += [(p, hashlib.sha256((lab / p).read_bytes()).hexdigest()) for p in ROOT_FILES]
+    values += [(p, hashlib.sha256((lab / p).read_bytes()).hexdigest()) for p in root_files()]
     return hashlib.sha256(json.dumps(values, separators=(",", ":")).encode()).hexdigest()
 
 
 def ordered_model_cases(cases: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    model = [c for c in cases if c["split"] == "development" and c["family"] in MODEL_FAMILIES]
+    model = [c for c in cases if c["split"] == ACTIVE.split and c["family"] in MODEL_FAMILIES
+             and (ACTIVE.case_ids is None or c["id"] in ACTIVE.case_ids)]
     by_id = {c["id"]: c for c in model}
     if set(PILOT_IDS) - set(by_id):
         raise ExecutionBlocked("pilot_case_missing")
@@ -139,7 +182,7 @@ def freeze(project: Path, lab: Path, out_dir: Path, cases_path: Path, cases: lis
         "pilot_case_ids": list(PILOT_IDS),
         "model": MODEL,
         "frozen_at": utc_now(),
-        "split": "development",
+        "split": ACTIVE.split,
     }
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
@@ -386,13 +429,14 @@ def execute_campaign(
     if reserved - completed:
         raise ExecutionBlocked("uncertain_trial_requires_review")
     queue = [c for c in ordered_model_cases(cases) if c["id"] not in completed]
-    caps = {"requests": 64, "input_tokens": 64 * 16384, "output_tokens": 64 * 2048, "estimated_cost_usd": Decimal("0.1179648")}
+    n = ACTIVE.max_requests
+    caps = {"requests": n, "input_tokens": n * 16384, "output_tokens": n * 2048, "estimated_cost_usd": Decimal("0.0018432") * n}
     ran = 0
     with lock if lock is not None else nullcontext():
         for case in queue[:max_trials]:
             if ran:
                 sleep(min_gap_seconds)
-            built = build_case(case)
+            built = build_case(case, split=ACTIVE.split)
             try:
                 ledger.reserve(
                     case_id=case["id"], trial=1, calls=TRIAL_CAPS["requests"], input_tokens=TRIAL_CAPS["input_tokens"],
@@ -459,8 +503,8 @@ def _stop(ledger: CampaignLedger, out_dir: Path, case: dict[str, Any], reason: s
 def build_report(cases: list[dict[str, Any]], out_dir: Path, *, provenance: str) -> dict[str, Any]:
     trials = read_jsonl(out_dir / "trials.jsonl")
     offline = _read_json(out_dir / "offline-controls.json") if (out_dir / "offline-controls.json").exists() else []
-    dev = [c for c in cases if c["split"] == "development"]
-    expected_model = len([c for c in dev if c["family"] in MODEL_FAMILIES])
+    dev = [c for c in cases if c["split"] == ACTIVE.split]
+    expected_model = len(ordered_model_cases(cases))
     passed = sum(t["pass"] for t in trials)
 
     def group(key: str) -> dict[str, Any]:
@@ -482,7 +526,7 @@ def build_report(cases: list[dict[str, Any]], out_dir: Path, *, provenance: str)
     return {
         "campaign": CAMPAIGN,
         "dataset": "p05-live-v1",
-        "split": "development",
+        "split": ACTIVE.split,
         "provenance": provenance,
         "status": "COMPLETE" if complete else "INCOMPLETE",
         "model": MODEL,
@@ -517,7 +561,10 @@ def build_report(cases: list[dict[str, Any]], out_dir: Path, *, provenance: str)
             "reason": "needs the Redis and PostgreSQL durable queue; no number is claimed",
         },
         "limits": [
-            "development split only; the 84 holdout cases were not opened",
+            ("development split only; the 84 holdout cases were not opened" if ACTIVE.split == "development"
+             else "holdout split, single use: the 39 model-family holdout cases are spent by this run; any change informed by it needs fresh confirmation cases"),
+            *(["diagnostic of two cases: it says why a call was refused and is not a quality measurement"]
+              if ACTIVE.id == "p05-diag-v1" else []),
             "corpus and grader are assistant-authored under the rubric; human review is PENDING",
             "independent review is WAIVED_BY_OWNER, which is owner approval and not independent verification",
             "one trial per case; the interval is wide and the result is not a generalisation claim",

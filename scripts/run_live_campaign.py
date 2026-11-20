@@ -360,7 +360,7 @@ def summarize(
 
 
 def execute_development(args: argparse.Namespace) -> int:
-    """Sealed `p05-dev-v1` path: freeze, fixture execution, or live execution through the root account."""
+    """Sealed campaign path (`--campaign`, default `p05-dev-v1`): freeze, fixture execution, or live execution through the root account."""
     import os
     import time
 
@@ -368,12 +368,13 @@ def execute_development(args: argparse.Namespace) -> int:
 
     lab = ROOT.parents[1]
     try:
-        if args.stage != "development":
-            raise ex.ExecutionBlocked("development_stage_only")
+        spec = ex.use_campaign(args.campaign)
+        if args.stage != spec.split:
+            raise ex.ExecutionBlocked(f"{spec.split}_stage_only")
         config = read_json(ROOT / "evals/live-campaign.json")
         cases_path = ROOT / config["cases_path"]
         cases = read_cases(cases_path, read_json(ROOT / config["dataset_manifest"]))
-        live_dir = ROOT / "artifacts/evals/live/p05-dev-v1"
+        live_dir = ROOT / "artifacts/evals/live" / spec.id
         if args.freeze:
             manifest = ex.freeze(ROOT, lab, live_dir, cases_path, cases)
             print(json.dumps({"status": "FROZEN", "candidate": manifest["candidate"], "fingerprint": manifest["fingerprint"]}))
@@ -383,7 +384,7 @@ def execute_development(args: argparse.Namespace) -> int:
         if args.execute_fixture:
             if args.output_dir is None or ROOT in args.output_dir.resolve().parents:
                 raise ex.ExecutionBlocked("fixture_output_outside_repository_required")
-            built = {b.ticket.id: b for b in (ex.build_case(c) for c in ex.ordered_model_cases(cases))}
+            built = {b.ticket.id: b for b in (ex.build_case(c, split=spec.split) for c in ex.ordered_model_cases(cases))}
             session = ex.OracleFixtureSession(built)
             out_dir, provenance = args.output_dir, "fixture"
             reader, lock = session.usage_for, None
@@ -424,6 +425,7 @@ def main(argv: list[str] | None = None) -> int:
     command.add_argument("--stage", choices=("pilot", "development", "holdout"))
     command.add_argument("--resume", metavar="CAMPAIGN_ID")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--campaign", default="p05-dev-v1", help="sealed campaign id: p05-dev-v1, p05-diag-v1 or p05-holdout-v1")
     parser.add_argument("--freeze", action="store_true", help="write the manifest that binds the committed sources")
     parser.add_argument("--execute-free", action="store_true", help="live Groq trials through the root account")
     parser.add_argument("--execute-fixture", action="store_true", help="plumbing run with a no-network oracle session")

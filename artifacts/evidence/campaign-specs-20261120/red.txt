@@ -1,0 +1,141 @@
+FEFEFEFEFEFE                                                             [100%]
+=================================== ERRORS ====================================
+_ ERROR at teardown of SpecTests.test_a_case_builds_only_for_the_split_the_campaign_owns _
+
+self = <test_campaign_specs.SpecTests testMethod=test_a_case_builds_only_for_the_split_the_campaign_owns>
+
+    def tearDown(self) -> None:
+>       ex.use_campaign("p05-dev-v1")
+        ^^^^^^^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:19: AttributeError
+_____ ERROR at teardown of SpecTests.test_an_unknown_campaign_is_refused ______
+
+self = <test_campaign_specs.SpecTests testMethod=test_an_unknown_campaign_is_refused>
+
+    def tearDown(self) -> None:
+>       ex.use_campaign("p05-dev-v1")
+        ^^^^^^^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:19: AttributeError
+_ ERROR at teardown of SpecTests.test_each_campaign_binds_its_own_authorization_file _
+
+self = <test_campaign_specs.SpecTests testMethod=test_each_campaign_binds_its_own_authorization_file>
+
+    def tearDown(self) -> None:
+>       ex.use_campaign("p05-dev-v1")
+        ^^^^^^^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:19: AttributeError
+_ ERROR at teardown of SpecTests.test_the_default_campaign_is_the_sealed_development_one _
+
+self = <test_campaign_specs.SpecTests testMethod=test_the_default_campaign_is_the_sealed_development_one>
+
+    def tearDown(self) -> None:
+>       ex.use_campaign("p05-dev-v1")
+        ^^^^^^^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:19: AttributeError
+_ ERROR at teardown of SpecTests.test_the_diagnostic_runs_two_known_development_cases_with_eight_calls _
+
+self = <test_campaign_specs.SpecTests testMethod=test_the_diagnostic_runs_two_known_development_cases_with_eight_calls>
+
+    def tearDown(self) -> None:
+>       ex.use_campaign("p05-dev-v1")
+        ^^^^^^^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:19: AttributeError
+_ ERROR at teardown of SpecTests.test_the_holdout_runs_only_the_thirty_nine_model_family_holdout_cases _
+
+self = <test_campaign_specs.SpecTests testMethod=test_the_holdout_runs_only_the_thirty_nine_model_family_holdout_cases>
+
+    def tearDown(self) -> None:
+>       ex.use_campaign("p05-dev-v1")
+        ^^^^^^^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:19: AttributeError
+================================== FAILURES ===================================
+______ SpecTests.test_a_case_builds_only_for_the_split_the_campaign_owns ______
+
+self = <test_campaign_specs.SpecTests testMethod=test_a_case_builds_only_for_the_split_the_campaign_owns>
+
+    def test_a_case_builds_only_for_the_split_the_campaign_owns(self) -> None:
+        holdout = next(c for c in CASES if c["split"] == "holdout" and c["family"] in MODEL_FAMILIES)
+        with self.assertRaisesRegex(ValueError, "only development cases"):
+            build_case(holdout)
+>       self.assertEqual(build_case(holdout, split="holdout").ticket.id, build_case(holdout, split="holdout").ticket.id)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: build_case() got an unexpected keyword argument 'split'
+
+tests\test_campaign_specs.py:47: TypeError
+________________ SpecTests.test_an_unknown_campaign_is_refused ________________
+
+self = <test_campaign_specs.SpecTests testMethod=test_an_unknown_campaign_is_refused>
+
+    def test_an_unknown_campaign_is_refused(self) -> None:
+        with self.assertRaisesRegex(ex.ExecutionBlocked, "unknown_campaign"):
+>           ex.use_campaign("p05-anything-v9")
+            ^^^^^^^^^^^^^^^
+E           AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:27: AttributeError
+________ SpecTests.test_each_campaign_binds_its_own_authorization_file ________
+
+self = <test_campaign_specs.SpecTests testMethod=test_each_campaign_binds_its_own_authorization_file>
+
+    def test_each_campaign_binds_its_own_authorization_file(self) -> None:
+        for name in ("p05-dev-v1", "p05-diag-v1", "p05-holdout-v1"):
+>           ex.use_campaign(name)
+            ^^^^^^^^^^^^^^^
+E           AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:54: AttributeError
+______ SpecTests.test_the_default_campaign_is_the_sealed_development_one ______
+
+self = <test_campaign_specs.SpecTests testMethod=test_the_default_campaign_is_the_sealed_development_one>
+
+    def test_the_default_campaign_is_the_sealed_development_one(self) -> None:
+>       self.assertEqual((ex.CAMPAIGN, ex.ACTIVE.split, ex.ACTIVE.max_requests), ("p05-dev-v1", "development", 64))
+                                       ^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'ACTIVE'
+
+tests\test_campaign_specs.py:22: AttributeError
+_ SpecTests.test_the_diagnostic_runs_two_known_development_cases_with_eight_calls _
+
+self = <test_campaign_specs.SpecTests testMethod=test_the_diagnostic_runs_two_known_development_cases_with_eight_calls>
+
+    def test_the_diagnostic_runs_two_known_development_cases_with_eight_calls(self) -> None:
+>       ex.use_campaign("p05-diag-v1")
+        ^^^^^^^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:30: AttributeError
+_ SpecTests.test_the_holdout_runs_only_the_thirty_nine_model_family_holdout_cases _
+
+self = <test_campaign_specs.SpecTests testMethod=test_the_holdout_runs_only_the_thirty_nine_model_family_holdout_cases>
+
+    def test_the_holdout_runs_only_the_thirty_nine_model_family_holdout_cases(self) -> None:
+>       ex.use_campaign("p05-holdout-v1")
+        ^^^^^^^^^^^^^^^
+E       AttributeError: module 'scripts.campaign_execution' has no attribute 'use_campaign'. Did you mean: 'execute_campaign'?
+
+tests\test_campaign_specs.py:36: AttributeError
+=========================== short test summary info ===========================
+FAILED tests/test_campaign_specs.py::SpecTests::test_a_case_builds_only_for_the_split_the_campaign_owns
+FAILED tests/test_campaign_specs.py::SpecTests::test_an_unknown_campaign_is_refused
+FAILED tests/test_campaign_specs.py::SpecTests::test_each_campaign_binds_its_own_authorization_file
+FAILED tests/test_campaign_specs.py::SpecTests::test_the_default_campaign_is_the_sealed_development_one
+FAILED tests/test_campaign_specs.py::SpecTests::test_the_diagnostic_runs_two_known_development_cases_with_eight_calls
+FAILED tests/test_campaign_specs.py::SpecTests::test_the_holdout_runs_only_the_thirty_nine_model_family_holdout_cases
+ERROR tests/test_campaign_specs.py::SpecTests::test_a_case_builds_only_for_the_split_the_campaign_owns
+ERROR tests/test_campaign_specs.py::SpecTests::test_an_unknown_campaign_is_refused
+ERROR tests/test_campaign_specs.py::SpecTests::test_each_campaign_binds_its_own_authorization_file
+ERROR tests/test_campaign_specs.py::SpecTests::test_the_default_campaign_is_the_sealed_development_one
+ERROR tests/test_campaign_specs.py::SpecTests::test_the_diagnostic_runs_two_known_development_cases_with_eight_calls
+ERROR tests/test_campaign_specs.py::SpecTests::test_the_holdout_runs_only_the_thirty_nine_model_family_holdout_cases
