@@ -1,0 +1,54 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+__________ test_migrate_waits_for_a_database_that_is_still_starting ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB682B9480>
+
+    def test_migrate_waits_for_a_database_that_is_still_starting(monkeypatch):
+        attempts = []
+    
+        def connect(dsn, **_kwargs):
+            attempts.append(dsn)
+            if len(attempts) < 3:
+                raise psycopg.OperationalError("FATAL:  the database system is starting up")
+            return Conn()
+    
+        monkeypatch.setattr(persistence.psycopg, "connect", connect)
+        slept = []
+        store = PostgresStore("postgresql://x")
+        store.wait_sleep = slept.append
+>       store.migrate()
+
+tests\test_database_wake.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+supportops_platform\persistence.py:30: in migrate
+    with psycopg.connect(self.dsn) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+dsn = 'postgresql://x', _kwargs = {}
+
+    def connect(dsn, **_kwargs):
+        attempts.append(dsn)
+        if len(attempts) < 3:
+>           raise psycopg.OperationalError("FATAL:  the database system is starting up")
+E           psycopg.OperationalError: FATAL:  the database system is starting up
+
+tests\test_database_wake.py:27: OperationalError
+______ test_migrate_gives_up_with_the_original_error_after_the_deadline _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB682B95B0>
+
+    def test_migrate_gives_up_with_the_original_error_after_the_deadline(monkeypatch):
+        def connect(dsn, **_kwargs):
+            raise psycopg.OperationalError("FATAL:  the database system is starting up")
+    
+        monkeypatch.setattr(persistence.psycopg, "connect", connect)
+>       store = PostgresStore("postgresql://x", wait_seconds=0)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: PostgresStore.__init__() got an unexpected keyword argument 'wait_seconds'
+
+tests\test_database_wake.py:44: TypeError
+=========================== short test summary info ===========================
+FAILED tests/test_database_wake.py::test_migrate_waits_for_a_database_that_is_still_starting
+FAILED tests/test_database_wake.py::test_migrate_gives_up_with_the_original_error_after_the_deadline

@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
+import time
 
 import psycopg
 from psycopg.rows import dict_row
@@ -21,13 +22,28 @@ def document(value):
 
 
 class PostgresStore:
-    def __init__(self, dsn):
+    def __init__(self, dsn, wait_seconds=120):
         self.dsn = dsn
+        self.wait_seconds = wait_seconds
+        self.wait_sleep = time.sleep
+
+    def _connect_when_ready(self):
+        """A stopped database answers 'starting up' for a while. Boot waits with a capped backoff instead of crashing the process."""
+        deadline = time.monotonic() + self.wait_seconds
+        delay = 1
+        while True:
+            try:
+                return psycopg.connect(self.dsn)
+            except psycopg.OperationalError:
+                if time.monotonic() + delay > deadline:
+                    raise
+                self.wait_sleep(delay)
+                delay = min(delay * 2, 8)
 
     def migrate(self):
         root = Path(__file__).resolve().parent
         if not (root / "migrations").is_dir(): root = root.parent
-        with psycopg.connect(self.dsn) as conn:
+        with self._connect_when_ready() as conn:
             conn.execute("SELECT pg_advisory_xact_lock(991005)")
             for name in ("002_pgvector_knowledge.sql", "003_product_state.sql", "004_authorization_lease.sql"):
                 conn.execute((root / "migrations" / name).read_text(encoding="utf-8"))
