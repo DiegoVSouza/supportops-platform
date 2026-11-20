@@ -3,13 +3,13 @@
     {
       "id": "auth-tenant-scope",
       "description": "Locally verified JWT or introspected principal scopes API and repository access by tenant",
-      "status": "PASS_LOCAL_HS256_AND_KEYCLOAK_OIDC; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_PENDING",
+      "status": "PASS_LOCAL_HS256_AND_KEYCLOAK_OIDC; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_OUT_OF_SCOPE",
       "evidence": "artifacts/evidence/phase-009-full-gate-final.txt; artifacts/evidence/phase-015-keycloak-api.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-oidc-acceptance.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-mcp-acceptance.txt; artifacts/evidence/status-reconcile/console-e2e-on-fly-head-20261102.txt"
     },
     {
       "id": "mcp-trusted-principal",
       "description": "In-memory MCP tools use injected principal and fail closed without it",
-      "status": "PASS_LOCAL_TCP; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_PENDING",
+      "status": "PASS_LOCAL_TCP; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_OUT_OF_SCOPE",
       "evidence": "artifacts/evidence/phase-009-full-gate-final.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-oidc-acceptance.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-mcp-acceptance.txt; artifacts/evidence/status-reconcile/console-e2e-on-fly-head-20261102.txt"
     },
     {
@@ -39,7 +39,7 @@
     {
       "id": "network-mcp-auth",
       "description": "Verified bearer creates a tenant principal through authenticated Streamable HTTP over loopback TCP",
-      "status": "PASS_LOCAL_HS256_AND_RFC7662_CONTRACT; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_PENDING",
+      "status": "PASS_LOCAL_HS256_AND_RFC7662_CONTRACT; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_OUT_OF_SCOPE",
       "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-011-introspection-green.txt; artifacts/evidence/phase-014-service-summary.json; artifacts/evidence/status-reconcile/keycloak-on-fly-oidc-acceptance.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-mcp-acceptance.txt; artifacts/evidence/status-reconcile/console-e2e-on-fly-head-20261102.txt"
     },
     {
@@ -63,7 +63,7 @@
     {
       "id": "product-end-to-end-orchestration",
       "description": "Durable authenticated API to P04 worker to P01 agent to PostgreSQL RAG/MCP flow",
-      "status": "PASS_LOCAL_SERVICE; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_PENDING",
+      "status": "PASS_LOCAL_SERVICE; PASS_KEYCLOAK_ON_FLY; THIRD_PARTY_IDP_OUT_OF_SCOPE",
       "evidence": "artifacts/evidence/phase-010-full-gate.txt; artifacts/evidence/phase-010-service-summary.json; artifacts/evidence/phase-014-full-gate.txt; artifacts/evidence/phase-014-service-summary.json; artifacts/evidence/status-reconcile/keycloak-on-fly-oidc-acceptance.txt; artifacts/evidence/status-reconcile/keycloak-on-fly-mcp-acceptance.txt; artifacts/evidence/status-reconcile/console-e2e-on-fly-head-20261102.txt"
     },
     {
@@ -87,13 +87,13 @@
     {
       "id": "durable-authorization-snapshot",
       "description": "Verified subject, tenant, roles, and scopes remain unchanged; durable job authorization expires 15 minutes after acceptance and expired HITL resumes are denied",
-      "status": "PASS_LOCAL_15_MINUTE_LEASE; INCOMPLETE_EXTERNAL_IDENTITY",
+      "status": "PASS_LOCAL_15_MINUTE_LEASE; THIRD_PARTY_IDP_OUT_OF_SCOPE",
       "evidence": "artifacts/evidence/phase-016-full-gate.txt; artifacts/evidence/phase-016-final-service-summary.json"
     },
     {
       "id": "mcp-external-token-introspection",
       "description": "Optional RFC 7662 verifier checks direct MCP token activity on every request and denies the same token after revocation; local worker delegation remains compatible",
-      "status": "PASS_LOCAL_MCP_TCP_AND_KEYCLOAK_26_8_1; INCOMPLETE_EXTERNAL_IDP_AND_QUEUED_JOB_REVOCATION",
+      "status": "PASS_LOCAL_MCP_TCP_AND_KEYCLOAK_26_8_1; THIRD_PARTY_IDP_OUT_OF_SCOPE; QUEUED_JOB_REVOCATION_BY_LEASE_ONLY",
       "evidence": "artifacts/evidence/phase-011-introspection-green.txt; artifacts/evidence/phase-011-keycloak-oidc.txt"
     },
     {
