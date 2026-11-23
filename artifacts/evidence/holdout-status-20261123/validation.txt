@@ -1,0 +1,12 @@
+Working directory: projects/p05
+Command: python scripts/check_fast.py
+Exit code: 0
+Output: check-fast: OK
+
+Command: .venv/Scripts/python.exe scripts/check_full.py --skip-services
+Process exit code reported by execution tool: 1
+Selected output: unit/contract/package consumer exit_code=0; 263 passed, 2 skipped, 2 warnings. Retrieval fixture, OpenAPI, package provenance and fake control evaluation each exit_code=0; negative regression rejection exit_code=1 as expected. Required service integration: INCOMPLETE; explicitly omitted. check-full: INCOMPLETE.
+
+Command: python -c "import json,pathlib; f=json.loads(pathlib.Path('docs/harness/feature_list.json').read_text(encoding='utf-8')); r=json.loads(pathlib.Path('artifacts/evals/live/p05-holdout-v1/report.json').read_text()); s=json.loads(pathlib.Path('artifacts/evals/live/p05-holdout-v1/stop.json').read_text()); t=[json.loads(x) for x in pathlib.Path('artifacts/evals/live/p05-holdout-v1/trials.jsonl').read_text().splitlines()]; assert len(t)==r['live_model']['trials']==35 and sum(x['pass'] for x in t)==r['live_model']['passed']==20 and s['replay_allowed'] is False and r['status']=='INCOMPLETE'; assert all('FAIL' not in x['status'] for x in f['features']); print('PASS: 35 trials, 20 passed, replay prohibited; catalog JSON valid')"
+Exit code: 0
+Output: PASS: 35 trials, 20 passed, replay prohibited; catalog JSON valid

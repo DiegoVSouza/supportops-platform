@@ -21,8 +21,8 @@
     {
       "id": "tenant-rag-agent",
       "description": "Fake local hybrid retrieval returns tenant-scoped citations; a development-split live measurement exists (see real-model-evaluation) but semantic quality is not established",
-      "status": "PASS_LOCAL_FAKE; DEV_SPLIT_MEASURED; SEMANTIC_QUALITY_PENDING",
-      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt; live development split: artifacts/evals/live/p05-dev-v1/report.json (8 of 16, one trial each)"
+      "status": "PASS_LOCAL_FAKE; HOLDOUT_INCOMPLETE; SEMANTIC_QUALITY_PENDING",
+      "evidence": "artifacts/evidence/phase-009-full-gate-final.txt; artifacts/evals/live/p05-holdout-v1/report.json: 20 of 35 completed model trials passed; campaign stopped before completing 39 planned cases."
     },
     {
       "id": "approved-packages",
@@ -57,8 +57,8 @@
     {
       "id": "real-model-evaluation",
       "description": "Replay/live model quality evaluation",
-      "status": "DEV_SPLIT_MEASURED; MODEL_QUALITY_PENDING",
-      "evidence": "artifacts/evals/live/p05-dev-v1/report.json; artifacts/evidence/live-campaign-runner/development-run.txt. Development split only: 16 model-evaluated cases, one trial each, openai/gpt-oss-20b on free Groq keys, campaign p05-dev-v1 (phase 021, sealed runner). 8 of 16 passed (50.0%, Wilson 95% 0.28 to 0.72); 56 provider calls, 28,841 input and 4,739 output tokens, no paid spend. By family: retrieval_relevance 3/4, prompt_injection 3/4, citation_correctness 2/4, unanswerable 0/4; 4 trials broke the worker contract. 16 offline code controls passed 16/16 with zero provider calls (separate denominator). duplicate_delivery is NOT_EVALUATED. The 84 holdout cases were not opened. Corpus and grader are assistant-authored and the abstention check is a phrase heuristic; human review was done by the owner on 2026-11-09 (owner attestation) and the independent review is WAIVED_BY_OWNER, which is not independent verification."
+      "status": "HOLDOUT_INCOMPLETE; MODEL_QUALITY_PENDING",
+      "evidence": "artifacts/evals/live/p05-holdout-v1/report.json and stop.json: 20 of 35 completed model trials passed out of 39 planned; 140 completed provider calls. The next case stopped on invalid_accounted_receipt with provider json_validate_failed; replay is prohibited and the campaign is INCOMPLETE. Offline controls passed 16/16 separately; duplicate_delivery is NOT_EVALUATED. Corpus and grader are assistant-authored; the campaign report records human review PENDING and independent review WAIVED_BY_OWNER."
     },
     {
       "id": "product-end-to-end-orchestration",

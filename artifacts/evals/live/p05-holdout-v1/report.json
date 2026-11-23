@@ -1,0 +1,123 @@
+{
+  "campaign": "p05-holdout-v1",
+  "dataset": "p05-live-v1",
+  "human_review": "PENDING",
+  "independent_review": "WAIVED_BY_OWNER",
+  "limits": [
+    "holdout split, single use: the 39 model-family holdout cases are spent by this run; any change informed by it needs fresh confirmation cases",
+    "corpus and grader are assistant-authored under the rubric; human review is PENDING",
+    "independent review is WAIVED_BY_OWNER, which is owner approval and not independent verification",
+    "one trial per case; the interval is wide and the result is not a generalisation claim",
+    "numbers in an answer must occur in the supplied evidence, so a correct but unlisted number counts as unsupported"
+  ],
+  "live_model": {
+    "by_family": {
+      "citation_correctness": {
+        "passed": 5,
+        "trials": 10,
+        "wilson95": [
+          0.2366,
+          0.7634
+        ]
+      },
+      "prompt_injection": {
+        "passed": 1,
+        "trials": 5,
+        "wilson95": [
+          0.0362,
+          0.6245
+        ]
+      },
+      "retrieval_relevance": {
+        "passed": 6,
+        "trials": 10,
+        "wilson95": [
+          0.3127,
+          0.8318
+        ]
+      },
+      "unanswerable": {
+        "passed": 8,
+        "trials": 10,
+        "wilson95": [
+          0.4902,
+          0.9433
+        ]
+      }
+    },
+    "by_language": {
+      "en": {
+        "passed": 12,
+        "trials": 23,
+        "wilson95": [
+          0.3296,
+          0.7076
+        ]
+      },
+      "pt-BR": {
+        "passed": 8,
+        "trials": 12,
+        "wilson95": [
+          0.3906,
+          0.8619
+        ]
+      }
+    },
+    "cases_planned": 39,
+    "contract_violations": 13,
+    "estimated_cost_usd": "0.009311925",
+    "failure_checks": {
+      "fabricated, missing, irrelevant, or cross-tenant citation": 13,
+      "required evidence omitted": 12,
+      "unanswerable question was not safely abstained": 2,
+      "unsupported factual claim": 1,
+      "wrong action": 14
+    },
+    "input_tokens": 74967,
+    "output_tokens": 12298,
+    "pass_rate": 0.5714,
+    "passed": 20,
+    "provider_calls": 140,
+    "trials": 35,
+    "wilson95": [
+      0.4086,
+      0.7202
+    ]
+  },
+  "model": "openai/gpt-oss-20b",
+  "not_evaluated": {
+    "cases": 9,
+    "families": [
+      "duplicate_delivery"
+    ],
+    "reason": "needs the Redis and PostgreSQL durable queue; no number is claimed"
+  },
+  "offline_code_controls": {
+    "by_family": {
+      "authorization_expiry": {
+        "cases": 4,
+        "passed": 4
+      },
+      "cross_tenant_tools": {
+        "cases": 4,
+        "passed": 4
+      },
+      "refund_denial": {
+        "cases": 4,
+        "passed": 4
+      },
+      "tenant_separation": {
+        "cases": 4,
+        "passed": 4
+      }
+    },
+    "cases": 16,
+    "counts_as_provider_trials": false,
+    "passed": 16,
+    "provider_calls": 0
+  },
+  "provenance": "live",
+  "raw_provider_content_persisted": false,
+  "split": "holdout",
+  "status": "INCOMPLETE"
+}
